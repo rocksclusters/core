@@ -141,8 +141,8 @@ fi
 
 # 0. directory structure
 # 
-if [ ! -d /export/rocks/install ]; then
-	mkdir -p /export/rocks/install
+if [ ! -d /export/rocks/install/rolls ]; then
+	mkdir -p /export/rocks/install/rolls
 fi
 
 # 1. other system packages (need similar for solaris)
