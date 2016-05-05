@@ -1,0 +1,138 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+  <description>
+
+  SNMP Server.  Open all the tables to the public and customize a
+  couple site varialbe.
+
+  </description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+  <changelog>
+  $Log: snmp-server.xml,v $
+  Revision 1.13  2012/05/06 05:48:10  phil
+  Copyright Storm for Mamba
+
+  Revision 1.12  2011/08/25 23:39:02  anoop
+  Don't need this on Solaris
+
+  Revision 1.11  2011/07/23 02:30:15  phil
+  Viper Copyright
+
+  Revision 1.10  2010/09/07 23:52:47  bruno
+  star power for gb
+
+  Revision 1.9  2009/07/01 21:27:30  mjk
+  i love google reader
+
+  Revision 1.8  2009/05/01 19:06:48  mjk
+  chimi con queso
+
+  Revision 1.7  2009/03/31 00:23:29  anoop
+  Merged the remainder of the solaris XML files to the base roll
+
+  Revision 1.6  2009/01/23 21:50:23  bruno
+  var tags converted to entities
+
+  Revision 1.5  2008/10/18 00:55:46  mjk
+  copyright 5.1
+
+  Revision 1.4  2008/03/06 23:41:30  mjk
+  copyright storm on
+
+  Revision 1.3  2007/06/23 04:03:18  mjk
+  mars hill copyright
+
+  Revision 1.2  2005/10/04 20:54:06  bruno
+  cleanup config file so errors are no longer reported during startup
+  in /var/log/messages
+
+  Revision 1.1  2005/03/04 01:40:04  mjk
+  massive graph cleanup
+
+  Revision 1.7  2005/02/16 00:40:04  mjk
+  graph cleanup
+
+  Revision 1.6  2005/02/01 23:37:10  mjk
+  remove roll attrs
+
+  Revision 1.5  2004/02/03 00:57:25  mjk
+  decolorize / derollize
+
+  Revision 1.4  2004/01/30 00:22:54  mjk
+  color hpc green
+
+  Revision 1.3  2003/09/26 00:07:24  bruno
+  closer to 9
+
+  Revision 1.2  2003/07/16 18:52:45  bruno
+  changes all file creation code to use 'file' tag
+
+  Revision 1.1  2003/07/07 20:47:52  bruno
+  initial release
+
+  Revision 1.4  2003/04/25 18:15:09  bruno
+  first pass at adding all the new rocks config screens
+
+  Revision 1.3  2001/09/18 17:39:52  mjk
+  *** empty log message ***
+
+  Revision 1.2  2001/09/05 00:27:18  mjk
+  main and packages section is correct for compute nodes
+
+  </changelog>
+
+  <package os='linux'>net-snmp</package>
+
+  <package os='sunos'>SUNWsmmgr</package>
+  <package os='sunos'>SUNWsadmi</package>
+  <package os='sunos'>SUNWmibii</package>
+  <package os='sunos'>SUNWsasnm</package>
+  <package os='sunos'>SUNWsmagt</package>
+  <package os='sunos'>SUNWsacom</package>
+  <package os='sunos'>SUNWsmcmd</package>
+
+<post os='linux'>
+/sbin/chkconfig snmpd on
+
+<file name="/etc/snmp/snmpd.conf">
+com2sec	notConfigUser	default		public
+group	notConfigGroup	v1		notConfigUser
+group	notConfigGroup	v2c		notConfigUser
+view    all             included        .1             80
+
+access  notConfigGroup  "" any noauth exact all all all
+
+syslocation "&Info_CertificateLocality;, &Info_CertificateState;, &Info_CertificateCountry;"
+syscontact "&Info_ClusterContact;"
+</file>
+
+</post>
+
+<post os='sunos'>
+	<service name="application/management/seaport"/>
+	<service name="application/management/dmi"/>
+	<service name="application/management/snmpdx"/>
+
+<file name="/etc/snmp/conf/snmpd.conf">
+com2sec	notConfigUser	default		public
+group	notConfigGroup	v1		notConfigUser
+group	notConfigGroup	v2c		notConfigUser
+view    all             included        .1             80
+
+access  notConfigGroup  "" any noauth exact all all all
+
+syslocation "&Info_CertificateLocality;, &Info_CertificateState;, &Info_CertificateCountry;"
+syscontact "&Info_ClusterContact;"
+</file>
+
+</post>
+
+</kickstart> 

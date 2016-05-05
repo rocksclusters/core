@@ -1,0 +1,5 @@
+%_topdir /export/home/repositories/rocks/src/roll/core/src/admin/../../
+%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/admin/rocks-admin.buildroot
+%buildroot /export/home/repositories/rocks/src/roll/core/src/admin/rocks-admin.buildroot
+%_var	/var
+%debug_package	%{nil}

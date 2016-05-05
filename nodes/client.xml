@@ -1,0 +1,157 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<kickstart interface="public">
+
+
+<description>
+The 'client node' in the graph.
+
+This file is used as a connection point for other XML configuration nodes.
+</description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+<changelog>
+$Log: client.xml,v $
+Revision 1.21  2013/01/17 17:32:47  clem
+removing /opt/rocks/lib/mysql from the global ld.so.conf
+
+we used the local rpath in all the foundation mysql binaries so we dont need
+any more the file in /etc/ld.so.conf.d/foundation-mysql.conf
+
+Tested on rocks 6.1 (need to test on rocks 5)
+
+Revision 1.20  2012/05/06 05:48:10  phil
+Copyright Storm for Mamba
+
+Revision 1.19  2011/08/25 23:41:32  anoop
+conditional on the wrong tag fixed
+
+Revision 1.18  2011/08/25 23:38:45  anoop
+Made a few section linux specific
+
+Revision 1.17  2011/07/23 02:30:14  phil
+Viper Copyright
+
+Revision 1.16  2011/05/12 18:19:21  anoop
+dbhost set for all clients except devel-servers.
+Needs to be made more generic to support all
+database installs.
+
+Database Security now set programmatically.
+All users have "SELECT" access on some tables
+apache has few more privs on some tables
+Root has all access to all.
+
+All passwords are random.
+
+Revision 1.15  2010/12/15 19:17:32  bruno
+make sure clients can access the database via the rocks command line
+
+Revision 1.14  2010/09/07 23:52:46  bruno
+star power for gb
+
+Revision 1.13  2009/07/31 01:50:40  anoop
+rocks report dbhost outputs xml
+
+Revision 1.12  2009/05/20 12:28:41  mjk
+*** empty log message ***
+
+Revision 1.11  2009/05/01 19:06:48  mjk
+chimi con queso
+
+Revision 1.10  2009/01/23 21:50:23  bruno
+var tags converted to entities
+
+Revision 1.9  2008/10/18 00:55:45  mjk
+copyright 5.1
+
+Revision 1.8  2008/03/06 23:41:30  mjk
+copyright storm on
+
+Revision 1.7  2008/02/19 23:20:24  bruno
+katz made me do it.
+
+Revision 1.6  2007/12/10 21:28:33  bruno
+the base roll now contains several elements from the HPC roll, thus
+making the HPC roll optional.
+
+this also includes changes to help build and configure VMs for V.
+
+Revision 1.5  2007/06/23 04:03:18  mjk
+mars hill copyright
+
+Revision 1.4  2006/11/29 23:12:40  bruno
+prototype support for lights out frontend installs
+
+Revision 1.3  2006/06/05 17:57:33  bruno
+first steps towards 4.2 beta
+
+Revision 1.2  2005/03/01 18:23:18  mjk
+client/server are the graft (public) points
+
+Revision 1.1  2005/03/01 00:22:26  mjk
+moved to base roll
+
+Revision 1.4  2005/02/15 22:58:52  mjk
+dtd is gone
+
+Revision 1.3  2004/08/24 23:07:19  bruno
+timezone cleanup
+
+for bug 6
+
+Revision 1.2  2004/07/21 21:37:25  fds
+Support for cluster shepard
+
+Revision 1.1  2004/03/08 21:01:23  mjk
+*** empty log message ***
+
+Revision 1.3  2004/02/03 20:00:35  mjk
+decolorize
+
+Revision 1.2  2004/01/30 04:53:42  mjk
+colorize
+
+Revision 1.1  2003/07/07 20:04:55  bruno
+new for rolls
+
+</changelog>
+
+<pre>
+
+<!--
+	this is used to skip by the browser popup during a client install.
+	we only want the browser (firefox) to popup on server installs
+	because the browser prompts the user for configuration info
+-->
+touch /tmp/rocks-skip-welcome
+
+</pre>
+
+
+<post>
+
+<!-- remove this for rocks 5.3 -->
+<file name="/var/cluster/frontend">
+&Kickstart_PrivateAddress;
+</file>
+</post>
+
+<post cond="appliance != 'devel-server'">
+<!-- get the name of the database host into the rocks command line -->
+<eval mode="xml">
+/opt/rocks/bin/rocks report dbhost
+</eval>
+
+</post>
+
+
+
+
+</kickstart> 

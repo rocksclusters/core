@@ -1,0 +1,96 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+<description>
+Configure the maximum size of a shared memory segment to be 3/4 of main memory
+</description>
+
+
+<changelog>
+$Log: shared-memory.xml,v $
+Revision 1.2  2009/03/31 00:23:29  anoop
+Merged the remainder of the solaris XML files to the base roll
+
+Revision 1.1  2007/12/10 21:28:33  bruno
+the base roll now contains several elements from the HPC roll, thus
+making the HPC roll optional.
+
+this also includes changes to help build and configure VMs for V.
+
+Revision 1.7  2005/04/09 01:07:28  bruno
+changes to deal with new format of /proc/meminfo
+
+Revision 1.6  2005/02/16 00:40:04  mjk
+graph cleanup
+
+Revision 1.5  2004/02/03 00:57:25  mjk
+decolorize / derollize
+
+Revision 1.4  2004/01/30 00:22:54  mjk
+color hpc green
+
+Revision 1.3  2003/08/31 14:56:03  bruno
+need to use 'bc' to make sure value not converted to scientific notation
+
+Revision 1.2  2003/08/31 14:44:21  bruno
+calculate shared memory size without scientific notation
+
+Revision 1.1  2003/07/07 20:47:52  bruno
+initial release
+
+Revision 1.2  2002/02/25 17:27:30  bruno
+fixes for 2.2
+
+Revision 1.1  2002/02/23 00:54:39  bruno
+initial release
+
+
+</changelog>
+
+<post os='linux'>
+SHMSIZE=`gawk '/MemTotal:/ { printf("(%s/4) * (3 * 1024)\n", $2); }' \
+	/proc/meminfo | bc`
+
+if [ $SHMSIZE ]
+then
+	echo "kernel.shmmax = " $SHMSIZE >> /etc/sysctl.conf
+fi
+</post>
+
+<post os='sunos' chroot="no">
+<![CDATA[
+# Get the memory size from prtconf
+echo `prtconf | awk '/Memory size/{ print $3 }'` > /a/tmp/memsize
+]]>
+</post>
+
+<post os='sunos'>
+<![CDATA[
+# Set max shared memory to 3/4 the total memory
+# Get value in hex
+MEMSIZE=`cat /tmp/memsize`
+SHMSIZE=`echo "obase=16;$MEMSIZE*3*1024*1024/4;" | bc `
+
+# If we've got no answer, exit.
+if [ -z ${SHMSIZE} ]; then
+	exit 0;
+fi
+
+# Check to see if max shared memory is already set
+# If it is change it. If not add it anew
+
+grep "shmsys:shminfo_shmmax" /etc/system
+if [ \$? -eq 0 ]; then
+	sed '/shmsys\:shminfo_shmmax/c\
+set shmsys:shminfo_shmmax="0x${SHMSIZE}"'\
+	/etc/system > /tmp/etc.system
+	mv /tmp/etc.system /etc/system
+else
+	echo "set shmsys:shminfo_shmmax=0x${SHMSIZE}" \
+	>> /etc/system
+fi
+]]>	
+</post>
+
+</kickstart> 

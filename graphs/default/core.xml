@@ -1,0 +1,122 @@
+<?xml version="1.0" standalone="no"?>
+
+<graph roll="core">
+	<description>
+
+	Core Graph for Rocks. Enough to define the database, command
+	and configuration core.
+
+	</description>
+
+
+	<!-- Graph Ordering for Kickstart Generation -->
+
+	<order tail="HEAD">
+		<head>python-development</head>
+	</order>
+
+	<order head="python-development">
+		<tail>core</tail>
+	</order>
+
+	<order head="TAIL">
+		<tail>install</tail>
+	</order>
+
+	<order head="node" tail="database-data"/>
+
+	<order head="syslog" tail="syslog-client"/>
+
+	<order head="foundation-server">
+		<tail>database</tail>
+	</order>
+
+	<order head="database">
+		<tail>database-schema</tail>
+	</order>
+
+	<order head="database-schema">
+		<tail>database-data</tail>
+	</order>
+
+	<order head="database-schema">
+		<tail>database-sec</tail>
+	</order>
+
+	<order head="database-sec">
+		<tail>database-data</tail>
+	</order>
+
+	<order head="database-data">
+		<tail>rocks-dist</tail>
+		<tail>install</tail>
+		<tail>routes-client</tail>
+		<tail>routes-server</tail>
+		<tail>insert-rolls</tail>
+		<tail>server</tail>
+	</order>
+
+	<order tail="server-firewall">
+		<head>networking-server</head>
+		<head>database-data</head>
+	</order>
+
+	<order head="firewall">
+		<tail>client-firewall</tail>
+		<tail>server-firewall</tail>
+	</order>
+
+	<!-- Graph OO Framework -->
+
+	<edge from="bootstrap-packages">
+		<to>bootstrap-dummy</to>
+	</edge>
+
+	<edge from="core">
+		<to>foundation-core</to>
+		<to>syslog</to>
+		<to>security</to>
+		<to>logrotate</to>
+		<to>rpc</to>
+		<to>scripting</to>
+		<to>node</to>
+	</edge>
+
+	<edge from="server">
+		<to>foundation-server</to>
+		<to>core</to>
+		<to>devel</to>
+		<to>rocks-dist</to>
+		<to>database</to>
+		<to>install</to>
+		<to>rocks-devel</to>
+		<to>syslog-server</to>
+	</edge>
+
+	<edge from="compilers">
+		<to>c-development</to>
+		<to>fortran-development</to>
+	</edge>
+
+	<edge from="devel">
+		<to>cdr</to>
+		<to>emacs</to>
+		<to>docbook</to>
+		<to>compilers</to>
+	</edge>
+
+	<edge from="scripting">
+		<to>perl-development</to>
+		<to>perl-modules</to>
+		<to>python-development</to>
+		<to>tcl-development</to>
+	</edge>
+
+	<edge from="database">
+		<to>database-schema</to>
+		<to>database-sec</to>
+		<to>database-data</to>
+	</edge>
+	
+</graph>
+

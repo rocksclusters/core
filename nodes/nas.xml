@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart interface="public">
+
+	<description>
+  
+	NAS Appliance Node.  You should create your own extend-nas.xml
+	file to add functionality to this appliance type.
+
+	</description>
+
+	<changelog>
+	$Log: nas.xml,v $
+	Revision 1.2  2009/01/08 23:36:01  mjk
+	- rsh edge is conditional (no more uncomment crap)
+	- add global_attribute commands (list, set, remove, dump)
+	- attributes are XML entities for kpp pass (both pass1 and pass2)
+	- attributes are XML entities for kgen pass (not used right now - may go away)
+	- some node are now interface=public
+	
+	Revision 1.1  2007/12/10 21:28:33  bruno
+	the base roll now contains several elements from the HPC roll, thus
+	making the HPC roll optional.
+	
+	this also includes changes to help build and configure VMs for V.
+	
+	Revision 1.8  2005/02/16 00:40:04  mjk
+	graph cleanup
+	
+	</changelog>
+
+</kickstart> 
+

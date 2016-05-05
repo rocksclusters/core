@@ -1,0 +1,141 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+  <description>
+
+Populates the frontend database with initially selected rolls.
+
+  </description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+  <changelog>
+  $Log: insert-rolls.xml,v $
+  Revision 1.21  2012/05/06 05:48:10  phil
+  Copyright Storm for Mamba
+
+  Revision 1.20  2011/07/23 02:30:14  phil
+  Viper Copyright
+
+  Revision 1.19  2011/06/08 00:35:59  anoop
+  bug fix. Only root can create tables in cluster db
+  Also, use the rocks.my.cnf file to connect to db as root,
+  because the db is already secured by the time this xml file
+  is parsed
+
+  Revision 1.18  2010/09/07 23:52:46  bruno
+  star power for gb
+
+  Revision 1.17  2009/05/26 22:26:37  bruno
+  nuked dead code
+
+  Revision 1.16  2009/05/01 19:06:48  mjk
+  chimi con queso
+
+  Revision 1.15  2009/04/28 00:02:35  bruno
+  katz don't kut (and paste like he used to).
+
+  Revision 1.14  2009/04/23 23:46:11  mjk
+  new foundation mysql needs --password flag
+
+  Revision 1.13  2009/03/04 19:06:29  bruno
+  put site attrs in database
+
+  Revision 1.12  2009/03/04 01:32:12  bruno
+  attributes work for frontend installs
+
+  Revision 1.11  2009/02/03 20:56:08  bruno
+  fix frontend eval command with entity
+
+  Revision 1.10  2009/01/23 23:19:31  mjk
+  tweaks on the entities
+
+  Revision 1.9  2008/10/18 00:55:45  mjk
+  copyright 5.1
+
+  Revision 1.8  2008/03/06 23:41:30  mjk
+  copyright storm on
+
+  Revision 1.7  2007/07/03 23:06:24  phil
+  one missing fi can ruin your whole cluster
+
+  Revision 1.6  2007/07/03 22:27:47  phil
+  Properly call mysql with user apache
+
+  Revision 1.5  2007/06/23 04:03:18  mjk
+  mars hill copyright
+
+  Revision 1.4  2006/07/06 18:17:38  bruno
+  make sure only root can read /tmp/site.xml
+
+  Revision 1.3  2006/06/09 22:39:35  bruno
+  added keyboard variable
+
+  moved all language-specific variables to screen-clusterinfo.xml
+
+  Revision 1.2  2006/06/05 22:55:44  bruno
+  add installed rolls into the frontend's database
+
+  Revision 1.1  2006/06/05 22:06:29  bruno
+  moved insert-rolls from hpc to base
+
+  Revision 1.3  2005/04/08 23:49:55  fds
+  Dont insert duplicate roll entries into database for multi-disk rolls.
+
+  Revision 1.2  2005/03/16 03:36:30  fds
+  Actually inserting selected rolls into database.
+
+  Revision 1.1  2005/03/15 02:37:49  fds
+  Insert selected rolls into the database during post processing. Must happen
+  before rocks-dist is run again (in rocks-dist.xml).
+
+  </changelog>
+
+<post>
+
+<file name="/tmp/insert-rolls.sql">
+<eval shell="/opt/rocks/bin/python">
+import os
+import os.path
+import sys
+import rocks.roll
+
+if '&hostname;' == 'None':
+	#
+	# this case can happen when building a cdrom that builds a
+	# kickstart file for 'Server' and 'Client'
+	#
+	sys.exit()
+
+if not os.path.exists('/tmp/rolls.xml'):
+	sys.exit()
+
+generator = rocks.roll.Generator()
+generator.parse('/tmp/rolls.xml')
+
+# 
+# Generate insert statements
+#
+for name, version, arch, url, diskid in generator.rolls:
+	print ('insert into rolls (name,version,arch,enabled) '
+		'values ("%s","%s","%s","yes");' % (name,version,arch))
+</eval>
+</file>
+
+
+/opt/rocks/mysql/bin/mysql --defaults-extra-file=/root/.rocks.my.cnf \
+	-u root cluster \
+	&lt; /tmp/insert-rolls.sql
+
+rm -f /tmp/insert-rolls.sql
+
+</post>
+
+
+</kickstart> 
+

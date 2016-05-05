@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+<package>rocks-devel</package>
+<package>cvs</package>
+<package>libtool</package>
+<package>autoconf</package>
+<package>automake</package>
+<package>device-mapper-devel</package>
+<package>foundation-tidy</package>
+<package>isomd5sum-devel</package>
+<package>iscsi-initiator-utils-devel</package>
+
+<package>rocks-restore-roll</package>
+
+<package>NetworkManager-devel</package>
+<package>NetworkManager-glib-devel</package>
+<package>ncurses</package>
+<package>ncurses-devel</package>
+
+<package>libarchive-devel</package>
+<package>libblkid-devel</package>
+<package>libIDL</package>
+<package>libIDL-devel</package>
+
+<package>createrepo</package>
+<package>squashfs-tools</package>
+<package>syslinux-perl</package>
+
+<package>swig</package>
+
+<package>glibc-static</package>
+
+</kickstart> 

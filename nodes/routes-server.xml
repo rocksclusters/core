@@ -1,0 +1,102 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+	<description>
+	Set up static routes on server
+
+	</description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+	<changelog>
+	$Log: routes-server.xml,v $
+	Revision 1.21  2012/05/06 05:48:10  phil
+	Copyright Storm for Mamba
+	
+	Revision 1.20  2011/07/23 02:30:15  phil
+	Viper Copyright
+	
+	Revision 1.19  2011/03/24 19:37:00  phil
+	Wrap routes report inside of XML tag to make it like interfaces,networks.
+	Add ability to report host addr to output a python dictionary
+	mod routes-*.xml and sync host network to use new output format
+	
+	Revision 1.18  2010/09/07 23:52:47  bruno
+	star power for gb
+	
+	Revision 1.17  2009/05/01 19:06:48  mjk
+	chimi con queso
+	
+	Revision 1.16  2009/03/21 22:22:55  bruno
+	 - lights-out install of VM frontends with new node_rolls table
+	 - nuked 'site' columns and tables from database
+	 - worked through some bugs regarding entities
+	
+	Revision 1.15  2009/03/13 00:02:59  mjk
+	- checkpoint for route commands
+	- gateway is dead (now a default route)
+	- removed comment rows from schema (let's see what breaks)
+	- removed short-name from appliance (let's see what breaks)
+	- dbreport static-routes is dead
+	
+	Revision 1.14  2009/03/12 22:21:04  mjk
+	- use the new route commands
+	- kill routes-client (move code to routes-base)
+	
+	Revision 1.13  2009/01/23 21:50:23  bruno
+	var tags converted to entities
+
+	Revision 1.12  2008/10/18 00:55:45  mjk
+	copyright 5.1
+
+	Revision 1.11  2008/03/06 23:41:30  mjk
+	copyright storm on
+
+	Revision 1.10  2007/07/03 23:06:24  phil
+	one missing fi can ruin your whole cluster
+
+	Revision 1.9  2007/07/03 22:34:30  phil
+	Try to really generate the static routes on the server
+
+	Revision 1.8  2007/07/03 22:27:47  phil
+	Properly call mysql with user apache
+
+	Revision 1.7  2007/07/03 19:11:27  phil
+	update routes as apache -- should really be a rocks command.
+	Use rocks list host interface to get the set of network interfaces
+	instead of a direct mysql  call
+
+	Revision 1.6  2007/06/23 04:03:18  mjk
+	mars hill copyright
+
+	Revision 1.5  2005/11/02 20:10:09  phil
+	Always contact the frontend through the private interface.
+
+	Revision 1.4  2005/09/27 22:55:06  bruno
+	use the 'var' tag to get the name of the frontend
+
+	Revision 1.3  2005/09/26 23:55:00  mjk
+	fix static routes on frontend (maybe)
+
+	Revision 1.2  2005/09/22 04:08:18  phil
+	correct database for mysql access
+
+	Revision 1.1  2005/09/22 03:19:32  phil
+	Populate database with static-routing information
+	Create static-routes file from database
+	</changelog>
+
+
+<post os="linux">
+
+/opt/rocks/bin/rocks report host route localhost | \
+/opt/rocks/bin/rocks report script attrs="`/opt/rocks/bin/rocks report host attr localhost pydict=true`" | /bin/bash 
+
+</post>
+
+</kickstart> 

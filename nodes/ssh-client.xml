@@ -1,0 +1,111 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<kickstart>
+
+<description>
+
+SSH Config for compute nodes and other non-frontend appliances.
+
+We are using one key pair among all SSH servers in the
+cluster. This implies we do not care about Man-in-the-Middle
+attacks. We have subverted the protection for these attacks for
+several releases (broadcastSSH).
+
+This logic should not be in the ssh.xml node so the frontend will
+generate its own keypair.
+  
+</description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+  <changelog>
+  $Log: ssh-client.xml,v $
+  Revision 1.11  2012/07/31 23:20:09  phil
+  Generate a cluster-wide ssh [rsa,dsa] keys and put them in
+  the secure attributes database. These are different from frontend's host keys.
+  Place these on nodes with rocks sync host sec_attr (new sec_attr plugins).
+  Add list global sec_attr command
+
+  Revision 1.10  2012/05/06 05:48:10  phil
+  Copyright Storm for Mamba
+
+  Revision 1.9  2011/07/23 02:30:15  phil
+  Viper Copyright
+
+  Revision 1.8  2010/09/07 23:52:47  bruno
+  star power for gb
+
+  Revision 1.7  2009/12/10 00:13:08  bruno
+  solaris tweak
+
+  Revision 1.6  2009/12/02 21:30:28  mjk
+  - Added ssh_use_dns attribute
+
+  Revision 1.5  2009/05/01 19:06:48  mjk
+  chimi con queso
+
+  Revision 1.4  2008/10/18 00:55:46  mjk
+  copyright 5.1
+
+  Revision 1.3  2008/03/06 23:41:30  mjk
+  copyright storm on
+
+  Revision 1.2  2007/06/23 04:03:18  mjk
+  mars hill copyright
+
+  Revision 1.1  2005/03/01 00:22:26  mjk
+  moved to base roll
+
+  Revision 1.2  2005/02/15 22:58:52  mjk
+  dtd is gone
+
+  Revision 1.1  2004/03/08 21:01:23  mjk
+  *** empty log message ***
+
+  Revision 1.3  2004/02/03 20:00:36  mjk
+  decolorize
+
+  Revision 1.2  2004/01/30 04:53:42  mjk
+  colorize
+
+  Revision 1.1  2003/09/17 22:50:55  fds
+  Moved ssh key files into separate node, so
+  frontend node does not get the key of our build host.
+
+  </changelog>
+  
+<post>
+
+RSAKEY=/etc/ssh/ssh_host_rsa_key
+DSAKEY=/etc/ssh/ssh_host_dsa_key
+for file in ${RSAKEY}* ${DSAKEY}*; do 
+	if [ -f $file ]; then
+		/bin/rm -f $file 
+	fi 
+done
+
+/usr/bin/ssh-keygen -t rsa -N '' -f  $RSAKEY
+/usr/bin/ssh-keygen -t dsa -N '' -f  $DSAKEY
+
+for file in ${RSAKEY} ${DSAKEY}; do 
+	chmod 0400 $file
+	chmod 0444 ${file}.pub
+done
+
+</post>
+
+<!-- ssh_use_dns is used to disable DNS lookups on ssh connections. -->
+<!-- This is useful for clusters not on the Internet. -->
+
+<post cond="not ssh_use_dns" os="linux">
+/bin/sed 's/#UseDNS.*/UseDNS no/g' /etc/ssh/sshd_config
+</post>
+
+
+</kickstart>
+

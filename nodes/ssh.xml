@@ -1,0 +1,252 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<kickstart>
+
+  <description>
+
+  Enable SSH
+
+  </description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+  <changelog>
+  $Log: ssh.xml,v $
+  Revision 1.21  2012/10/24 18:49:21  clem
+  centos 5.* ships with sshd version 4.* which does not support match rules
+  so disableying host based authentication for root works only on rocks 6
+
+  Revision 1.20  2012/10/18 19:24:28  phil
+  fix conflict between google-otp config and this one.
+
+  Revision 1.19  2012/08/13 05:12:17  phil
+  Hostbased Authentication now default method. Thanks, Roy Dragseth.
+
+  Revision 1.18  2012/08/10 23:49:09  phil
+  Support hostbased authentication for ssh.  Inspired by Roy Dragseth.
+
+  Revision 1.17  2012/05/06 05:48:10  phil
+  Copyright Storm for Mamba
+
+  Revision 1.16  2012/04/29 17:48:50  phil
+  Don't create intermediate /tmp/sshd_config file.
+
+  Revision 1.15  2011/07/23 02:30:15  phil
+  Viper Copyright
+
+  Revision 1.14  2010/09/07 23:52:47  bruno
+  star power for gb
+
+  Revision 1.13  2009/11/30 17:24:10  bruno
+  takes care of a missing codeset issue
+
+  Revision 1.12  2009/05/01 19:06:48  mjk
+  chimi con queso
+
+  Revision 1.11  2009/04/28 15:46:34  bruno
+  remove depreicated option
+
+  Revision 1.10  2009/03/31 00:23:29  anoop
+  Merged the remainder of the solaris XML files to the base roll
+
+  Revision 1.9  2008/10/18 00:55:46  mjk
+  copyright 5.1
+
+  Revision 1.8  2008/04/25 16:38:23  bruno
+  remove deprecated config option
+
+  Revision 1.7  2008/04/17 21:58:11  bruno
+  node file cleanup
+
+  Revision 1.6  2008/03/18 23:08:03  bruno
+  include xauth for x11 forwarding
+
+  Revision 1.5  2008/03/06 23:41:30  mjk
+  copyright storm on
+
+  Revision 1.4  2007/06/23 04:03:18  mjk
+  mars hill copyright
+
+  Revision 1.3  2005/10/19 13:04:14  bruno
+  make sure the permissions are correct
+
+  Revision 1.2  2005/03/02 23:47:52  bruno
+  changes for RHEL 4
+
+  Revision 1.1  2005/03/01 00:22:26  mjk
+  moved to base roll
+
+  Revision 1.5  2005/02/16 00:21:21  mjk
+  no more entity
+
+  Revision 1.4  2005/02/15 22:58:52  mjk
+  dtd is gone
+
+  Revision 1.3  2004/08/25 05:25:41  bruno
+  move from ssh v1 to ssh v2
+
+  (bug 17)
+
+  Revision 1.2  2004/05/20 16:08:14  bruno
+  the newest version of ssh now requires laus packages
+
+  Revision 1.1  2004/03/08 21:01:23  mjk
+  *** empty log message ***
+
+  Revision 1.17  2004/02/28 23:29:03  fds
+  Allow user-specified environments.
+
+  Revision 1.16  2004/02/03 20:00:36  mjk
+  decolorize
+
+  Revision 1.15  2004/01/30 04:53:42  mjk
+  colorize
+
+  Revision 1.14  2003/12/18 18:23:14  fds
+  sshd asks for password instead of wacked challenge-response.
+
+  Revision 1.13  2003/09/17 22:50:55  fds
+  Moved ssh key files into separate node, so
+  frontend node does not get the key of our build host.
+
+  Revision 1.12  2003/09/17 22:29:55  fds
+  Using one SSH key pair for the cluster.
+  Obviates the need for broadcastSSH.
+
+  Revision 1.11  2003/09/15 23:29:18  fds
+  There is only ONE. One ssh keypair for cluster.
+  No more broadcastSSH (thank god).
+
+  Revision 1.10  2003/05/29 20:55:19  mjk
+  gateway added to kickstart.cgi
+
+  Revision 1.9  2003/05/21 18:57:31  mjk
+  grid integration checkpoint
+
+  Revision 1.8  2002/01/18 23:27:32  bruno
+  updates for 7.2
+
+  Revision 1.7  2001/11/07 19:21:37  mjk
+  - moved phpMyAdmin the /var/www/html
+  - nuke cluster-config-* as special case rpms in rocks-dist (build.py)
+  - moved around code in rocks-boot
+  - 2.1.1 copyright
+
+  Revision 1.6  2001/10/31 21:22:02  bruno
+  added protocol 2
+
+  Revision 1.5  2001/10/31 00:35:11  bruno
+  rocks v2.1.1 updates
+
+  Revision 1.4  2001/09/21 18:36:54  mjk
+  - Fixed multiple swapfiles
+  - Added models CGI (and genmodel.py)
+  - Kickstart CGI now accepts form data
+  - Fixed turning off services (kudzu, et al)
+
+  Revision 1.3  2001/09/14 21:45:42  mjk
+  - Testing on ia32 compute nodes
+  - A CGI kickstart takes 5 seconds
+  - Working on ia64 compute nodes
+
+  Revision 1.2  2001/09/05 00:27:18  mjk
+  main and packages section is correct for compute nodes
+
+  </changelog>
+
+
+  <package os='linux'>openssh</package>
+  <package os='linux'>openssh-clients</package>
+  <package os='linux'>openssh-server</package>
+  <package os='linux'>openssh-askpass</package>
+
+  <package os='linux'>xorg-x11-xauth</package>
+
+  <package os='sunos'>SUNWsshcu</package>
+  <package os='sunos'>SUNWsshdr</package>
+  <package os='sunos'>SUNWsshdu</package>
+  <package os='sunos'>SUNWsshr</package>
+  <package os='sunos'>SUNWsshu</package>
+  <package os='sunos'>SUNWspnego</package>
+  <package os='sunos'>SUNWgssdh</package>
+  <package os='sunos'>SUNWrsg</package>
+  <package os='sunos'>SUNWuiu8</package>
+
+<post>
+<file name="/etc/ssh/ssh_config">
+Host *
+	CheckHostIP             no
+	ForwardX11              yes
+	ForwardAgent		yes
+	StrictHostKeyChecking   no
+	UsePrivilegedPort       no
+	Protocol		2,1
+	HostbasedAuthentication yes
+	EnableSSHKeySign        yes
+</file>
+</post>
+
+<post os='linux'>
+<!--
+change permissions on /root/ and /root/.ssh/ directories so
+cluster-dist can read root's 'id_rsa.pub' when it's run by a
+non-root user
+-->
+
+chmod a+rx /root
+mkdir /root/.ssh
+chmod a+rx /root/.ssh
+
+<!-- Permit user environment -->
+sed -i -e 's/#PermitUserEnvironment no/PermitUserEnvironment yes/' \
+	/etc/ssh/sshd_config
+</post>
+
+
+<!-- centos 5.* ships with sshd version 4.* which does not support match rules -->
+<post cond="rocks_version_major >= 6">
+<!-- Turn off HostbasedAuthentication for Root, Keys/Password Only -->
+<file name="/etc/ssh/sshd_config" mode="append">
+Match User root
+      HostbasedAuthentication no
+</file>
+</post>
+
+
+
+<post>
+# Enable HostbasedAuthentication
+sed -ri -e "/^#?HostbasedAuthentication/ c HostbasedAuthentication yes"  /etc/ssh/sshd_config
+</post>
+
+<post os='sunos'>
+
+<service name="network/ssh" enabled="yes"/>
+
+<!--
+change permissions on /root/ and /root/.ssh/ directories so
+cluster-dist can read root's 'id_rsa.pub' when it's run by a
+non-root user
+-->
+
+mkdir -p /.ssh
+chmod a+rx /.ssh
+
+<!-- Turn off HostbasedAuthentication for Root, Keys/Password Only -->
+<file name="/etc/ssh/sshd_config" mode="append">
+Match User root
+      HostbasedAuthentication no
+</file>
+
+<!-- Allow root login get normal passwd auth. -->
+sed -e '/PermitRootLogin/s/no/yes/g' /etc/ssh/sshd_config > /tmp/sshd_config
+<file name="/etc/ssh/sshd_config" expr="cat /tmp/sshd_config" />
+
+</post>
+
+</kickstart> 
