@@ -21,7 +21,7 @@ YUM.CONF=yum.conf
 YUM.REPOS.D=yum.repos.d
 SYSTEMPATH=/etc
 REPONAME=localrepo
-LOCALREPO.CONF=$(LOCALPATH)/$(YUM.REPOS.D)/$(REPONAME).conf
+LOCALREPO.REPO=$(LOCALPATH)/$(YUM.REPOS.D)/$(REPONAME).repo
 LOCALYUM.CONF=$(LOCALPATH)/$(YUM.CONF)
 LOCALCACHE=$(LOCALPATH)/cache
 
@@ -35,17 +35,17 @@ $(LOCALPATH)/$(YUM.REPOS.D):
 copyrepos: $(LOCALPATH)/$(YUM.REPOS.D)
 	/bin/find $(SYSTEMPATH)/$(YUM.REPOS.D) -name '*repo' -exec /bin/cp {} $(LOCALPATH)/$(YUM.REPOS.D) \; -print
 
-$(LOCALREPO.CONF): copyrepos 
-	echo "[$(ROLLNAME)-roll]" > $(LOCALREPO.CONF)
-	echo "name=$(ROLLNAME)-roll" >> $(LOCALREPO.CONF)
-	echo "baseurl=file://$(CURDIR)/$(REPONAME)" >> $(LOCALREPO.CONF)
-	echo "enabled=1" >> $(LOCALREPO.CONF)
-	echo "gpgcheck=0" >> $(LOCALREPO.CONF)
-	echo "protected=1" >> $(LOCALREPO.CONF)
+$(LOCALREPO.REPO): copyrepos 
+	echo "[$(ROLLNAME)-roll]" > $(LOCALREPO.REPO)
+	echo "name=$(ROLLNAME)-roll" >> $(LOCALREPO.REPO)
+	echo "baseurl=file://$(CURDIR)/$(REPONAME)" >> $(LOCALREPO.REPO)
+	echo "enabled=1" >> $(LOCALREPO.REPO)
+	echo "gpgcheck=0" >> $(LOCALREPO.REPO)
+	echo "protected=1" >> $(LOCALREPO.REPO)
 
 localcache:
 	[ -d $(LOCALCACHE) ] || /bin/mkdir $(LOCALCACHE)
-localrepo: $(LOCALREPO.CONF) 
+localrepo: $(LOCALREPO.REPO) 
 	[ -d $(LOCALPATH)/$(REPONAME) ] || /bin/mkdir -p $(LOCALPATH)/$(REPONAME)/RPMS
 	find RPMS -name '*rpm' -exec /bin/cp {} $(LOCALPATH)/$(REPONAME)/RPMS \; -print 
 	( cd $(LOCALPATH)/$(REPONAME); createrepo $(LOCALPATH)/$(REPONAME))
