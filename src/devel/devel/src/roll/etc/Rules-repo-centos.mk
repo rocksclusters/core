@@ -38,9 +38,10 @@ copyrepos: $(LOCALPATH)/$(YUM.REPOS.D)
 $(LOCALREPO.CONF): copyrepos 
 	echo "[$(ROLLNAME)-roll]" > $(LOCALREPO.CONF)
 	echo "name=$(ROLLNAME)-roll" >> $(LOCALREPO.CONF)
-	echo "baseurl=file:///$(CURDIR)/$(REPONAME)" >> $(LOCALREPO.CONF)
+	echo "baseurl=file://$(CURDIR)/$(REPONAME)" >> $(LOCALREPO.CONF)
 	echo "enabled=1" >> $(LOCALREPO.CONF)
 	echo "gpgcheck=0" >> $(LOCALREPO.CONF)
+	echo "protected=1" >> $(LOCALREPO.CONF)
 
 localcache:
 	[ -d $(LOCALCACHE) ] || /bin/mkdir $(LOCALCACHE)
