@@ -142,11 +142,16 @@ BOOTSTRAP_PY=bootstrap.py
 ## Linux
 ##
 
-function install_linux() {
+function install_linux_oldstyle() {
 	find /usr/src/redhat/RPMS -name "$1-[0-9]*.*.rpm" \
 		-exec rpm -Uhv --force --nodeps {} \;
 	find RPMS -name "$1-[0-9]*.*.rpm" \
 		-exec rpm -Uhv --force --nodeps {} \;
+}
+
+function install_linux() {
+	gmake createlocalrepo
+	yum -y -c yum.conf install $1
 }
 
 function compile_linux() {

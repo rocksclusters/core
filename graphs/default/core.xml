@@ -56,16 +56,6 @@
 		<tail>server</tail>
 	</order>
 
-	<order tail="server-firewall">
-		<head>networking-server</head>
-		<head>database-data</head>
-	</order>
-
-	<order head="firewall">
-		<tail>client-firewall</tail>
-		<tail>server-firewall</tail>
-	</order>
-
 	<!-- Graph OO Framework -->
 
 	<edge from="bootstrap-packages">
@@ -74,23 +64,14 @@
 
 	<edge from="core">
 		<to>foundation-core</to>
-		<to>syslog</to>
-		<to>security</to>
-		<to>logrotate</to>
-		<to>rpc</to>
-		<to>scripting</to>
 		<to>node</to>
 	</edge>
 
 	<edge from="server">
 		<to>foundation-server</to>
 		<to>core</to>
-		<to>devel</to>
-		<to>rocks-dist</to>
+		<to>core-devel</to>
 		<to>database</to>
-		<to>install</to>
-		<to>rocks-devel</to>
-		<to>syslog-server</to>
 	</edge>
 
 	<edge from="compilers">
