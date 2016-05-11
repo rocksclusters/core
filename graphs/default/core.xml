@@ -79,11 +79,10 @@
 		<to>fortran-development</to>
 	</edge>
 
-	<edge from="devel">
+	<edge from="core-devel">
 		<to>cdr</to>
-		<to>emacs</to>
-		<to>docbook</to>
 		<to>compilers</to>
+		<to>scripting</to>
 	</edge>
 
 	<edge from="scripting">
