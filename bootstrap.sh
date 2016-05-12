@@ -60,7 +60,9 @@
 #
 
 . src/devel/devel/src/roll/etc/bootstrap-functions.sh
-
+compile devel
+install rocks-devel
+. /etc/profile.d/rocks-devel.sh
 
 #if [ `./_os` == "linux" ]; then
 #	compile_and_install foundation-redhat
