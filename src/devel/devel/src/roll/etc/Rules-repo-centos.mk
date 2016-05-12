@@ -1,4 +1,5 @@
 
+
 ## Create a localrepo at the top level roll directory. Create a local yum.conf
 ## file
 ## When complete:
@@ -7,6 +8,9 @@
 
 ## make createlocalrepo 
 ## does all the work
+
+ifndef __RULES_REPO_CENTOS_MK
+__RULES_REPO_CENTOS_MK = yes
 
 LOCALPATH=$(CURDIR)
 # Some protections for local path system wide
@@ -66,3 +70,7 @@ clean::
 	/bin/rm -rf $(LOCALPATH)/$(REPONAME)
 	/bin/rm -rf $(LOCALCACHE)
 	/bin/rm -f $(LOCALPATH)/$(YUM.CONF)
+
+
+endif #__RULES_REPO_CENTOS_MK
+
