@@ -25,7 +25,6 @@ ecd046355054a655708b8f57cf1d837a4cf070f8  src/foundation-python-extras/pygobject
 b5f8302941435adc4145cb16f5f9cb696069425d  src/foundation-python/Python-2.6.7.tar.gz
 e92c3bc382df73147cb1992eed93fed52a2fd5f7  src/foundation-python-setuptools/distribute-0.6.10.tar.gz
 587edfbda731a0c4147e1680c5dea1fc3a53c4cd  src/foundation-python-xml-26/PyXML-0.8.4.tar.gz
-587edfbda731a0c4147e1680c5dea1fc3a53c4cd  src/foundation-python-xml/PyXML-0.8.4.tar.gz
 28e8ad12521938496604f77cf60134af184cb11b  src/foundation-wget/wget-1.10.2.tar.gz
 06b974934629879b6fec45889ac006630bfcf7f9  src/foundation-python-sphinx/jinja2-2.7.3.tar.gz
 cd5c22acf6dd69046d6cb6a3920d84ea66bdf62a  src/foundation-python-sphinx/MarkupSafe-0.23.tar.gz
