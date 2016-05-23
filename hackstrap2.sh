@@ -41,3 +41,14 @@ MYNAME=`hostname -s`
 /opt/rocks/bin/rocks add appliance compute graph=default node=compute membership=Compute public=yes
 /opt/rocks/bin/rocks add attr rocks_version `/opt/rocks/bin/rocks report version`
 /opt/rocks/bin/rocks add attr rocks_version_major `/opt/rocks/bin/rocks report version major=1`
+
+#4 create a repo entry for rocks-dist distribution
+REPONAME=/etc/yum.repos.d/rocks-local.repo
+if [ ! -f $REPONAME ]; then
+cat > $REPONAME << EOF
+[Rocks-`/opt/rocks/bin/rocks report version`]
+name=Rocks
+baseurl=file:///export/rocks/install/rocks-dist/`uname -i`
+enabled = 1
+EOF
+fi
