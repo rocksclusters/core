@@ -89,9 +89,12 @@
 	<package os="linux">libxml2</package>
 	<package os="linux">libxml2-devel</package>
 	<package os="linux">mysql-devel</package>
+	<package os="linux">pygobject2</package>
+	<package os="linux">pygobject2-devel</package>
 	<package os="linux">python-devel</package>
 	<package os="linux">readline-devel</package>
 	<package os="linux">slang-devel</package>
+	<package os="linux">swig</package>
 
 </kickstart>
 

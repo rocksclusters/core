@@ -191,10 +191,15 @@ class Command(rocks.commands.run.command):
 		for line in gen.generate('packages'):
 			if line.find('%package') == -1:
 				rpms.append(line)
+		yumlist = []
 		for rpm in rpms:
 			if rpm in rpm_list.keys():
-				script.append('yum install %s\n' % rpm)
-				script.append(rpm_force_template % rpm_list[rpm])
+				yumlist.append(rpm)
+		if len(yumlist) > 0:
+			script.append('yum --nogpgcheck -y install %s\n' % 
+				" ".join(yumlist))
+			rpmlist = [ x[1] for x in rpm_list.items() ]
+			script.append(rpm_force_template % " ".join(rpmlist))
 
 		script += gen.generate_config_script()
 		
