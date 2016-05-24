@@ -18,7 +18,7 @@
 <package>libarchive-devel</package>
 <package>createrepo</package>
 <package>glibc-static</package>
-<package>pdfjadetex</package>
-<package>docbookutils</package>
+<package>jadetex</package>
+<package>docbook-utils</package>
 
 </kickstart> 

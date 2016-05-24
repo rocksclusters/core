@@ -71,3 +71,10 @@ ROLL=`echo $1 | cut -d 1 -f 1`
 #7 Install packages from the core roll
 PKGS=`/opt/rocks/bin/rocks list host profile localhost | /bin/awk '/%packages/,/%end/' | /usr/bin/head -n -1 | /usr/bin/tail -n +2` 
 /usr/bin/yum -y --nogpgcheck install $PKGS
+
+#8 run the post for the localhost
+SCRIPT=$(mktemp)
+/opt/rocks/bin/rocks list host xml | /opt/rocks/sbin/kgen --section=post > $SCRIPT
+/sbin/service foundation-mysql stop
+sh $SCRIPT
+/bin/rm $SCRIPT
