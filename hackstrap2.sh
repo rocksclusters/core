@@ -32,12 +32,13 @@ MYNAME=`hostname -s`
 /opt/rocks/bin/rocks add appliance bootstrap node=server
 /opt/rocks/bin/rocks add host $MYNAME rack=0 rank=0 membership=bootstrap
 /opt/rocks/bin/rocks add network private 127.0.0.1 netmask=255.255.255.255
-/opt/rocks/bin/rocks add host interface $MYNAME lo subnet=private ip=127.0.0.1
+MAC=`/sbin/ifconfig -a | grep -i HWADDR | head -1 | /bin/awk '{print $NF}'`
+/opt/rocks/bin/rocks add host interface $MYNAME lo subnet=private ip=127.0.0.1 mac=$MAC
 /opt/rocks/bin/rocks add attr os `./_os` 
+
 
 #3. Add appliance types so that we can build the other Rolls
 /opt/rocks/bin/rocks add attr Kickstart_PrivateKickstartBasedir install
-/opt/rocks/bin/rocks add attr Kickstart_PublicHostname $MYNAME 
 /opt/rocks/bin/rocks add appliance compute graph=default node=compute membership=Compute public=yes
 /opt/rocks/bin/rocks add attr rocks_version `/opt/rocks/bin/rocks report version`
 /opt/rocks/bin/rocks add attr rocks_version_major `/opt/rocks/bin/rocks report version major=1`
@@ -52,3 +53,21 @@ baseurl=file:///export/rocks/install/rocks-dist/`uname -i`
 enabled = 1
 EOF
 fi
+
+#5 Add the core roll and enable it
+/opt/rocks/bin/rocks add roll $1
+ROLL=`echo $1 | cut -d 1 -f 1`
+/opt/rocks/bin/rocks/enable roll $ROLL
+
+. /etc/profile.d/rocks-binaries.sh
+
+#6 Some additional attributes. These are needed for the KVM roll,e.g.,
+/opt/rocks/bin/rocks add attr Kickstart_PublicHostname $MYNAME 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateGateway 127.0.0.1 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateDNSServers 127.0.0.1 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateNetMask 255.255.255.0 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateKickstartHost 127.0.0.1 
+
+#7 Install packages from the core roll
+PKGS=`/opt/rocks/bin/rocks list host profile localhost | /bin/awk '/%packages/,/%end/' | /usr/bin/head -n -1 | /usr/bin/tail -n +2` 
+/usr/bin/yum -y --nogpgcheck install $PKGS

@@ -74,6 +74,7 @@
 	<package os="linux">binutils-devel</package>
 	<package os="linux">bzip2-devel</package>
 	<package os="linux">cmake</package>
+	<package os="linux">docbook-utils</package>
 	<package os="linux">expat-devel</package>
 	<package os="linux">glibc-static</package>
 	<package os="linux">intltool</package>
@@ -89,6 +90,7 @@
 	<package os="linux">libxml2</package>
 	<package os="linux">libxml2-devel</package>
 	<package os="linux">mysql-devel</package>
+	<package os="linux">pdfjadetex</package>
 	<package os="linux">pygobject2</package>
 	<package os="linux">pygobject2-devel</package>
 	<package os="linux">python-devel</package>
