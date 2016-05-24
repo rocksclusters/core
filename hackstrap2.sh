@@ -63,6 +63,7 @@ ROLL=`echo $1 | cut -d 1 -f 1`
 
 #6 Some additional attributes. These are needed for the KVM roll,e.g.,
 /opt/rocks/bin/rocks add attr Kickstart_PublicHostname $MYNAME 
+/opt/rocks/bin/rocks add attr Kickstart_PublicAddress 127.0.0.1 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateGateway 127.0.0.1 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateDNSServers 127.0.0.1 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateNetMask 255.255.255.0 
