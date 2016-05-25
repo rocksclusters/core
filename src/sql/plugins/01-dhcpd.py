@@ -147,6 +147,8 @@ class Plugin(rocks.sql.InsertEthersPlugin):
 				'--norestart' in self.app.caller_args:
 			return
 
+		if not self.updateConfig():
+			return
 		cmd = '/opt/rocks/bin/rocks report host dhcpd localhost | '
 		cmd += '/opt/rocks/bin/rocks report script | bash'
 		os.system(cmd)

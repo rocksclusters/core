@@ -74,6 +74,8 @@ class Plugin(rocks.sql.InsertEthersPlugin):
 	def done(self):
 		"""Update shosts/known hosts"""
 
+		if not self.updateConfig():
+			return
 		subprocess.call("/opt/rocks/bin/rocks report shosts | /opt/rocks/bin/rocks report script | /bin/sh", shell=True)
 		subprocess.call("/opt/rocks/bin/rocks report knownhosts | /opt/rocks/bin/rocks report script | /bin/sh", shell=True)
 		subprocess.call("make -C /var/411 2>&1 > /dev/null", shell=True)

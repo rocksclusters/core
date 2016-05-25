@@ -134,6 +134,8 @@ class Plugin(rocks.sql.InsertEthersPlugin):
 				'%s install_sol'% (nodename))
 			subprocess.call(cmd, shell=True)
 
+		if not self.updateConfig():
+			return
 		subprocess.call("/opt/rocks/bin/rocks set host boot " + \
 			"%s action=%s" % (nodename, "install"), shell=True)
 

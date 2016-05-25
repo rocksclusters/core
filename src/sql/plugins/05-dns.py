@@ -151,6 +151,8 @@ class Plugin(rocks.sql.InsertEthersPlugin):
 				'--norestart' in self.app.caller_args:
 			return
 
+		if not self.updateConfig():
+			return
 		os.system('/opt/rocks/bin/rocks sync dns')
 		os.system('/opt/rocks/bin/rocks report host > /etc/hosts ' +
 			  '2> /dev/null')
