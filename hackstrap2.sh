@@ -56,17 +56,22 @@ fi
 
 #5 Add the core roll and enable it
 /opt/rocks/bin/rocks add roll $1
-ROLL=`echo $1 | cut -d 1 -f 1`
-/opt/rocks/bin/rocks/enable roll $ROLL
+ROLL=`echo $1 | cut -d - -f 1`
+/opt/rocks/bin/rocks enable roll $ROLL
 
 . /etc/profile.d/rocks-binaries.sh
+
+pushd /export/rocks/install
+/opt/rocks/bin/rocks create distro
+popd
 
 #6 Some additional attributes. These are needed for the KVM roll,e.g.,
 /opt/rocks/bin/rocks add attr Kickstart_PublicHostname $MYNAME 
 /opt/rocks/bin/rocks add attr Kickstart_PublicAddress 127.0.0.1 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateGateway 127.0.0.1 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateDNSServers 127.0.0.1 
-/opt/rocks/bin/rocks add attr Kickstart_PrivateNetMask 255.255.255.0 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateNetmask 255.255.255.0 
+/opt/rocks/bin/rocks add attr Kickstart_PrivateNetwork  127.0.0.0 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateKickstartHost 127.0.0.1 
 
 #7 Install packages from the core roll

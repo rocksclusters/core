@@ -577,6 +577,7 @@ if os.path.exists('/tmp/site.attrs'):
 /opt/rocks/bin/rocks add appliance frontend membership=Frontend node=server \
 	public=no
 /opt/rocks/bin/rocks add appliance compute  membership=Compute node=compute
+/opt/rocks/bin/rocks add appliance login    membership=Login node=login
 /opt/rocks/bin/rocks add appliance nas      membership='NAS Appliance' node=nas 
 /opt/rocks/bin/rocks add appliance network  membership='Ethernet Switch'
 /opt/rocks/bin/rocks add appliance power    membership='Power Distribution Unit'
