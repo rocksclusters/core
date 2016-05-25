@@ -703,6 +703,10 @@ class Generator:
 			if filePerms:
 				s += 'chmod %s %s' % (filePerms, fileName)
 
+			s +=  'dn=$(dirname %s)\n' % fileName
+			s +=  'mkdir -p %s/$dn \n' % "/var/rocks"
+			s +=  '/bin/cp -p %s %s/$dn\n' % (fileName,"/var/rocks")
+
 		return s
 	
 	# <*>
