@@ -73,6 +73,8 @@ popd
 /opt/rocks/bin/rocks add attr Kickstart_PrivateNetmask 255.255.255.0 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateNetwork  127.0.0.0 
 /opt/rocks/bin/rocks add attr Kickstart_PrivateKickstartHost 127.0.0.1 
+# This will keep rocks sync config from updating system files
+/opt/rocks/bin/rocks add attr Config_NoUpdate true
 
 #7 Install packages from the core roll
 PKGS=`/opt/rocks/bin/rocks list host profile localhost | /bin/awk '/%packages/,/%end/' | /usr/bin/head -n -1 | /usr/bin/tail -n +2` 
