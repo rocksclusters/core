@@ -197,4 +197,3 @@ class Command(rocks.commands.report.command):
 			self.addText('\n')
 
 
-RollName = "base"

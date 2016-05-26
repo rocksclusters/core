@@ -302,4 +302,3 @@ class Command(rocks.commands.report.command):
 		self.addOutput('localhost',s)
 		self.endOutput(padChar = '')
 
-RollName = "base"

@@ -120,4 +120,3 @@ class Command(rocks.commands.remove.os.command):
 			os = '%s' and network = '%s'""" % (os, address))
 
 
-RollName = "base"

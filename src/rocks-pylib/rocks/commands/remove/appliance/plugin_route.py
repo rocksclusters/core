@@ -94,4 +94,3 @@ class Plugin(rocks.commands.Plugin):
 			'appliance_routes.appliance=(select id from appliances ' +\
 			'where name="%s")' % appliance)
 
-RollName = "base"

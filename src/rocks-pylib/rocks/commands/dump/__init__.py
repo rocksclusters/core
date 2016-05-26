@@ -197,4 +197,3 @@ class Command(command):
 		self.dump('run reconfigure clear=1')
 
 
-RollName = "base"

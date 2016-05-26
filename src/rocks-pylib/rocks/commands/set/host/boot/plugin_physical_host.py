@@ -392,4 +392,3 @@ class Plugin(rocks.commands.Plugin):
 				self.writePxebootCfg(host, nodeid)
 
 
-RollName = "base"

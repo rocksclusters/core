@@ -115,4 +115,3 @@ class Command(rocks.commands.list.host.command):
 		self.endOutput(header=['host', 'action'])
 
 
-RollName = "base"

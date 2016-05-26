@@ -182,4 +182,3 @@ class Command(command):
 
 		self.endOutput(padChar='')
 
-RollName = "base"

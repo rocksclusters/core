@@ -206,4 +206,3 @@ class Command(rocks.commands.set.host.command):
 				'values ((select id from nodes where name="%s"), "%s", "%s", "%s")' \
 				% (host, attr, enc_value, enc))
 
-RollName = "base"

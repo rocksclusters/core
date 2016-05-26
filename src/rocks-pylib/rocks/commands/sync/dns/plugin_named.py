@@ -119,4 +119,3 @@ class Plugin(rocks.commands.Plugin):
 
 		p2.communicate(out)
 
-RollName = "base"

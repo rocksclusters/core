@@ -132,4 +132,3 @@ class Command(rocks.commands.remove.host.command):
 					os.unlink(filename)
 
 
-RollName = "base"

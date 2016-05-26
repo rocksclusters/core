@@ -116,4 +116,3 @@ class Command(rocks.commands.remove.host.command):
 			and network like '%s' """ % (host, address))
 
 
-RollName = "base"

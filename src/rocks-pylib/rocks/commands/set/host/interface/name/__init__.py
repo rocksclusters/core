@@ -183,4 +183,3 @@ class Command(rocks.commands.set.host.command):
 			(name, host, iface, iface))
 
 
-RollName = "base"

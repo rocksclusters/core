@@ -90,4 +90,3 @@ class command(rocks.commands.HostArgumentProcessor,
 	pass
 
 
-RollName = "base"

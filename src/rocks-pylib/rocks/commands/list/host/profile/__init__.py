@@ -312,4 +312,3 @@ class Command(rocks.commands.list.host.command):
 			
 		self.endOutput(padChar='')	
 
-RollName = "base"

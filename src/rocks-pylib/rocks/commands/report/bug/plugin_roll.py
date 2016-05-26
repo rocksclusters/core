@@ -87,4 +87,3 @@ class Plugin(rocks.commands.Plugin):
 		self.owner.addText('</roll>\n')
 
 
-RollName = "base"

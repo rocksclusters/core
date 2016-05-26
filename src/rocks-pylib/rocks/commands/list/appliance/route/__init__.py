@@ -124,4 +124,3 @@ class Command(rocks.commands.list.appliance.command):
 			'netmask', 'gateway' ], trimOwner=0)
 
 
-RollName = "base"

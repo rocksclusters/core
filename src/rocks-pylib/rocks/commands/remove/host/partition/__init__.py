@@ -151,4 +151,3 @@ class Command(rocks.commands.remove.host.command):
 				mountpoint like '%s'""" % (host, partition))
 
 
-RollName = "base"

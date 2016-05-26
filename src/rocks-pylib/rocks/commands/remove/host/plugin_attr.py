@@ -101,4 +101,3 @@ class Plugin(rocks.commands.Plugin):
 		session.commit()
 
 
-RollName = "base"

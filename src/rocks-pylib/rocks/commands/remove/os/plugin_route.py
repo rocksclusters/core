@@ -82,4 +82,3 @@ class Plugin(rocks.commands.Plugin):
 		self.owner.command('remove.os.route', [ os ])
 
 
-RollName = "base"

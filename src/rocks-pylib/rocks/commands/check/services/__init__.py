@@ -122,4 +122,3 @@ class Command(rocks.commands.Command):
 		return True
 
 
-RollName = "kvm"

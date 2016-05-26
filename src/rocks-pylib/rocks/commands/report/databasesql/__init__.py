@@ -136,6 +136,5 @@ class Command(rocks.commands.report.command):
 			f.close()
 
 	
-RollName = "base"
 
 

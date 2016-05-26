@@ -123,4 +123,3 @@ class Command(rocks.commands.remove.appliance.command):
 			""" % (appliance.name, address))
 
 
-RollName = "base"

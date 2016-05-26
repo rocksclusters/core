@@ -149,4 +149,3 @@ class Command(command):
 			'comment', 'category'])
 
 
-RollName = "base"

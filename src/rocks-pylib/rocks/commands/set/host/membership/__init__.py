@@ -145,4 +145,3 @@ class Command(rocks.commands.MembershipArgumentProcessor,
 				(membership, host))
 
 
-RollName = "base"

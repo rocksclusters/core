@@ -161,4 +161,3 @@ class Command(rocks.commands.add.appliance.command):
 
 
 
-RollName = "base"

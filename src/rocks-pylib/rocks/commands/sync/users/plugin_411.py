@@ -130,4 +130,3 @@ class Plugin(rocks.commands.Plugin, rocks.commands.HostArgumentProcessor):
                         self.owner.addText(line)
 
 
-RollName = "base"

@@ -218,4 +218,3 @@ class Command(rocks.commands.RollArgumentProcessor,
 			os.removedirs(dir)
 
 
-RollName = "base"

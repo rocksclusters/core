@@ -166,4 +166,3 @@ class Command(rocks.commands.NetworkArgumentProcessor,
 				name='%s'""" % network)
 
 
-RollName = "base"

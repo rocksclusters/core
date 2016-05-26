@@ -99,4 +99,3 @@ class Command(rocks.commands.report.host.command):
 
 		self.endOutput()
 
-RollName = "base"

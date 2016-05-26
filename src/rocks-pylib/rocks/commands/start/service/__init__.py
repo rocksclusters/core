@@ -79,4 +79,3 @@ class command(rocks.commands.start.command):
 	pass
 
 
-RollName = "base"

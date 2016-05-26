@@ -410,4 +410,3 @@ class Command(rocks.commands.list.host.command):
 		return map
 
 
-RollName = "base"

@@ -189,4 +189,3 @@ class Command(rocks.commands.set.command):
 				'values ("%s", "%s", "%s")' \
 				% (attr, enc_value, enc))
 
-RollName = "base"

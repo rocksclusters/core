@@ -140,4 +140,3 @@ class Command(rocks.commands.list.command):
 		file.close()
 
 
-RollName = "base"

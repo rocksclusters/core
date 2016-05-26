@@ -113,4 +113,3 @@ class Command(rocks.commands.list.host.command):
 			'os' ], trimOwner=0)
 
 
-RollName = "base"

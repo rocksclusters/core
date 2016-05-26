@@ -140,4 +140,3 @@ class Command(command):
 
 		self.dump_firewall()
 
-RollName = "base"

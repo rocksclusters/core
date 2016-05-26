@@ -84,4 +84,3 @@ class Plugin(rocks.commands.Plugin):
 		f.write('%04d\n' % int(m))
 		f.close()
 
-RollName = "base"

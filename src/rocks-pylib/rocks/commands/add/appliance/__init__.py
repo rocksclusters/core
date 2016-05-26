@@ -326,4 +326,3 @@ class Command(command):
 			'%s')""" %
 			(mem_name, app_name, rocks_distribution, public))
 
-RollName = "base"

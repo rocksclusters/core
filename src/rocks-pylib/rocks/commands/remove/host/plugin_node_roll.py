@@ -87,4 +87,3 @@ class Plugin(rocks.commands.Plugin):
 			(host))
 
 
-RollName = "base"

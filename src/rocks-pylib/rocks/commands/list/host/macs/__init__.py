@@ -172,4 +172,3 @@ class Command(command):
 			self.endOutput(header=['', 'macs in cluster', 'host names'])
 
 
-RollName = "base"

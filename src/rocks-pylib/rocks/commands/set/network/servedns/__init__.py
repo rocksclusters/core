@@ -109,4 +109,3 @@ class Command(rocks.commands.NetworkArgumentProcessor,
 				'servedns=%s ' % servedns	+\
 				'where name="%s"' % network)
 
-RollName = "base"

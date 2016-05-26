@@ -141,4 +141,3 @@ class Command(rocks.commands.set.os.command):
 			self.newdb.setCategoryAttr('os', os, attr, value)
 			
 
-RollName = "base"

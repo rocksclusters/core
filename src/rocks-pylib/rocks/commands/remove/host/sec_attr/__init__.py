@@ -86,4 +86,3 @@ class Command(rocks.commands.remove.host.command):
 				'where attr="%s" and node=' % attr	+\
 				'(select id from nodes where name="%s")' % host)
 
-RollName = "base"

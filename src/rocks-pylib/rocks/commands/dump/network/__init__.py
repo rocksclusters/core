@@ -118,4 +118,3 @@ class Command(command):
 					(subnet,netmask,mtu))
 
 
-RollName = "base"

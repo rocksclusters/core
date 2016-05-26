@@ -79,4 +79,3 @@ import rocks.commands
 class command(rocks.commands.OSArgumentProcessor, rocks.commands.add.command):
 	pass
 
-RollName = "base"

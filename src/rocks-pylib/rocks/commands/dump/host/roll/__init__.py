@@ -106,4 +106,3 @@ class Command(rocks.commands.dump.host.command):
 					% (self.dumpHostname(host), name, ver, arch, os))
 
 
-RollName = "base"

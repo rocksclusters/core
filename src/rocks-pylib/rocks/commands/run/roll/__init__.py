@@ -180,6 +180,7 @@ class Command(rocks.commands.run.command):
 		rpm_list = {}
 		len_base_path = len('/export/rocks')
                 base_url = "http://" + self.db.getHostAttr('localhost', 'Kickstart_PublicHostname')
+		# Build a list of all the files in rocks-managed distribution
 		for file in tree.getFiles(os.path.join(self.arch, 'RedHat', 'RPMS')):
 			if isinstance(file, rocks.file.RPMFile):
 				rpm_url = base_url + file.getFullName()[len_base_path:]
@@ -189,17 +190,17 @@ class Command(rocks.commands.run.command):
 			
 		rpms = []
 		for line in gen.generate('packages'):
-			if line.find('%package') == -1:
+			if line.find('%package') == -1 and line.find('%end') == -1:
 				rpms.append(line)
+		# Use yum to add RPMS
 		yumlist = []
 		for rpm in rpms:
-			if rpm in rpm_list.keys():
-				yumlist.append(rpm)
+			yumlist.append(rpm)
 		if len(yumlist) > 0:
 			script.append('yum --nogpgcheck -y install %s\n' % 
 				" ".join(yumlist))
-			rpmlist = [ x[1] for x in rpm_list.items() ]
-			script.append(rpm_force_template % " ".join(rpmlist))
+			#rpmlist= [ x[1] for x in rpm_list.items() ]
+			#script.append(rpm_force_template % " ".join(rpmlist))
 
 		script += gen.generate_config_script()
 		
@@ -209,4 +210,3 @@ class Command(rocks.commands.run.command):
 			os.system(string.join(script, ''))
 
 
-RollName = "base"

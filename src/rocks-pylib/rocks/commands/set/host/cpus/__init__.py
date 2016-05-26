@@ -154,4 +154,3 @@ class Command(rocks.commands.set.host.command):
 			node.cpus = int(cpus)
 
 
-RollName = "base"

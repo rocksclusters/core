@@ -113,4 +113,3 @@ class Command(rocks.commands.remove.os.command):
 			self.newdb.removeCategoryAttr('os', os, attr)
 
 
-RollName = "base"

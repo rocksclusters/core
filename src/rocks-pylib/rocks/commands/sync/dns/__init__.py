@@ -197,4 +197,3 @@ class Command(rocks.commands.sync.command):
 		self.runPlugins()
 		os.system('/sbin/service named reload > /dev/null 2>&1')
 
-RollName = "base"

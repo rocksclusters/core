@@ -178,4 +178,3 @@ class Command(command):
 			thread.join()
 
 
-RollName = "base"

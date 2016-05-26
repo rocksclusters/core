@@ -150,4 +150,3 @@ class Command(rocks.commands.NetworkArgumentProcessor,
 			'comment', 'category'])
 
 
-RollName = "base"

@@ -127,4 +127,3 @@ class Command(rocks.commands.sync.command):
 			for line in os.popen(cmd).readlines():
 				self.addText(line)
 
-RollName = "base"

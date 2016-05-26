@@ -103,4 +103,3 @@ class Plugin(rocks.commands.Plugin):
 		self.owner.command('remove.host.boot', [ host ])
 
 
-RollName = "base"

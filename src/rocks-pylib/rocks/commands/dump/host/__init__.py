@@ -194,4 +194,3 @@ class Command(command):
 
 
 
-RollName = "base"

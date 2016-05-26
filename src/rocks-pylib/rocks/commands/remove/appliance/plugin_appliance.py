@@ -99,4 +99,3 @@ class Plugin(rocks.commands.Plugin):
 			ID=mapCategoryIndex('appliance','%s')""" % appliance)
 
 
-RollName = "base"

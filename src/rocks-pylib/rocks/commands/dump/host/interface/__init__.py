@@ -262,4 +262,3 @@ class Command(rocks.commands.dump.host.command):
 					self.dump(set % ('channel', channel))
 
 
-RollName = "base"

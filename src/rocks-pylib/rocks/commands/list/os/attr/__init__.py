@@ -106,4 +106,3 @@ class Command(rocks.commands.list.os.command):
 		self.endOutput(header=['os', 'attr', 'value' ])
 
 
-RollName = "base"

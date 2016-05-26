@@ -114,4 +114,3 @@ class Command(rocks.commands.remove.host.command):
 					name = '%s')""" % (host))
 
 
-RollName = "base"

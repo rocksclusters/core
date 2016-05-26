@@ -219,4 +219,3 @@ class Command(rocks.commands.list.host.command):
 			'ip', 'netmask', 'module', 'name', 'vlan',
 			'options', 'channel'])
 
-RollName = "base"

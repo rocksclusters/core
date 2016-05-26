@@ -95,4 +95,3 @@ class Plugin(rocks.commands.Plugin):
 		self.owner.command('remove.host.partition', [ host ])
 		
 
-RollName = "base"

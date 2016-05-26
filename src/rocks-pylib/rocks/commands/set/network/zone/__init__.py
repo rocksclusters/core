@@ -94,4 +94,3 @@ class Command(rocks.commands.NetworkArgumentProcessor,
 			'set dnszone="%s" ' % zone	+\
 			'where name="%s"' % network)
 
-RollName = "base"

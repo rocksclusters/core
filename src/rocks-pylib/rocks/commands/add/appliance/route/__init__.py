@@ -160,4 +160,3 @@ class Command(rocks.commands.add.appliance.command):
 			self.abort('route already present %s/%s' %
 				(address, netmask))
 
-RollName = "base"

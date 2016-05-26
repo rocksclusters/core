@@ -122,4 +122,3 @@ class Command(command):
 						self.addText('%s\n' % line)
 		
 
-RollName = "base"

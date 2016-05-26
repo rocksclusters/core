@@ -107,4 +107,3 @@ class Plugin(rocks.commands.Plugin):
 			pass
 
 
-RollName = "base"

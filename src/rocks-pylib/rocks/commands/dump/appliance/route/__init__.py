@@ -104,4 +104,3 @@ class Command(rocks.commands.dump.appliance.command):
 					'%s %s %s netmask=%s' % (app.name, n, g, m))
 
 
-RollName = "base"

@@ -156,4 +156,3 @@ class Command(rocks.commands.set.host.command):
 				(vlanid, vlanid, iface, iface, host))
 
 
-RollName = "base"

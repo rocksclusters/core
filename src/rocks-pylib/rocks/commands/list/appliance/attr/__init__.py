@@ -110,4 +110,3 @@ class Command(rocks.commands.list.appliance.command):
 			trimOwner=0)
 
 
-RollName = "base"

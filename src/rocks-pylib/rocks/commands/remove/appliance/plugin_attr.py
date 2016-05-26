@@ -94,4 +94,3 @@ class Plugin(rocks.commands.Plugin):
 		self.owner.command('remove.appliance.attr', [ appliance ])
 
 
-RollName = "base"

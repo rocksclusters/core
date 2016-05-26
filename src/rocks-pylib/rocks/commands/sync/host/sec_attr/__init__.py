@@ -170,4 +170,3 @@ class Command(rocks.commands.sync.host.command):
 		if os.path.exists(khfname):
 			os.unlink(khfname)
 
-RollName = "base"

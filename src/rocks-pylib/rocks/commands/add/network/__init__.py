@@ -221,4 +221,3 @@ class Command(rocks.commands.add.command):
 			% (name, subnet, netmask, mtu, dnszone, servedns))
 
 
-RollName = "base"

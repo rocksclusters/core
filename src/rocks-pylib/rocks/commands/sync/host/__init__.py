@@ -291,4 +291,3 @@ class Parallel(threading.Thread):
 			# unlock stderr
 			fcntl.lockf(sys.stderr, fcntl.LOCK_UN)
 
-RollName = "base"

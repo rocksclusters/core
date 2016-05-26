@@ -108,4 +108,3 @@ class Plugin(rocks.commands.Plugin):
 				category=mapCategory('host') AND  name='%s'""" % host) 
 
 
-RollName = "base"

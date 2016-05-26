@@ -237,4 +237,3 @@ class Command(command):
 					continue
 			os.system('sh -x %s' % os.path.join(dir, file))
 
-RollName = "base"

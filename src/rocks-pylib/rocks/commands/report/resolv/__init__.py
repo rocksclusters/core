@@ -135,4 +135,3 @@ class Command(command):
 			'Kickstart_PublicDNSServers'))
 
 
-RollName = "base"

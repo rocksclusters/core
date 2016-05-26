@@ -103,4 +103,3 @@ class Command(command):
 			self.runPlugins(os)
 
 
-RollName = "base"

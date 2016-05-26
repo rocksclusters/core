@@ -303,4 +303,3 @@ class Command(command):
 		# Set the value of the OS in the host attributes table
 		self.newdb.setCategoryAttr('host', host, 'os', osname)
 
-RollName = "base"

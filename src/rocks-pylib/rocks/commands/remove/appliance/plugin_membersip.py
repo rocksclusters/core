@@ -87,4 +87,3 @@ class Plugin(rocks.commands.Plugin):
 			appliance=(select id from appliances where name='%s')"""
 			% appliance)
 
-RollName = "base"

@@ -252,4 +252,3 @@ class Command(rocks.commands.sync.host.command):
 				'service gmond restart > /dev/null 2>&1' ] )
 
 
-RollName = "base"

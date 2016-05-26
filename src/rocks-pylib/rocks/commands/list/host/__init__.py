@@ -185,4 +185,3 @@ class Command(command):
 			'rank', 'runaction', 'installaction'])
 
 
-RollName = "base"

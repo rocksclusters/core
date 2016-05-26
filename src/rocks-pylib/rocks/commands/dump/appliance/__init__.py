@@ -147,4 +147,3 @@ class Command(command):
 			self.dump(str)
 
 
-RollName = "base"

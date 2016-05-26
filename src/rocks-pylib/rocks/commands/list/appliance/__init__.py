@@ -178,4 +178,3 @@ class Command(command):
 			
 		self.endOutput(header=['appliance', 'graph', 'node'])
 
-RollName = "base"

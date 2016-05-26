@@ -125,4 +125,3 @@ class Command(rocks.commands.set.host.command):
 			WHERE name='%s'""" % (name, host))
 		
 
-RollName = "base"

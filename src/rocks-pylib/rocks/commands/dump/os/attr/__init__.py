@@ -112,4 +112,3 @@ class Command(rocks.commands.dump.os.command):
 						(os, attr.attr, v))
 
 
-RollName = "base"

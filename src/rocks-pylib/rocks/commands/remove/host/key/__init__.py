@@ -119,4 +119,3 @@ class Command(rocks.commands.remove.host.command):
 			nodes where name = '%s') """ % (id, host))
 
 
-RollName = "base"

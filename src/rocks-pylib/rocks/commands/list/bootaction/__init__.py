@@ -124,4 +124,3 @@ class Command(rocks.commands.list.command):
 		self.endOutput(header=[ 'action', 'kernel', 'ramdisk', 'args'])
 
 
-RollName = "base"

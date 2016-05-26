@@ -138,4 +138,3 @@ class Command(rocks.commands.HostArgumentProcessor,
 		self.endOutput(padChar='')
 
 
-RollName = "base"

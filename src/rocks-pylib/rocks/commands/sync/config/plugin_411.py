@@ -93,4 +93,3 @@ class Plugin(rocks.commands.Plugin):
 
 		file.close()
 
-RollName = "base"

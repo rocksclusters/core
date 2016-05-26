@@ -97,4 +97,3 @@ class Command(command):
 		self.addOutput('localhost', '</file>')
 		self.endOutput(padChar='')
 
-RollName = "base"

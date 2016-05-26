@@ -124,4 +124,3 @@ class Command(rocks.commands.MembershipArgumentProcessor,
 		self.endOutput(header=['membership', 'appliance', 'distribution', 'public'])
 
 
-RollName = "base"

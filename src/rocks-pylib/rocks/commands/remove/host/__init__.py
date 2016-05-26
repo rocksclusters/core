@@ -123,4 +123,3 @@ class Command(command):
 		self.command('sync.config')
 
 
-RollName = "base"

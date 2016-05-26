@@ -215,4 +215,3 @@ class Command(rocks.commands.add.host.command):
 				(host, i, 'channel=%s' % channel))
 
 
-RollName = "base"

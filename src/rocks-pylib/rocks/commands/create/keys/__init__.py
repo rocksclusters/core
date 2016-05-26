@@ -130,4 +130,3 @@ class Command(command):
 			os.remove(key)
 
 
-RollName = "base"

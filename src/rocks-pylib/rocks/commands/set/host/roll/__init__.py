@@ -184,4 +184,3 @@ class Command(rocks.commands.set.host.command):
 				% (host, rollid))
 
 
-RollName = "base"

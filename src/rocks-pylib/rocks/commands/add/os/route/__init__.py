@@ -161,4 +161,3 @@ class Command(rocks.commands.add.os.command):
                 	        (os, address, netmask, gateway, subnet))
 
 
-RollName = "base"

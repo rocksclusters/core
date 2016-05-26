@@ -466,4 +466,3 @@ class Command(command):
 		if collate:
 			self.endOutput(padChar='')
 
-RollName = "base"

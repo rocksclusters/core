@@ -186,4 +186,3 @@ class Command(rocks.commands.remove.host.command):
 		self.command('run.host', hosts + [ cmd ] )
 
 
-RollName = "base"

@@ -93,4 +93,3 @@ class Command(rocks.commands.report.resolv.command):
 			'Kickstart_PrivateDNSServers'))
 
 
-RollName = "base"

@@ -161,4 +161,3 @@ class Command(rocks.commands.RollArgumentProcessor,
 			trimOwner=0)
 		
 
-RollName = "base"

@@ -180,4 +180,3 @@ class Command(rocks.commands.HostArgumentProcessor, rocks.commands.add.command):
 		self.command('set.host.boot', self.getHostnames())
 
 
-RollName = "base"

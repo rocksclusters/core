@@ -138,4 +138,3 @@ class Command(rocks.commands.set.host.command):
 				name='%s'""" % (int(rack), host))
 
 
-RollName = "base"

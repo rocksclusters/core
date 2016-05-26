@@ -164,4 +164,3 @@ class command(rocks.commands.Command):
 
 		return net_list
 
-RollName = "base"
