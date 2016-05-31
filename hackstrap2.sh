@@ -43,14 +43,21 @@ MAC=`/sbin/ifconfig -a | grep -i HWADDR | head -1 | /bin/awk '{print $NF}'`
 /opt/rocks/bin/rocks add attr rocks_version `/opt/rocks/bin/rocks report version`
 /opt/rocks/bin/rocks add attr rocks_version_major `/opt/rocks/bin/rocks report version major=1`
 
+#4a.  Define the repository directory
+if [ "x$2" == "x" ]; then
+	DISTRODIR="/export/rocks"
+else
+	DISTRODIR="$2"
+fi
 #4 create a repo entry for rocks-dist distribution
 REPONAME=/etc/yum.repos.d/rocks-local.repo
 if [ ! -f $REPONAME ]; then
 cat > $REPONAME << EOF
 [Rocks-`/opt/rocks/bin/rocks report version`]
 name=Rocks
-baseurl=file:///export/rocks/install/rocks-dist/`uname -i`
+baseurl=file://$DISTRODIR/install/rocks-dist/`uname -i`
 enabled = 1
+gpgcheck = 0
 EOF
 fi
 
@@ -77,13 +84,9 @@ popd
 /opt/rocks/bin/rocks add attr Config_NoUpdate true
 
 
-#7 Install packages from the core roll
-#PKGS=`/opt/rocks/bin/rocks list host profile localhost | /bin/awk '/%packages/,/%end/' | /usr/bin/head -n -1 | /usr/bin/tail -n +2` 
-#/usr/bin/yum -y --nogpgcheck install $PKGS
-
-#8 run the post for the localhost
-#SCRIPT=$(mktemp)
-#/opt/rocks/bin/rocks list host xml | /opt/rocks/sbin/kgen --section=post > $SCRIPT
-#/sbin/service foundation-mysql stop
-#sh $SCRIPT
-#/bin/rm $SCRIPT
+#7 Run the roll 
+SCRIPT=$(mktemp)
+/opt/rocks/bin/rocks run roll core > $SCRIPT
+/sbin/service foundation-mysql stop
+sh $SCRIPT
+/bin/rm $SCRIPT
