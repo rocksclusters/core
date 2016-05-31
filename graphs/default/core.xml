@@ -70,7 +70,7 @@
 	<edge from="server">
 		<to>foundation-server</to>
 		<to>core</to>
-		<to>core-devel</to>
+		<to cond="core-devel">core-devel</to>
 		<to>database</to>
 		<to>core-pxe</to>
 	</edge>

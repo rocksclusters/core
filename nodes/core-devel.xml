@@ -8,7 +8,6 @@
         
         </copyright>
 
-<package>rocks-devel</package>
 <package>cvs</package>
 <package>libtool</package>
 <package>autoconf</package>
