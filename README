@@ -1,5 +1,11 @@
 
 
-This is the base roll of the Rocks clusters toolkit.
+This is the core roll of the Rocks clusters toolkit.
+
+Its functionality is to define the Rocks database and base command-line structure.
+
+With the exception the database itself, it sets up no services on machine and should
+be compatible with nearly any CentOS/RedHat system (Rocks and Non-Rocks)
+
 http://www.rocksclusters.org
 
