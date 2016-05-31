@@ -68,9 +68,11 @@
 	<edge from="server">
 		<to>foundation-server</to>
 		<to>core</to>
-		<to cond="core-devel">core-devel</to>
 		<to>database</to>
 		<to>core-pxe</to>
+	</edge>
+	<edge from="server" cond="not slimcore">
+		<to>core-devel</to>
 	</edge>
 
 	<edge from="compilers">

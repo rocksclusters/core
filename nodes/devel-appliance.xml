@@ -91,8 +91,13 @@ MYSQL_HOME=/opt/rocks/etc /opt/rocks/mysql/bin/mysqldump --defaults-extra-file=/
 <post cond="RepositoryLocal">
 <!-- Modify yum.conf to point locally. Self-containment -->
 /bin/sed -i '/^baseurl/d' /etc/yum.repos.d/rocks-local.repo
+if [ "x&Kickstart_DistroDir" == "x" ]; then
+	DISTRODIR="/export/rocks"
+else
+	DISTRODIR=&Kickstart_DistroDir
+fi
 <file name="/etc/yum.repos.d/rocks-local.repo" mode="append">
-baseurl=file:/export/rocks/install/rocks-dist/&arch;
+baseurl=file://$DISTRODIR/install/rocks-dist/&arch;
 </file>
 
 </post>

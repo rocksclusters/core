@@ -12,8 +12,6 @@
         
         </copyright>
 
-  <changelog>
-
 <!-- OS Packages -->
   <package os="linux">environment-modules</package>
   <package>rpm-build</package>
