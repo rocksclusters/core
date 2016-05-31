@@ -173,7 +173,10 @@ class Command(rocks.commands.RollArgumentProcessor,
 		# Like add, call through to OS-specific function due to 
 		# path differences. Proper DB use should fix this.
 		clean_rolldir = getattr(self, 'clean_rolldir_%s' % self.os)
-		clean_rolldir(roll, version, arch)
+		distrodir = self.db.getHostAttr('localhost','Kickstart_DistroDir')
+		if distrodir == None:
+			distrodir="/export/rocks"
+		clean_rolldir(roll, version, arch, distrodir)
 
 		#
 		# remove the roll from 'node_rolls'
@@ -189,14 +192,14 @@ class Command(rocks.commands.RollArgumentProcessor,
 			version = '%s' and
 			arch = '%s'""" % (roll, version, arch))
 
-	def clean_rolldir_linux(self, roll, version, arch):
+	def clean_rolldir_linux(self, roll, version, arch, distrodir):
 		""" Clean out the roll's filesystem presence on Linux. """
-		rolls_dir = '/export/rocks/install/rolls'
+		rolls_dir = os.path.join(distrodir, 'install','rolls')
 		self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
 
 	def clean_rolldir_sunos(self, roll, version, arch):
 		""" Clean out the roll's filesystem presence on Solaris. """
-		rolls_dir = '/export/rocks/install/jumpstart/rolls'
+		rolls_dir = os.path.join(distrodir, 'install','jumpstart','rolls')
 		self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
 
 	def clean_dir(self, dir):

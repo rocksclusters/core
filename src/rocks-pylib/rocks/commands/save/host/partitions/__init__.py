@@ -124,8 +124,10 @@ class Command(rocks.commands.save.host.command):
 	    file = open("/tmp/db_partition_info.py", 'w')
 	    file.write("KickstartHost = '%s'" % kickstarthost)
 	    file.close()
-	
-	    path='/export/rocks/install/rocks-dist/'
+	    path = self.db.getHostAttr('localhost', 'Kickstart_DistroDir')
+	    if path == None:
+		path = '/export/rocks' 
+	    path=os.path.join(path,'install', 'rocks-dist')
 	    arch = os.listdir(path)[0]
 	    path = os.path.join(path, arch, 'build/include/installclass/')
 	    sys.path.append(path)

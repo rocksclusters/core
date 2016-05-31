@@ -675,12 +675,12 @@ class RollHandler:
 class Command(rocks.commands.add.command):
 	"""
 	Add Roll ISO images to this machine's roll directory. This command
-	copies all files in the ISOs to a directory under /export/rocks/install/rolls.
+	copies all files in the ISOs to a directory under Kickstart_DistroDir/install/rolls.
 
 	<arg optional='1' type='string' name='roll' repeat='1'>
 	A list of Roll ISO images to add to /export/rocks/install/rolls. If no list is
 	supplied, then if a roll is mounted on /mnt/cdrom, it will be copied
-	into /export/rocks/install/rolls.
+	into Kickstart_DistroDir/install/rolls 
 	</arg>
 		
 	<param type='bool' name='clean'>

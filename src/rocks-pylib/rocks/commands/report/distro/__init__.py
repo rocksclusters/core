@@ -94,7 +94,10 @@ class Command(rocks.commands.report.command):
 	"""
 
 	def run(self, params, args):
-		distrodir = '/export/rocks/install'
+		distrodir = self.db.getHostAttr('localhost', 'Kickstart_DistroDir')
+		if distrodir == None:
+			distrodir = '/export/rocks'
+		distrodir = os.path.join(distrodir, 'install')
 
 		self.beginOutput()
 		self.addOutput('', distrodir)

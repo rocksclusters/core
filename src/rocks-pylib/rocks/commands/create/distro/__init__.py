@@ -152,7 +152,7 @@ class Command(rocks.commands.create.command):
 
 	<param type='string' name='root'>
 	The path prefix location of the rolls. The default is:
-	/export/rocks/install.
+	Kickstart_DistroDir/install.
 	</param>
 
 	<param type='string' name='dist'>
@@ -204,11 +204,15 @@ class Command(rocks.commands.create.command):
 				% lockfile)
 		os.system('touch %s' % lockfile)
 
+		root=self.db.getHostAttr('localhost','Kickstart_DistroDir')
+		if root == None:
+			root = '/export/rocks'
+		root = os.path.join(root,'install')
 		(arch, version, withrolls, root, calcmd5, dist) = self.fillParams(
 			[ ('arch', self.arch),
 			('version', rocks.version),
 			('rolls', None),
-			('root', '/export/rocks/install'),
+			('root', root),
 			('md5', 'yes'),
 			('dist', 'rocks-dist') ])
 
