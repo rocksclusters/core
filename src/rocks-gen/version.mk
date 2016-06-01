@@ -1,2 +1,2 @@
-NAME	= rocks-kickstart
+NAME	= rocks-gen
 RELEASE	= 0

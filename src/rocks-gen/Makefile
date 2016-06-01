@@ -113,19 +113,6 @@ install:: build
 	mkdir -p $(ROOT)/$(PKGROOT)/sbin
 	$(INSTALL) -m 0755 kgen kdoc screengen \
 		$(ROOT)/$(PKGROOT)/sbin/
-
-	mkdir -p $(ROOT)/etc/rc.d/init.d
-	cp init.d/rocks-kickstart $(ROOT)/etc/rc.d/init.d
-
-	mkdir -p $(ROOT)/export/rocks/install/sbin
-	$(INSTALL) -m 0755 cgi/*.cgi $(ROOT)/export/rocks/install/sbin/
-
-	mkdir -p $(ROOT)/export/rocks/install/site-profiles/$(VERSION)/nodes
-	$(INSTALL) -m 0644 site-nodes/*.xml \
-		$(ROOT)/export/rocks/install/site-profiles/$(VERSION)/nodes/
-
-
-
 clean::
 	rm -f $(SCRIPTS)
 	rm -f $(SPECFILE).in
