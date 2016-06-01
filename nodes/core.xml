@@ -19,6 +19,7 @@
   <package>librocks</package>
   <package>rocks-channel</package>
   <package>rocks-devel</package>
+  <package>rocks-gen</package>
 
 </kickstart> 
 

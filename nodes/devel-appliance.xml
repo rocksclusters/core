@@ -42,7 +42,7 @@
 
 <!-- Required Packages to build rocks core rolls -->
 <package>rocks-bittorrent</package>
-<package>rocks-kickstart</package>
+<package>rocks-gen</package>
 <package>alsa-lib-devel</package>
 <package>libxml2.&arch;</package>
 <package>libXxf86misc-devel</package>

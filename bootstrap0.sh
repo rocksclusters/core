@@ -176,8 +176,7 @@ install rocks-admin
 compile config
 install rocks-config
 compile_and_install rocks-pylib
-compile kickstart
-install rocks-kickstart
+compile_and_install rocks-gen
 
 # 4. Make sure we have updated paths
 . /etc/profile.d/rocks-binaries.sh
