@@ -13,6 +13,7 @@
         </copyright>
 
 	<package>rocks-gen</package>
+	<package>rocks-profile</package>
 	<package>rocks-sql</package>
 	<package>foundation-coreutils</package>
 	<package>foundation-libxml2</package>
@@ -20,6 +21,7 @@
 	<package>foundation-python</package>
 	<package>foundation-python-extras</package>
 	<package>foundation-python-setuptools</package>
+	<package>foundation-python-xml</package>
 	<package>foundation-redhat</package>
 
 </kickstart>

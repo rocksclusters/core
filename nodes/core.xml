@@ -20,6 +20,7 @@
   <package>rocks-channel</package>
   <package>rocks-devel</package>
   <package>rocks-gen</package>
+  <package>rocks-profile</package>
 
 </kickstart> 
 

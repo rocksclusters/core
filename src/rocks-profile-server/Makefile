@@ -94,9 +94,9 @@ include Rules.mk
 build::
 
 install::
-
-	mkdir -p $(ROOT)/var/www/html/misc
-	$(INSTALL) -m644 misc/dot-graph.php $(ROOT)/var/www/html/misc
+	mkdir -p $(ROOT)/etc/profile.d/
+	$(INSTALL) -m755 profile.d/ssh-key.csh $(ROOT)/etc/profile.d/
+	$(INSTALL) -m755 profile.d/ssh-key.sh $(ROOT)/etc/profile.d/
 
 clean::
 	rm -f $(SPECFILE).in
