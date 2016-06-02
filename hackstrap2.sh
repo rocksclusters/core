@@ -7,23 +7,29 @@ mount -o loop $ISO /mnt
 find /mnt -name 'rocks-devel*rpm' -exec yum -y install {} \;
 . /etc/profile.d/rocks-devel.sh
 
+# Now copy the RPMS from the ISO to local RPMS directory
 mkdir $CURDIR/RPMS
 find /mnt -name '*rpm' -print -exec cp -p {} $CURDIR/RPMS \; 
 umount /mnt
 
-## Install all RPMS defined in this roll iso
+## Install all RPMS defined in the corestrap-packages.xml file (which is in
+## the roll-core-kickstart rpm
 cp /opt/rocks/share/devel/src/roll/template/Makefile . 
 cat /opt/rocks/share/devel/src/roll/template/version.mk | sed -e 's/@template@/core/' > version.mk
 make createlocalrepo
-yum -c yum.conf --disablerepo='*' --enablerepo=core-roll list available | grep core-roll | awk '{print $1}' | awk -F. '{print $1}' | grep -v 'roll.*kickstart' | less | xargs yum -y -c yum.conf install
+PKGS=$(mktemp)
+rpm2cpio $CURDIR/RPMS/noarch/roll-*-kickstart-*.noarch.rpm | cpio -i --quiet --to-stdout '*/corestrap-packages.xml' | grep "<package>" | cut -d '>' -f 2 | cut -d '<' -f 1 > $PKGS
+yum -c yum.conf install `cat $PKGS`
+/bin/rm $PKGS
 
-# Get the nodes/graphs files from the roll itself
-rpm --relocate=/export/profile=`pwd` -ivh RPMS/roll-core-kickstart-6.3-2.noarch.rpm 
-. /etc/profile.d/rocks-binaries.sh
+# Get the nodes/graphs files from the roll itself. These  will be put under
+# $CURDIR/export/profile
+rpm2cpio $CURDIR/RPMS/noarch/roll-*-kickstart-*.noarch.rpm | cpio -id 
 
 # Now bootstrap the database
+NODES=export/profile/nodes
 tmpfile=$(/bin/mktemp)
-/bin/cat nodes/database.xml nodes/database-schema.xml nodes/database-sec.xml | /opt/rocks/bin/rocks report post attrs="{'hostname':'', 'HttpRoot':'/var/www/html','os':'linux'}"  > $tmpfile
+/bin/cat $NODES/database.xml $NODES/database-schema.xml $NODES/database-sec.xml | /opt/rocks/bin/rocks report post attrs="{'hostname':'', 'HttpRoot':'/var/www/html','os':'linux'}"  > $tmpfile
 if [ $? != 0 ]; then echo "FAILURE to create script for bootstrapping the Database"; exit -1; fi
 /bin/sh $tmpfile
 # /bin/rm $tmpfile
@@ -68,7 +74,7 @@ ROLL=`echo $1 | cut -d - -f 1`
 
 . /etc/profile.d/rocks-binaries.sh
 
-pushd /export/rocks/install
+pushd $DISTRODIR/install 
 /opt/rocks/bin/rocks create distro
 popd
 

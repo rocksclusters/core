@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+	<description>
+	Installing a core binary roll on a Non-Rocks system. This lists the key packages
+	</description>
+
+        <copyright>
+        Copyright (c) 2000 - 2014 The Regents of the University of California.
+        All rights reserved. Rocks(r) 6.2 www.rocksclusters.org
+        
+        </copyright>
+
+	<package>rocks-gen</package>
+	<package>rocks-sql</package>
+	<package>foundation-coreutils</package>
+	<package>foundation-libxml2</package>
+	<package>foundation-mysql</package>
+	<package>foundation-python</package>
+	<package>foundation-python-extras</package>
+	<package>foundation-python-setuptools</package>
+	<package>foundation-redhat</package>
+
+</kickstart>
