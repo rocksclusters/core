@@ -1,5 +1,0 @@
-%_topdir /export/home/repositories/rocks/src/roll/core/src/foundation-rcs/../../
-%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/foundation-rcs/foundation-rcs.buildroot
-%buildroot /export/home/repositories/rocks/src/roll/core/src/foundation-rcs/foundation-rcs.buildroot
-%_var	/var
-%debug_package	%{nil}

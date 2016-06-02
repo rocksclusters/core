@@ -1,5 +1,0 @@
-%_topdir /export/home/repositories/rocks/src/roll/core/src/rocks-pylib/../../
-%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/rocks-pylib/rocks-pylib.buildroot
-%buildroot /export/home/repositories/rocks/src/roll/core/src/rocks-pylib/rocks-pylib.buildroot
-%_var	/var
-%debug_package	%{nil}

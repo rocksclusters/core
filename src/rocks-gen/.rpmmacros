@@ -1,5 +1,0 @@
-%_topdir /export/home/repositories/rocks/src/roll/core/src/kickstart/../../
-%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/kickstart/rocks-kickstart.buildroot
-%buildroot /export/home/repositories/rocks/src/roll/core/src/kickstart/rocks-kickstart.buildroot
-%_var	/var
-%debug_package	%{nil}

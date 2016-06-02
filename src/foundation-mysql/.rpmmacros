@@ -1,5 +1,0 @@
-%_topdir /export/home/repositories/rocks/src/roll/core/src/foundation-mysql/../../
-%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/foundation-mysql/foundation-mysql.buildroot
-%buildroot /export/home/repositories/rocks/src/roll/core/src/foundation-mysql/foundation-mysql.buildroot
-%_var	/var
-%debug_package	%{nil}

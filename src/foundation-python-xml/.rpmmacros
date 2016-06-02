@@ -1,5 +1,0 @@
-%_topdir /export/home/repositories/rocks/src/roll/core/src/foundation-python-xml/../../
-%_buildrootdir /export/home/repositories/rocks/src/roll/core/src/foundation-python-xml/foundation-python-xml.buildroot
-%buildroot /export/home/repositories/rocks/src/roll/core/src/foundation-python-xml/foundation-python-xml.buildroot
-%_var	/var
-%debug_package	%{nil}
