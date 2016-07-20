@@ -98,13 +98,21 @@ VERSION.MAJOR = 5
 VERSION.MINOR = 6
 RELEASE_NAME = Emerald Boa
 #VERSION.PATCH = 3
-else
+endif
+
+ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 6)
 VERSION.MAJOR = 6
 VERSION.MINOR = 3
 #VERSION.PATCH = 3
 RELEASE_NAME = DiamondBack
 endif
 
+ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 7)
+VERSION.MAJOR = 7
+VERSION.MINOR = 0
+#VERSION.PATCH = 3
+RELEASE_NAME = Manzanita
+endif
 VERSION_NAME = "$(RELEASE_NAME)"
 
 rocks-version-common.mk: $(wildcard $(ROCKSROOT)/etc/rocks-version-common.mk)
