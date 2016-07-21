@@ -15,8 +15,11 @@ include rocks-version-common.mk
 
 ifeq ($(strip $(VERSION.MAJOR)), 5)
 PY.VERSION	= 2.4
-else
-PY.VERSION	= 2.6
+endif
+ifeq ($(strip $(VERSION.MAJOR)), 6)
+endif
+ifeq ($(strip $(VERSION.MAJOR)), 7)
+PY.VERSION	= 2.7
 endif
 PY.PATH		= /opt/rocks/bin/python
 PY.LIB		= python$(PY.VERSION)
