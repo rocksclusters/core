@@ -86,6 +86,7 @@
 #
 
 PKGROOT		= /
+RPM.PREFIX	= /etc/profile.d
 REDHAT.ROOT     = $(CURDIR)/../../
 ROCKSROOT       = ../devel/devel
 -include $(ROCKSROOT)/etc/Rules.mk

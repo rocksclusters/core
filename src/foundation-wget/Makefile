@@ -134,6 +134,7 @@
 #
 
 PKGROOT		= /opt/rocks
+RPM.PREFIX	= $(PKGROOT)
 REDHAT.ROOT     = $(CURDIR)/../../
 ROCKSROOT       = ../devel/devel
 -include $(ROCKSROOT)/etc/Rules.mk
