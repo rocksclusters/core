@@ -33,3 +33,7 @@ cd5c22acf6dd69046d6cb6a3920d84ea66bdf62a  src/foundation-python-sphinx/MarkupSaf
 9e424b03fe1f68e0326f3905738adcf27782f677  src/foundation-python-sphinx/Sphinx-1.2.2.tar.gz
 292c49f16c7b2a29aae3735c9bf8f876ddcc7ee2  src/foundation-rcs/rcs-5.7.tar.gz
 1778dd7cc826096a56fcfaf86c90b38f0373066a  src/foundation-python/Python-2.7.5.tar.gz
+36f9a94140be4ccba5c4046be0073da3c1039e36  src/foundation-python-extras/gobject-introspection-1.42.0.tar.gz
+9fb0a3ecd1f7682cb9954f1175b290f390ed53fb  src/foundation-python-extras/pygobject-3.14.0.tar.gz
+ae4ef962c7bfef8e5756fb4372331aa6636fef66  src/foundation-python-extras/numpy-1.10.4.tar.gz
+913192975793a123b64d0c3ccd66335ce34792b6  src/foundation-python-extras/gobject-introspection-1.40.0.tar.gz

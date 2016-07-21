@@ -155,6 +155,9 @@ if [ `./_os` == "linux" ]; then
 	EXTRA_PACKAGES="$EXTRA_PACKAGES coreutils curl"
 	# packages needed for mysql dependency resolution
 	EXTRA_PACKAGES="$EXTRA_PACKAGES perl-DB perl-Time-HiRes perl-GD"
+	# packages needed for gobject-introspection numpy pygobject 
+	EXTRA_PACKAGES="$EXTRA_PACKAGES flex bison glib2-devel pycairo-devel" 
+	EXTRA_PACKAGES="$EXTRA_PACKAGES cairo-gobject cairo-gobject-devel Cython" 
 	yum -y install rpm-build rpm-devel gcc gcc-c++ ncurses-devel swig glib2 glib2-devel openssl-devel pygobject2 pygobject2-devel cairo cairo-devel createrepo apr apr-devel expat-devel cmake $EXTRA_PACKAGES
 fi
 

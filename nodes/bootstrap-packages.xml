@@ -72,10 +72,16 @@
 	<package os="linux">apr-util-devel</package>
 	<package os="linux">audit-libs-devel</package>
 	<package os="linux">binutils-devel</package>
+	<package os="linux">bison</package>
 	<package os="linux">bzip2-devel</package>
+	<package os="linux">cairo-gobject</package>
+	<package os="linux">cairo-gobject-devel</package>
 	<package os="linux">cmake</package>
+	<package os="linux">Cython</package>
 	<package os="linux">docbook-utils</package>
 	<package os="linux">expat-devel</package>
+	<package os="linux">flex</package>
+	<package os="linux">glib2-devel</package>
 	<package os="linux">glibc-static</package>
 	<package os="linux">intltool</package>
 	<package os="linux">isomd5sum-devel</package>
@@ -91,6 +97,7 @@
 	<package os="linux">libxml2-devel</package>
 	<package os="linux">mysql-devel</package>
 	<package os="linux">pdfjadetex</package>
+	<package os="linux">pycairo-devel</package>
 	<package os="linux">pygobject2</package>
 	<package os="linux">pygobject2-devel</package>
 	<package os="linux">python-devel</package>

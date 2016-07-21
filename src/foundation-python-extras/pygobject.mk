@@ -82,12 +82,14 @@
 #
 
 PYGOBJECT_VERSION	= 2.14.1
+PYGOBJECT_VERSION	= 3.14.0
 
 build::
 	gunzip -c pygobject-$(PYGOBJECT_VERSION).tar.gz | $(TAR) -xf -
 	(								\
 		cd pygobject-$(PYGOBJECT_VERSION);			\
 		PATH=/opt/rocks/bin:$$PATH				\
+		PKG_CONFIG_PATH=$(PWD)/../tmpinstall/lib/pkgconfig:$PKG_CONFIG_PATH 		\
 			./configure --prefix=$(PKGROOT);		\
 		$(MAKE);						\
 	)
