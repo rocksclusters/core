@@ -79,11 +79,11 @@ install::
 	mkdir -p $(ROOT)/$(PKGROOT)/etc
 	(							\
 		cd git-$(VERSION);				\
-		mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT);\
+		mount --bind $(ROOT)$(PKGROOT) $(PKGROOT);\
 		make install;		\
 		cd ..;                   \
 		tar -xvzf git-manpages-$(VERSION).tar.gz -C /opt/rocks/share/man ;\
-		umount $(ROOT)/$(PKGROOT);\
+		umount $(PKGROOT);\
 		rm $(ROOT)/$(PKGROOT)/libexec/git-core/git-svn;  \
 		cp gitconfig $(ROOT)/$(PKGROOT)/etc; \
 	)
