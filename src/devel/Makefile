@@ -92,6 +92,7 @@
 PKGROOT		= /opt/rocks/share/devel
 REDHAT.ROOT     = $(CURDIR)/../../
 ROCKSROOT	= devel
+REMLIST		= / /opt /etc
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 
@@ -106,5 +107,8 @@ install::
 		cd devel;						\
 		find . | grep -v CVS | cpio -pduv $(ROOT)/$(PKGROOT)/;		\
 	)
+	( DDIR=$(PWD); cd  $(ROOT);  \
+	find ./etc/profile.d ./opt/rocks/share/devel | sed 's#^\.##' > $$DDIR/$(RPM.FILESLIST) ) 
 
 clean::
+	-/bin/rm $(RPM.FILESLIST)
