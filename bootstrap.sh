@@ -85,6 +85,7 @@ if [ `./_os` == "linux" ]; then
 fi
 
 compile_and_install rocks-pylib
+compile_and_install rocks-profile
 
 if [ `./_os` == "linux" ]; then
 	install_os_packages server
