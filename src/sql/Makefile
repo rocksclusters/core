@@ -425,6 +425,9 @@ install:: build
 
 	$(MAKE) install -C po 
 
+	( DDIR=$(PWD); cd  $(ROOT);  \
+	find ./etc/cron.daily ./opt/rocks ./usr/share/locale ./var/db | sed 's#^\.##' > $$DDIR/$(RPM.FILESLIST) ) 
+
 
 clean::
 	rm -f $(SCRIPTS)
