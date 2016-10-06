@@ -19,4 +19,4 @@ ADDFLAGS = "CFLAGS=-fPIC"
 RPM.EXTRAS="%define _python_bytecompile_errors_terminate_build 0\\n%define __python_requires  %{_builddir}/%{name}-%{version}/filter_python_requires.sh"
 #CONFIGOPTS += --exec-prefix=$(PKGROOT)
 endif 
-RPM.PREFIX=/opt/rocks
+RPM.FILES = "/opt/rocks/bin/*\\n/opt/rocks/include/python2*\\n/opt/rocks/lib/lib*\\n/opt/rocks/lib/pkgconfig/*\\n/opt/rocks/lib/python2*\\n/opt/rocks/share/man/man1/*\\n/opt/rocks/usr/bin/*"

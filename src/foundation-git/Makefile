@@ -58,7 +58,6 @@
 
 
 PKGROOT		= /opt/rocks
-RPM.PREFIX = $(PKGROOT)
 REDHAT.ROOT	= $(PWD)/../../
 RPM.EXTRAS += "AutoReqProv: no"
 -include $(ROCKSROOT)/etc/Rules.mk
@@ -90,4 +89,3 @@ install::
 
 clean::
 	rm -rf $(NAME)
-
