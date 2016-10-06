@@ -458,6 +458,7 @@ ifeq ($(RPM.FILES),)
 else
 	@$(PF) "$(RPM.FILES)\n" >> $@
 endif
+else
 	@$(PF) "$(RPM.PREFIX)\n" >> $@
 endif
 	echo -e "$(RPM.FILE.EXTRAS)" >> $@
