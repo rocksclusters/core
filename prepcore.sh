@@ -77,6 +77,13 @@ fi
 /opt/rocks/bin/rocks add network private 127.0.0.1 netmask=255.255.255.255
 /opt/rocks/bin/rocks add host interface $MYNAME lo subnet=private ip=127.0.0.1
 /opt/rocks/bin/rocks add attr os `./_os` 
+/opt/rocks/bin/rocks add attr arch `./_arch` 
+
+# 2.5 add the Kickstart_PublicAddress
+device=$(/usr/sbin/ip route list 0.0.0.0/0 | /usr/bin/cut -d ' ' -f5)
+ipaddr=$(/usr/sbin/ip -4 address show dev eth0 | /usr/bin/grep inet | /usr/bin/awk '{print $2}' | /usr/bin/cut -d/ -f1)
+/opt/rocks/bin/rocks add attr Kickstart_PublicAddress $ipaddr
+/opt/rocks/bin/rocks add attr distribution rocks-dist 
 
 # 3. Add appliance types so that we can build the OS Roll
 /opt/rocks/bin/rocks add attr Kickstart_DistroDir /export/rocks
@@ -90,4 +97,5 @@ if [ `./_os` == "linux" ]; then
         install_os_packages bootstrap-packages
 fi
 
-
+# 5. Add a rocks distribution to system
+/usr/bin/cat nodes/yum-core.xml | /opt/rocks/bin/rocks report post attrs="`/opt/rocks/bin/rocks report host attr localhost pydict=true`" | sh
