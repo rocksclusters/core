@@ -81,7 +81,7 @@ ROOT ?= /
 
 build:: rocks-copyright.txt
 	
-install:: build
+install:: addrollvariable build
 	$(myenv) $(PY.PATH) setup.py install -f --root=$(ROOT)
 	# TODO this is really hugly but for now it does the job
 	@echo "version = \"$(ROCKS_VERSION)\"" > \
@@ -107,7 +107,7 @@ clean::
 ctags:
 	ctags  --python-kinds=-i --exclude=*/build/* -R .
 
-# add the RollName = "base" variable to all the command files we can 
+# add the RollName = "core" variable to all the command files we can 
 # commit this into the repo since this property never changes
 #
 # this script is a helper for adding the variable to all the file in 
