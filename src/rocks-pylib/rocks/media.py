@@ -123,32 +123,40 @@ import os.path
 import string
 import rocks
 
+DEFAULTPATH = "/mnt/cdrom"
+
 class Media:
 
-	def mounted(self):
+	def mounted(self,path=None):
 		"Returns true if /tmp/rocks-cdrom device or /mnt/cdrom is mounted"
 
 		rv = 0
 		f = open('/proc/mounts','r')
 		for line in f.readlines():
+			if path is not None and line.find(path) >= 0:
+				rv = 1
+				break
 			if line.find('/tmp/rocks-cdrom') >= 0:
 				rv = 1
 				break
-			if line.find('/mnt/cdrom') >= 0:
+			if line.find(DEFAULTPATH) >= 0:
 				rv = 1
 				break
 		f.close()
 		return rv
 
 
-	def mountCD(self, prefix="/"):
+	def mountCD(self, prefix="/",path=DEFAULTPATH):
 		"""Try to mount the CD. Returns 256 if mount failed
 		(no disk in drive), 0 on success."""
 
-		if self.mounted():
+		if self.mounted(path=path):
 			return 1
 			
-		mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
+		if path.startswith(os.path.sep):
+			mountpoint = path
+		else:
+			mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
 
 		#
 		# loader creates '/tmp/rocks-cdrom' -- the cdrom device
@@ -159,17 +167,20 @@ class Media:
 		return rc
 
 
-	def umountCD(self, prefix="/"):
-		if not self.mounted():
+	def umountCD(self, prefix="/",path=DEFAULTPATH):
+		if not self.mounted(path):
 			return
               
-		mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
+		if path.startswith(os.path.sep):
+			mountpoint = path
+		else:
+			mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
 		os.system('umount %s > /dev/null 2>&1' % (mountpoint))
                 return
 
 
-	def ejectCD(self):
-		self.umountCD()
+	def ejectCD(self,path=DEFAULTPATH):
+		self.umountCD(path=path)
 
 		#
 		# there are cases where the CD doesn't immediately un-mount
@@ -178,8 +189,8 @@ class Media:
 		# try 10 times to unmount the CD.
 		#
 		i = 0
-		while self.mounted() and i < 10:
-			self.umountCD()
+		while self.mounted(path) and i < 10:
+			self.umountCD(path)
 			i += 1
 
 		#
@@ -201,11 +212,11 @@ class Media:
 		return
 
 
-	def getCDInfo(self):
-		self.mountCD()
+	def getCDInfo(self,path=DEFAULTPATH):
+		self.mountCD(path)
 
 		try:
-			file = open('/mnt/cdrom/.discinfo', 'r')
+			file = open(os.path.join(path,'.discinfo'), 'r')
 			t = file.readline()
 			n = file.readline()
 			a = file.readline()
@@ -226,11 +237,11 @@ class Media:
 		return (timestamp, name, archinfo, diskid)
 
 
-	def getCDInfoFromXML(self):
+	def getCDInfoFromXML(self,path=DEFAULTPATH):
 		retval = (None, None, None)
 
-		self.mountCD()
-		cdtree = rocks.file.Tree('/mnt/cdrom')
+		self.mountCD(path)
+		cdtree = rocks.file.Tree(path)
 		for dir in cdtree.getDirs():
 			for file in cdtree.getFiles(dir):
 				try:
@@ -258,10 +269,10 @@ class Media:
 		return retval
 
 
-	def getId(self):
+	def getId(self,path=DEFAULTPATH):
 		"""Get the Id of the physical roll CD."""
 
-		(timestamp, name, archinfo, diskid) = self.getCDInfo()
+		(timestamp, name, archinfo, diskid) = self.getCDInfo(path)
 
 		if name != None and diskid != None:
 			str = '%s - Disk %s' % (name, diskid)

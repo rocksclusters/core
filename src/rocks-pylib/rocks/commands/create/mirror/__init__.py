@@ -186,7 +186,7 @@ class Command(rocks.commands.create.command):
 
 
 	def mirror(self, mirror_path):
-		cmd = 'wget -erobots=off --reject "anaconda*rpm" -m -nv -np %s' % (mirror_path)
+		cmd = 'wget -erobots=off -m -nv -np %s' % (mirror_path)
 		os.system(cmd)
 
 		if len(mirror_path) > 6:
