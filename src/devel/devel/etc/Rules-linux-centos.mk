@@ -316,7 +316,7 @@ RPM.PACKAGE = kickstart
 RPM.ARCH = noarch
 RPM.SUMMARY = $(ROLLNAME) roll
 RPM.DESCRIPTION = XML files for the $(ROLLNAME) roll
-RPM.PREFIX = $(PROFILE_DIR)
+RPM.FILES = "$(PROFILE_DIR)/*"
 endif
 
 ifeq ($(RPM.SUMMARY),)
