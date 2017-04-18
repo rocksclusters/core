@@ -104,7 +104,7 @@
 
 	<package os='linux'>python</package>
 	<package os='linux'>python-devel</package>
-	<package os='linux'>PyXML</package>
+	<package os='linux' cond="rocks_version_major == 6">PyXML</package>
 	<package os='linux'>expat</package>
 	<package os='linux'>rocks-pylib</package>	<!-- Rocks specific -->
 

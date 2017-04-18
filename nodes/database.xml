@@ -314,7 +314,7 @@
 
   <package os='linux'>rocks-sql</package>
   <package os='linux'>mysql</package>
-  <package os='linux'>mysql-server</package>
+  <package os='linux' cond="rocks_version_major == 6">mysql-server</package>
   <package os='linux'>mysql-devel</package>
   <package os='linux'>MySQL-python</package>
   <package os='linux'>php-mysql</package>

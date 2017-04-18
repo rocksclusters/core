@@ -156,7 +156,6 @@
 	<package os='linux'>foundation-libxml2</package>
 	<package os='linux'>foundation-wget</package>
 	<package os='linux'>foundation-ant</package>
-	<package os='linux'>foundation-mercurial</package>
 	<package os='linux'>foundation-git</package>
 
 	<!-- needed by foundation-git -->
