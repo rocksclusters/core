@@ -162,6 +162,9 @@ class Command(rocks.commands.report.command):
 			section_name = 'finish'
 
 		list += self.generator.generate(section_name)
+
+		section_name = 'configure'
+		list += self.generator.generate('configure')
 			
 		for line in list:
 			if line.startswith("%post") or line.startswith("%end"):
