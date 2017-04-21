@@ -701,7 +701,7 @@ class Generator:
 				s += 'EOF\n'
 
 			if filePerms:
-				s += 'chmod %s %s' % (filePerms, fileName)
+				s += 'chmod %s %s\n' % (filePerms, fileName)
 
 			s +=  'dn=$(dirname %s)\n' % fileName
 			s +=  'mkdir -p %s/$dn \n' % "/var/rocks"
