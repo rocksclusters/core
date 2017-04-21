@@ -317,6 +317,7 @@ RPM.ARCH = noarch
 RPM.SUMMARY = $(ROLLNAME) roll
 RPM.DESCRIPTION = XML files for the $(ROLLNAME) roll
 RPM.FILES = "$(PROFILE_DIR)/*"
+RPM.PREFIX = $(PROFILE_DIR)
 endif
 
 ifeq ($(RPM.SUMMARY),)
