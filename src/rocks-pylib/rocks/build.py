@@ -890,6 +890,7 @@ import socket
 import rocks.dist
 import rocks.file
 import rocks.util
+import rocks
 
 
 class BuildError(Exception):
@@ -901,6 +902,7 @@ class Builder:
 	def __init__(self):
         	self.verbose = 0
 		self.debug   = 0
+		self.versionMajor = int(rocks.version_major)
 
 	def build(self):
 		pass
@@ -1211,23 +1213,31 @@ class DistributionBuilder(Builder):
 
 
     def insertNetstage(self):
-	print 'Applying stage2.img'
+	print 'Applying netstage (aka stage2)'
 	
 	cmd = 'rm -f %s/RedHat/base/stage2.img' % (self.dist.getReleasePath())
 	subprocess.call(cmd, shell=True)
 
+	## Note for CentOS7 rocks-boot has all the net/cdrom/EFI components 
 	try:
-		self.applyRPM('rocks-boot-netstage', self.dist.getReleasePath())
+
+		if self.versionMajor >= 7:
+			rpm = 'rocks-boot'
+		else:	
+			rpm = 'rocks-boot-netstage'
+		self.applyRPM(rpm, self.dist.getReleasePath())
 	except:
-		print "Couldn't find the package rocks-boot-netstage"
+		print "Couldn't find the package %s" % rpm
 		print "\tIf you are building the OS roll, this is not a problem"
 		pass
 
 
-	print 'Applying updates.img'
-	cmd = 'rm -f %s/RedHat/base/updates.img' % (self.dist.getReleasePath())
-	subprocess.call(cmd, shell=True)
+	print 'Applying rocks-anaconda-updates'
+	if self.versionMajor < 7:
+		cmd = 'rm -f %s/RedHat/base/updates.img' % (self.dist.getReleasePath())
+		subprocess.call(cmd, shell=True)
 
+	## Note for CentOS7 rocks-anaconda-updates only contains comps.xml
 	try:
 		self.applyRPM('rocks-anaconda-updates',
 			self.dist.getReleasePath())
@@ -1235,32 +1245,6 @@ class DistributionBuilder(Builder):
 		print "Couldn't find the package rocks-anaconda-updates"
 		print "\tIf you are building the OS roll, this is not a problem"
 		pass
-
-
-	#print 'Applying comps.xml'
-	#cmd = 'rm -f %s/RedHat/base/comps.xml' % (self.dist.getReleasePath())
-	#os.system(cmd)
-
-	#try:
-		#self.applyRPM('comps', self.dist.getReleasePath())
-
-		#cmd = 'cp %s/usr/share/comps/%s/comps.xml %s/RedHat/base/' % \
-			#(self.dist.getReleasePath(), self.dist.getArch(),
-				#self.dist.getReleasePath())
-		#os.system(cmd)
-	#except:
-		#print "Couldn't find the package 'comps'"
-		#print "\tIf you are building the OS roll, this is not a problem"
-		#pass
-
-	#
-	# the comps package also installs hdlist and hdlist2 -- let's remove
-	# those
-	#
-	#for i in [ 'hdlist', 'hdlist2' ]:
-		#cmd = 'rm -f %s/RedHat/base/%s' % \
-				#(self.dist.getReleasePath(), i)
-		#os.system(cmd)
 
 	return
 
@@ -1361,6 +1345,10 @@ class DistributionBuilder(Builder):
         else:
 	    cmd = cmd + '--badreloc --relocate /=%s %s %s' % (root, flags,
 							      rpm.getFullName())
+
+	if self.debug > 0:
+                sys.stderr.write('build.applyRPM: executing "%s"' % cmd)
+
         retval = subprocess.call(cmd + ' > /dev/null 2>&1', shell=True)
 
         shutil.rmtree(os.path.join(root, 'var'))
@@ -1376,6 +1364,10 @@ class DistributionBuilder(Builder):
 	# the directory where the python files exist that are used to
 	# extend anaconda
 	#
+
+        ## For CentOS 7, rocks-boot has the product img
+        if self.versionMajor >= 7:
+                return
 	product = '../../images/product.img'
 	productfilesdir = os.path.join(self.dist.getBuildPath(), 'include')
 

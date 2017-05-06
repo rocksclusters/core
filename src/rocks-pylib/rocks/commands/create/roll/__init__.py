@@ -233,6 +233,7 @@ class Builder:
 	def __init__(self):
 		self.config = None
 		self.tempdir = os.getcwd()
+		self.versionMajor = int(rocks.version_major)
 
 	def mktemp(self):
 		return tempfile.mktemp(dir=self.tempdir)
@@ -240,7 +241,7 @@ class Builder:
 	def makeBootable(self, name):
 		pass
 				
-	def mkisofs(self, isoName, rollName, diskName, rollDir):
+	def mkisofs(self, isoName, rollName, diskName, rollDir, volname=None):
 		print 'Building ISO image for %s ...' % diskName
 
 		if self.config.isBootable():
@@ -248,17 +249,24 @@ class Builder:
 		else:
 			extraflags = ''
 
-		volname = '%s %s' % (rollName, diskName)
+		if volname is None:
+			volname = '%s %s' % (rollName, diskName)
 		if len(volname) > 32:
-			volname = volname[0:32]
+			volname = volname[0:31]
 			
 		cwd = os.getcwd()
 		cmd = 'mkisofs -V "%s" %s -r -T -f -o %s .' % \
 			(volname, extraflags, os.path.join(cwd, isoName))
 
 		os.chdir(rollDir)
+		print "mkisofs: %s" % cmd
 		rocks.util.system(cmd, 'spinner')
 		os.chdir(cwd)
+	def makeHybrid(self,isoname):
+		cwd = os.getcwd()
+		cmd = 'isohybrid -v --uefi %s' % (os.path.join(cwd, isoname))
+		print "makeHybrid: %s" % cmd
+		rocks.util.system(cmd)
 
 		
 	def copyFile(self, path, file, root):
@@ -306,9 +314,9 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		self.config = rocks.file.RollInfoFile(file)
 		self.setArch(self.config.getRollArch())
 		self.command = command
-
-	def mkisofs(self, isoName, rollName, diskName):
-		Builder.mkisofs(self, isoName, rollName, diskName, diskName)
+		self.CDlabel = "%s %s %s" % ("Rocks",rocks.version,self.getArch())
+	def mkisofs(self, isoName, rollName, diskName, volname=None):
+		Builder.mkisofs(self, isoName, rollName, diskName, diskName, volname=volname)
 		
 	def signRPM(self, rpm):
 	
@@ -593,7 +601,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		#
 		# add the rocks netstage
 		# 
-		self.boot.installNetstage(rolldir)
+		if self.versionMajor < 7:
+			self.boot.installNetstage(rolldir)
 	
 		return
 
@@ -691,12 +700,15 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 				self.config.getRollArch(),
 				name)
 				
+			volname = None
 			if id == 1 and self.config.isBootable() == 1:
 				self.makeBootable(name)
+				volname = self.CDlabel
 			
-			self.mkisofs(isoname, self.config.getRollName(), name)
+			self.mkisofs(isoname, self.config.getRollName(), name, volname=volname)
 
-
+			if id == 1 and self.config.isBootable() == 1:
+				self.makeHybrid(isoname)
 		
 class MetaRollBuilder(Builder):
 
@@ -962,5 +974,4 @@ class Command(rocks.commands.create.command):
 			self.abort('no arguments')
 			
 		builder.run()
-
 

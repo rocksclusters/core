@@ -288,6 +288,10 @@ include Rules-repo-centos.mk
 MKISOFSFLAGS = "-b isolinux/isolinux.bin -c isolinux/boot.cat \
 	-no-emul-boot -boot-load-size 4 -boot-info-table"
 
+ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 7)
+MKISOFSFLAGS += " -eltorito-alt-boot -efi-boot EFI/BOOT/grubx64.efi -no-emul-boot -boot-load-size 4 -boot-info-table"
+endif
+
 ifeq ($(ROLLS),)
 WITHROLLS = 0
 else

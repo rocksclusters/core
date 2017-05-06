@@ -177,6 +177,7 @@
 import os
 import shutil
 import tempfile
+import rocks
 import rocks.dist
 import rocks.file
 import rocks.util
@@ -186,6 +187,7 @@ class Bootable:
 
 	def __init__(self, dist):
 		self.dist = dist
+		self.version = int(rocks.version_major)
 
 		#
 		# build a list of CPUs, from 'best' to 'worst' match
@@ -237,7 +239,7 @@ class Bootable:
 		"""Used to 'patch' the new distribution with RPMs from the
 		distribution.  We use this to always get the correct
 		genhdlist, and to apply eKV to Rocks distributions.
-        
+		
 		Throws a ValueError if it cannot find the specified RPM, and
 		BuildError if the RPM was found but could not be installed."""
 
@@ -256,6 +258,7 @@ class Bootable:
 			cmd = cmd + '--badreloc --relocate /=%s %s %s' \
 					% (root, flags, rpm.getFullName())
 
+		print "bootable.applyRPM cmd: %s" % cmd
 		retval = os.system(cmd + ' > /dev/null 2>&1')
 		shutil.rmtree(os.path.join(root, dbdir))
 
@@ -275,7 +278,7 @@ class Bootable:
 		# Create a scratch area on the local disk of the machine, we
 		# don't want to do this in the distribution since it might be
 		# over NFS (not a problem, just slow).
-        
+		
 		tmp = tempfile.mktemp()
 		os.makedirs(tmp)
 
@@ -326,7 +329,10 @@ class Bootable:
 
 
 	def installBootfiles(self, destination):
-		name = 'rocks-boot-cdrom'
+		if self.version >= 7:
+			name = 'rocks-boot'
+		else:
+			name = 'rocks-boot-cdrom'
 		RPM = self.getBestRPM(name)
 		if not RPM:
 			raise ValueError, "could not find %s" % name
@@ -349,7 +355,10 @@ class Bootable:
 		cmd = 'rm -f %s/stage2.img' % (destination)
 		os.system(cmd)
 
-		name = 'rocks-boot-netstage'
+		if self.version >= 7: 
+			name = 'rocks-boot'
+		else:
+			name = 'rocks-boot-netstage'
 		RPM = self.getBestRPM(name)
 		if not RPM:
 			raise ValueError, "could not find %s" % name
