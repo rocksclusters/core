@@ -180,6 +180,7 @@ compile config
 install rocks-config
 compile_and_install rocks-pylib
 compile_and_install rocks-gen
+compile_and_install rocks-profile
 
 # 4. Make sure we have updated paths
 . /etc/profile.d/rocks-binaries.sh
