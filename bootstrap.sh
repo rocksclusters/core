@@ -80,10 +80,7 @@ compile_and_install foundation-coreutils
 compile_and_install foundation-gawk
 compile_and_install foundation-wget
 
-if [ `./_os` == "linux" ]; then
-	compile_and_install librocks
-fi
-
+compile_and_install librocks
 compile_and_install rocks-pylib
 compile_and_install rocks-profile
 
