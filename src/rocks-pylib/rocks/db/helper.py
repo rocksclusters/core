@@ -432,7 +432,7 @@ class DatabaseHelper(rocks.db.database.Database):
 						break
 					except:
 						pass
-				if addr:
+				if addr and addr != '127.0.0.1':
 					return self.getHostname(hostname)
 
 				fin.close()
