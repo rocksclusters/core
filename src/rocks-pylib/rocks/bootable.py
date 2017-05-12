@@ -340,6 +340,25 @@ class Bootable:
 		self.applyRPM(RPM, destination)
 		return
 
+	def createrepo(self,destination):
+		if self.version < 7:
+			return
+		# get the comps.xml file
+		name = 'rocks-anaconda-updates' 
+		RPM = self.getBestRPM(name)
+		if not RPM:
+			raise ValueError, "could not find %s" % name
+		self.applyRPM(RPM, destination)
+
+		# now have the comps file
+		pwd = os.getcwd()
+		os.chdir(destination)
+		shutil.move('RedHat/base/comps.xml',os.getcwd())
+		shutil.rmtree('RedHat/base')
+		shutil.rmtree('RedHat')
+		os.system("/usr/bin/createrepo -g comps.xml .")
+		os.chdir(pwd)
+		
 
 	def copyBasefiles(self, destination):
 		if not os.path.exists(destination):

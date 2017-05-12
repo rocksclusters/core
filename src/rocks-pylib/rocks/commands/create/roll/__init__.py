@@ -593,6 +593,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 
 		self.boot = rocks.bootable.Bootable(dist)
 
+		self.boot.createrepo(os.path.join(os.getcwd(), 'disk1'))
+
 		#
 		# add isolinux files
 		# 
@@ -974,4 +976,3 @@ class Command(rocks.commands.create.command):
 			self.abort('no arguments')
 			
 		builder.run()
-
