@@ -395,7 +395,7 @@ class Command(rocks.commands.list.command):
 
 		# Add more values to the attributes
 		attrs['version'] = rocks.version
-		attrs['rocks_version_major'] = float(rocks.version).__trunc__()
+		attrs['rocks_version_major'] = rocks.version.split('.')[0]
 		attrs['release'] = rocks.release
 		attrs['root']	 = root
 		
