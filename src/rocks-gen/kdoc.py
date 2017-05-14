@@ -316,6 +316,11 @@ class App(rocks.app.Application):
 				      parents,
 				      children)
 
+		# need reference nodes for any (external/missing) node references
+		for p in self.donthave:
+			desc="Node '%s' referenced but not defined in this roll" %p
+			self.document(p,desc,None,None)
+
 		self.footer()
 
 
