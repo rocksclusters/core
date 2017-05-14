@@ -135,6 +135,7 @@
 
 import os
 import time
+import rocks
 import rocks.commands
 from rocks.commands.sync.host import Parallel
 from rocks.commands.sync.host import timeout
@@ -180,7 +181,11 @@ class Command(rocks.commands.sync.host.command):
 		threads = []
 		for host in hosts:
 
-			cmd = 'echo "/sbin/service iptables restart  > /dev/null 2>&1" |'
+			if rocks.version_major == '6':
+				cmd = 'echo "/sbin/service iptables restart  > /dev/null 2>&1" |'
+			else:
+				cmd = 'echo "/usr/bin/systemctl reload iptables  > /dev/null 2>&1" |'
+			
 			cmd += self.getExecCommand(host, localhost)
 
 			p = Parallel(cmd, host)
