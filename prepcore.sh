@@ -94,7 +94,7 @@ ipaddr=$(/usr/sbin/ip -4 address show dev eth0 | /usr/bin/grep inet | /usr/bin/a
 
 # 4. Rest of packages for full build
 if [ `./_os` == "linux" ]; then
-        install_os_packages bootstrap-packages
+        install_os_packages bootstrap-packages-core
 fi
 
 # 5. Add a rocks distribution to system

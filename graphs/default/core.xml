@@ -56,8 +56,8 @@
 
 	<!-- Graph OO Framework -->
 
-	<edge from="bootstrap-packages">
-		<to>bootstrap-dummy</to>
+	<edge from="bootstrap-packages-core">
+		<to>bootstrap-dummy-core</to>
 	</edge>
 
 	<edge from="core">

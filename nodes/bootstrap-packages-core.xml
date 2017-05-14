@@ -79,6 +79,7 @@
 	<package os="linux">cmake</package>
 	<package os="linux">Cython</package>
 	<package os="linux">docbook-utils</package>
+	<package os="linux">docbook-utils-pdf</package>
 	<package os="linux">expat-devel</package>
 	<package os="linux">flex</package>
 	<package os="linux">glib2-devel</package>
