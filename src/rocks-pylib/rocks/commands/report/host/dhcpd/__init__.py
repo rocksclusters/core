@@ -262,8 +262,8 @@ class Command(rocks.commands.HostArgumentProcessor,
 
 	def writeDhcpDotConf(self, hosts):
 		# Handle Path Name Fun
-		RocksVersion = self.db.getHostAttr('localhost', 'rocks_version')
-		if int(RocksVersion.split('.')[0]) < 6:
+		RocksVersion = int(rocks.version_major) 
+		if RocksVersion < 6:
 			self.addOutput('', '<file name="/etc/dhcpd.conf">')
 		else:
 			self.addOutput('', '<file name="/etc/dhcp/dhcpd.conf">')
