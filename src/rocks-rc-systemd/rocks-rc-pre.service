@@ -1,0 +1,9 @@
+[Unit]
+Description=Rocks Pre-Configuration Scripts
+
+[Service]
+Type=oneshot
+ExecStart=/etc/rc.d/rc.rocksconfig before-rc
+
+[Install]
+Before=network.target

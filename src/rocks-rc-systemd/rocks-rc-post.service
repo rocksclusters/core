@@ -1,0 +1,9 @@
+[Unit]
+Description=Rocks Post-Configuration Scripts
+
+[Service]
+Type=oneshot
+ExecStart=/etc/rc.d/rc.rocksconfig after-rc
+
+[Install]
+After=multi-user.target

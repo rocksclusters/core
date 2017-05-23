@@ -1,0 +1,5 @@
+%post
+# enable the services 
+/usr/bin/systemctl enable rocks-rc-pre 
+/usr/bin/systemctl enable rocks-rc-post
+
