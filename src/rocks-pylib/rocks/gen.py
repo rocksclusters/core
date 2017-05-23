@@ -785,6 +785,7 @@ class MainNodeFilter_linux(NodeFilter):
 			'main',
 			'auth',
 			'clearpart',
+			'autopart',
 			'device',
 			'driverdisk',
 			'install',
