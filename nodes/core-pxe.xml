@@ -22,7 +22,7 @@ chown root.apache /tftpboot/pxelinux/pxelinux.cfg
 chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 </post>
 
-<post>
+<post cond="rocks_version_major == 6">
 
 <!-- now setup the global PXE boot default actions -->
 /opt/rocks/bin/rocks add bootaction action="install" \
@@ -40,5 +40,21 @@ chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 
 </post>
 
+<post cond="rocks_version_major == 7">
+
+<!-- now setup the global PXE boot default actions -->
+/opt/rocks/bin/rocks add bootaction action="install" \
+	kernel="vmlinuz-&version;-&arch;" \
+	ramdisk="initrd.img-&version;-&arch;" \
+	args="ks kssendmac pxe lang= devfs=nomount selinux=0 noipv6 rocks=clientksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img"
+
+/opt/rocks/bin/rocks add bootaction action="os" \
+	kernel="localboot 0"
+
+/opt/rocks/bin/rocks add bootaction action="install headless" \
+	kernel="vmlinuz-&version;-&arch;" \
+	ramdisk="initrd.img-&version;-&arch;" \
+	args="headless ks kssendmac pxe lang= devfs=nomount selinux=0 noipv6 rocks=clientksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img"
+</post>
 </kickstart> 
 

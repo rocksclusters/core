@@ -791,6 +791,18 @@ class DatabaseHelper(rocks.db.database.Database):
 
 		# TODO cache attributes tables for speed
 		# self._cacheAttrs[node.name] = attrs
+		if showsource:
+			attrs['arch'] = (rocks.util.getNativeArch(),'G')
+			attrs['rocks_release'] = (rocks.release,'G')
+			attrs['rocks_version'] = (rocks.version,'G')
+			attrs['rocks_version_major'] = (rocks.version_major,'G')
+			attrs['version'] = (rocks.version,'G')
+		else:
+			attrs['arch'] = rocks.util.getNativeArch()
+			attrs['rocks_release'] = rocks.release
+			attrs['rocks_version'] = rocks.version
+			attrs['rocks_version_major'] = rocks.version_major
+			attrs['version'] = rocks.version
 		return attrs
 
 
