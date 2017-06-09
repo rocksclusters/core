@@ -468,8 +468,8 @@ class InsertEthersPlugin:
 		""" plugins can determine of they should update system config"""
                 noUpdate = self.app.db.getHostAttr('localhost','Config_NoUpdate')
                 if noUpdate is not None:
-			return false
+			return False
 		else:
-			return true
+			return True
 
 

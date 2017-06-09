@@ -195,5 +195,8 @@ class Command(rocks.commands.sync.command):
 
 	def run(self, params, args):
 		self.runPlugins()
-		os.system('/sbin/service named reload > /dev/null 2>&1')
+		if int(rocks.version_major) < 7:
+			os.system('/sbin/service named reload > /dev/null 2>&1')
+		else:
+			os.system('/usr/bin/systemctl reload named > /dev/null 2>&1')
 
