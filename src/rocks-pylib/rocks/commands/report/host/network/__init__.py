@@ -132,6 +132,7 @@
 #
 #
 
+import rocks
 import rocks.commands
 
 class Command(rocks.commands.HostArgumentProcessor,
@@ -231,13 +232,16 @@ class Command(rocks.commands.HostArgumentProcessor,
 		if not interface:
 			interface = 'private'
 
-		self.db.execute("""select net.name, s.dnszone from 
+		self.db.execute("""select net.name, s.dnszone, net.device from 
 			networks net, nodes n, subnets s where
 			n.id = net.node and net.subnet = s.id and
 			s.name = '%s' and n.name = '%s' and
 			net.device != 'ipmi' """ % (interface, host))
+		hostname = None
+		domain = None
+		device = None
 		try:
-			(hostname, domain) = self.db.fetchone()
+			(hostname, domain,device) = self.db.fetchone()
 			self.addOutput(host, 'HOSTNAME=%s.%s' % (hostname, domain))
 		except:
 			pass
@@ -245,5 +249,17 @@ class Command(rocks.commands.HostArgumentProcessor,
 		if gateway:
 			self.addOutput(host, 'GATEWAY=%s' % gateway)
 
+		if device:
+			self.addOutput(host, 'GATEWAYDEV=%s' % device)
+
 		self.addOutput(host, '</file>')
+
+
+		if int(rocks.version_major) < 7:
+			return
+		## Specific files for CentOS 7
+		if hostname is not None and domain is not None:
+			self.addOutput(host, '<file name="/etc/hostname">')
+			self.addOutput(host, '%s.%s' % (hostname, domain))
+			self.addOutput(host, '</file>')
 
