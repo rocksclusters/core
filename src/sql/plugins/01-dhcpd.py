@@ -153,4 +153,7 @@ class Plugin(rocks.sql.InsertEthersPlugin):
 		cmd += '/opt/rocks/bin/rocks report script | bash'
 		os.system(cmd)
 
-		os.system('/etc/rc.d/init.d/dhcpd restart > /dev/null 2>&1')
+		if int(rocks.version_major) < 7:
+			os.system('/etc/rc.d/init.d/dhcpd restart > /dev/null 2>&1')
+		else:
+			os.system('/usr/bin/systemctl restart dhcpd> /dev/null 2>&1')
