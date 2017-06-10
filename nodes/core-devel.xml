@@ -19,5 +19,6 @@
 <package>glibc-static</package>
 <package>jadetex</package>
 <package>docbook-utils</package>
+<package>redhat-lsb</package>
 
 </kickstart> 
