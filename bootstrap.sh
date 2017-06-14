@@ -87,5 +87,5 @@ compile_and_install rocks-profile
 if [ `./_os` == "linux" ]; then
 	install_os_packages server
 	bootstrap_py_init
-	install_os_packages bootstrap-packages
+	install_os_packages bootstrap-packages-core
 fi
