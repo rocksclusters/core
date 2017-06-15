@@ -1445,6 +1445,9 @@ class InsertEthers(GUI):
 		kslog = open('/var/log/httpd/ssl_access_log','r')
 		kslog.seek(0,2)
 
+		kslog2 = open('/var/log/httpd/access_log','r')
+		kslog2.seek(0,2)
+
 		#
 		# key used to quit
 		#
@@ -1474,9 +1477,12 @@ class InsertEthers(GUI):
 					self.warningGUI(msg)
 				continue
 
-			# Check http log for a new line
+			# Check http/https log for a new line
 
 			access_line = kslog.readline()
+			if not access_line:
+				access_line = kslog2.readline()
+
 			if access_line:
 				try:
 					self.listenKs(access_line)
