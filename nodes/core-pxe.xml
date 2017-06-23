@@ -46,7 +46,7 @@ chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 /opt/rocks/bin/rocks add bootaction action="install" \
 	kernel="vmlinuz-&version;-&arch;" \
 	ramdisk="initrd.img-&version;-&arch;" \
-	args="inst.ks.sendmac lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img"
+	args="inst.ks.sendmac lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img inst.sshd"
 
 /opt/rocks/bin/rocks add bootaction action="os" \
 	kernel="localboot 0"
@@ -54,7 +54,7 @@ chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 /opt/rocks/bin/rocks add bootaction action="install headless" \
 	kernel="vmlinuz-&version;-&arch;" \
 	ramdisk="initrd.img-&version;-&arch;" \
-	args="headless inst.ks.sendmac pxe lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img"
+	args="headless inst.ks.sendmac pxe lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img inst.sshd"
 </post>
 </kickstart> 
 

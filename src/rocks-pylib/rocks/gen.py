@@ -809,6 +809,7 @@ class MainNodeFilter_linux(NodeFilter):
 			'reboot',
 			'rootpw',
 			'skipx',
+			'sshpw',
 			'text',
 			'timezone',
 			'upgrade',
@@ -985,6 +986,16 @@ class Generator_linux(Generator):
 		self.ks['main'].append('langsupport --default=%s' %
 			self.getChildText(node).strip())
 
+		return
+
+
+	# <main>
+	#	<sshpw>
+	# </main>
+
+	def handle_main_sshpw(self, node):
+		self.ks['main'].append('sshpw %s' %
+			self.getChildText(node).strip())
 		return
 
 	# <main>
