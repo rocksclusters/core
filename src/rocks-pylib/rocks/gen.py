@@ -788,6 +788,8 @@ class MainNodeFilter_linux(NodeFilter):
 			'autopart',
 			'device',
 			'driverdisk',
+			'eula',
+			'firstboot',
 			'install',
 			'nfs',
 			'cdrom',
