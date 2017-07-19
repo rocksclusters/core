@@ -30,8 +30,9 @@ class RocksPartition:
 		self.lvms = b.lvs 
 
 	def getDisks(self):
-		""" names of the disks in the system """
-		return map(lambda x: x.name, self.disks)
+		""" names of the disks in the system - filter out ramdisks """
+		return map(lambda x: x.name,  \
+			filter(lambda x: x.name.find('ram') < 0, self.disks))
 
 	def getRaids(self):
 		""" names of the md arrays in  the system """
