@@ -7,8 +7,15 @@ import httplib
 import random
 import time
 import string
+import socket
 sys.path.append('/tmp')
-import db_partition_info
+
+remotehost=socket.gethostname().split('.')[0]
+try:
+	import db_partition_info
+	remotehost=db_partition_info.KickstartHost
+except:
+	pass
 
 def sendit(server, req, nodepartinfo):
 	status = 0
@@ -56,7 +63,7 @@ if 'build' not in args:
 	random.seed(int(time.time()))
 
 	for i in range(0, 5):
-		status = sendit(db_partition_info.KickstartHost,
+		status = sendit(remotehost,
 			'/install/sbin/public/setDbPartitions.cgi',
 			nodepartinfo)
 	
