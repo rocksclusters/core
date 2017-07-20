@@ -1,6 +1,7 @@
 [Unit]
 Description=Rocks Post-Configuration Scripts
 After=sshd.service
+After=foundation-mysql.service
 
 [Service]
 Type=oneshot
