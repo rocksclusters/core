@@ -494,8 +494,10 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		#
 		if rocks.version.split('.')[0] == '5':
 			pyver='2.4'
-		else:
+		elif rocks.version.split('.')[0] == '6':
 			pyver='2.6'
+		else:
+			pyver='2.7'
 		sys.path.append('/usr/lib/python%s/site-packages' % pyver)
 		sys.path.append('/usr/lib64/python%s/site-packages' % pyver)
 		sys.path.append('/usr/lib/python%s/lib-dynload' % pyver)
@@ -518,10 +520,14 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 				group = a.comps.return_group(
 					rpm[1:].encode('utf-8'))
 
-				for r in group.mandatory_packages.keys() + \
-						group.default_packages.keys():
-					if r not in selected:
-						selected.append(r)
+				try:
+					for r in group.mandatory_packages.keys() + \
+							group.default_packages.keys():
+						if r not in selected:
+							selected.append(r)
+				except:
+					"comps returned no group for %s" % rpm
+
 			elif rpm not in selected:
 				selected.append(rpm)
 
@@ -976,3 +982,4 @@ class Command(rocks.commands.create.command):
 			self.abort('no arguments')
 			
 		builder.run()
+
