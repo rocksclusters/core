@@ -43,10 +43,16 @@ chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 <post cond="rocks_version_major == 7">
 
 <!-- now setup the global PXE boot default actions -->
+<!-- Install with tracker turned on -->
 /opt/rocks/bin/rocks add bootaction action="install" \
 	kernel="vmlinuz-&version;-&arch;" \
 	ramdisk="initrd.img-&version;-&arch;" \
-	args="inst.ks.sendmac lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img inst.sshd"
+	args="inst.ks.sendmac inst.sshd lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://127.0.0.1/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://localhost/fetchRocksKS.py inst.updates=http://127.0.0.1/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img rocks.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; tracker.trackers=&Kickstart_PrivateKickstartHost;"
+
+/opt/rocks/bin/rocks add bootaction action="install notracker" \
+	kernel="vmlinuz-&version;-&arch;" \
+	ramdisk="initrd.img-&version;-&arch;" \
+	args="inst.ks.sendmac inst.sshd lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://localhost/fetchRocksKS.py inst.updates=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img rocks.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI;"
 
 /opt/rocks/bin/rocks add bootaction action="os" \
 	kernel="localboot 0"
@@ -54,7 +60,12 @@ chmod 775 /tftpboot/pxelinux/pxelinux.cfg
 /opt/rocks/bin/rocks add bootaction action="install headless" \
 	kernel="vmlinuz-&version;-&arch;" \
 	ramdisk="initrd.img-&version;-&arch;" \
-	args="headless inst.ks.sendmac pxe lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks/&arch; inst.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; inst.updates=http://&Kickstart_PrivateAddress;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img inst.sshd"
+	args="headless inst.ks.sendmac inst.sshd lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://127.0.0.1/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://localhost/fetchRocksKS.py inst.updates=http://127.0.0.1/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img rocks.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI; tracker.trackers=&Kickstart_PrivateKickstartHost;"
+
+/opt/rocks/bin/rocks add bootaction action="install headless notracker" \
+	kernel="vmlinuz-&version;-&arch;" \
+	ramdisk="initrd.img-&version;-&arch;" \
+	args="headless inst.ks.sendmac inst.sshd lang= devfs=nomount selinux=0 ipv6.disable=1 rocks=client ksdevice=bootif inst.repo=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch; inst.ks=http://localhost/fetchRocksKS.py inst.updates=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/rocks-dist/&arch;/images/updates.img rocks.ks=http://&Kickstart_PrivateKickstartHost;/&Kickstart_PrivateKickstartBasedir;/&Kickstart_PrivateKickstartCGI;"
 </post>
 </kickstart> 
 

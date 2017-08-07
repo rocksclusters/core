@@ -96,7 +96,8 @@
 	<package os="linux">libSM-devel</package>
 	<package os="linux">libxml2</package>
 	<package os="linux">libxml2-devel</package>
-	<package os="linux">mysql-devel</package>
+	<package os="linux" cond="rocks_version_major == 6">mysql-devel</package>
+	<package os="linux" cond="rocks_version_major == 7">mariadb-devel</package>
 	<package os="linux">pdfjadetex</package>
 	<package os="linux">pycairo-devel</package>
 	<package os="linux">pygobject2</package>
