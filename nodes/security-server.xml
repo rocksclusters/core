@@ -52,6 +52,4 @@ Parent node for server security elements.
 
   </changelog>
 
-  <package>rocks-security</package>
-
 </kickstart>
