@@ -262,6 +262,13 @@ class Builder:
 		print "mkisofs: %s" % cmd
 		rocks.util.system(cmd, 'spinner')
 		os.chdir(cwd)
+
+	def implantMD5(self,isoname):
+		cwd = os.getcwd()
+		cmd = 'implantisomd5 --supported-iso %s' % (os.path.join(cwd, isoname))
+		print "implantMD5: %s" % cmd
+		rocks.util.system(cmd)
+
 	def makeHybrid(self,isoname):
 		cwd = os.getcwd()
 		cmd = 'isohybrid -v --uefi %s' % (os.path.join(cwd, isoname))
@@ -717,6 +724,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 
 			if id == 1 and self.config.isBootable() == 1:
 				self.makeHybrid(isoname)
+				self.implantMD5(isoname)
 		
 class MetaRollBuilder(Builder):
 
