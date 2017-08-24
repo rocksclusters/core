@@ -512,6 +512,9 @@ cat /tmp/site.attrs  | \
 	/mnt/sysimage/tmp/site.attrs
 chmod 400 /mnt/sysimage/tmp/site.attrs
 cp /tmp/rolls.xml /mnt/sysimage/tmp
+if [ -f /tmp/frontend-ifaces.sh ]; then
+	cp /tmp/frontend-ifaces.sh /mnt/sysimage//tmp/frontend-ifaces.sh 
+fi
 
 </post>
 <!--
@@ -626,6 +629,7 @@ if [ "&Kickstart_PublicMTU;" == "" ]; then Kickstart_PublicMTU = 1500; fi
 
 </post>
 
+
 <configure phase="reconfigure">
 # fix the private network too 
 /opt/rocks/bin/rocks set network subnet public &Kickstart_PublicNetwork;
@@ -679,11 +683,17 @@ if [ "&Kickstart_PublicMTU;" == "" ]; then Kickstart_PublicMTU = 1500; fi
 /opt/rocks/bin/rocks set host interface name &Kickstart_PrivateHostname; \
 	&Kickstart_PrivateInterface; &Kickstart_PrivateHostname;
 
+<!-- Add macs of all interfaces on the frontend to the DB -->
+if [ -f /tmp/frontend-ifaces.sh ]; then
+	/bin/sh /tmp/frontend-ifaces.sh;
+fi
+
 <!-- SSH settings -->
 
 /opt/rocks/bin/rocks set attr ssh_use_dns true
 
 </post>
+
 
 <configure phase="reconfigure">
 # change the name of the FE
