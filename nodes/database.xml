@@ -318,6 +318,13 @@
   <package os='linux' cond="rocks_version_major == 6">mysql-devel</package>
   <package os='linux' cond="rocks_version_major == 7">mariadb</package>
   <package os='linux' cond="rocks_version_major == 7">mariadb-devel</package>
+  <package os='linux'>perl<package>
+  <package os='linux'>perl-Data-Dumper<package>
+  <package os='linux'>perl-Getopt-Long<package>
+  <package os='linux'>perl-Carp</package>
+  <package os='linux'>perl-Exporter</package>
+  <package os='linux'>perl-Scalar-List-Utils</package>
+  <package os='linux'>perl-constant</package>
   <package os='linux'>MySQL-python</package>
   <package os='linux'>php-mysql</package>
   <package os='linux'>foundation-mysql</package>
