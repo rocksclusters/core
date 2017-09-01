@@ -4,9 +4,11 @@
 import syslog
 import string
 import os
+import os.path
 import re
 import tempfile
 import sys
+import rocks
 
 ## For CentOS/RedHat7 use blivet
 try:
@@ -26,7 +28,7 @@ class RocksPartition:
 		b = blivet.Blivet()
 		b.reset() 
 		self.disks = b.disks 
-		self.raids = b.mdarrays 
+		self.raids = b.mdarrays
 		self.lvms = b.lvs 
 
 	def getDisks(self):
@@ -36,7 +38,7 @@ class RocksPartition:
 
 	def getRaids(self):
 		""" names of the md arrays in  the system """
-		return map(lambda x: x.name, self.raids)
+		return map(lambda x: os.path.basename(os.readlink("/dev/md/%s" %x.name)), self.raids)
 
 	def getLVMs(self):
 		""" names of the lvm logical devices in  the system """
@@ -321,6 +323,7 @@ class RocksPartition:
 
 
 	def getRaidParts(self, device):
+
 		parts = []
 
 		foundparts = 0
