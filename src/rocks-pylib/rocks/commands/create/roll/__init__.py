@@ -258,6 +258,11 @@ class Builder:
 		cmd = 'mkisofs -V "%s" %s -r -T -f -o %s .' % \
 			(volname, extraflags, os.path.join(cwd, isoName))
 
+		if self.versionMajor >= 7: 
+			cmd = 'mkisofs -R -f -T -V "%s" %s -o %s .' % \
+				(volname, extraflags, os.path.join(cwd, isoName))
+
+
 		os.chdir(rollDir)
 		print "mkisofs: %s" % cmd
 		rocks.util.system(cmd, 'spinner')
@@ -529,6 +534,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 
 				try:
 					for r in group.mandatory_packages.keys() + \
+							group.optional_packages.keys() + \
 							group.default_packages.keys():
 						if r not in selected:
 							selected.append(r)
@@ -991,3 +997,5 @@ class Command(rocks.commands.create.command):
 			
 		builder.run()
 
+
+RollName = "core"
