@@ -299,7 +299,7 @@ error:
    Generate an encrypion envelope.  Saves a lot of space having thie case
    statement in one place.
 */
-static EVP_CIPHER *
+static const EVP_CIPHER *
 evp_cipher_factory(int cipher_type)
 {
    switch(cipher_type)
@@ -417,12 +417,12 @@ X509_object_helper_set_name(X509_NAME *name, PyObject *name_sequence)
       typeptr = PyString_AsString(type);
       valueptr = PyString_AsString(value);
 
-      str_type = ASN1_PRINTABLE_type( valueptr, -1 );
+      str_type = ASN1_PRINTABLE_type( (unsigned char *) valueptr, -1 );
       if ( !(nid = OBJ_ln2nid(typeptr)) )
          if ( !(nid = OBJ_sn2nid(typeptr)) )
             { PyErr_SetString( SSLErrorObject, "unknown ASN1 object" ); goto error; }
 
-      if ( !X509_NAME_add_entry_by_NID( name, nid, str_type, valueptr, strlen(valueptr), -1, 0 ) )
+      if ( !X509_NAME_add_entry_by_NID( name, nid, str_type, (unsigned char *) valueptr, strlen(valueptr), -1, 0 ) )
          { PyErr_SetString( SSLErrorObject, "unable to add name entry" ); goto error; }
 
       Py_DECREF(pair);
@@ -581,7 +581,7 @@ static x509_object *
 X509_object_der_read(char *src, int len)
 {
    x509_object *self;
-   unsigned char *ptr = src;
+   const unsigned char *ptr = (const unsigned char *) src;
 
    if ( !(self = PyObject_New( x509_object, &x509type ) ) )
       goto error;
@@ -1370,7 +1370,8 @@ static PyObject *
 X509_object_add_extension(x509_object *self, PyObject *args)
 {
    int critical=0, nid=0;
-   char *name=NULL, *buf=NULL;
+   char *name=NULL;
+   const unsigned char *buf=NULL;
    ASN1_OCTET_STRING *octetString=NULL;
    X509_EXTENSION *extn=NULL;
 
@@ -1380,7 +1381,7 @@ X509_object_add_extension(x509_object *self, PyObject *args)
    if ( !(octetString = M_ASN1_OCTET_STRING_new() ) )
       { PyErr_SetString( SSLErrorObject, "could not allocate memory" ); goto error; }
 
-   if ( !ASN1_OCTET_STRING_set(octetString, buf, strlen(buf)) )
+   if ( !ASN1_OCTET_STRING_set(octetString, buf, strlen((char *) buf)) )
       { PyErr_SetString( SSLErrorObject, "could not set ASN1 Octect string" ); goto error; }
 
    if ( NID_undef == (nid = OBJ_txt2nid(name) ) )
@@ -2051,7 +2052,7 @@ static x509_crl_object *
 x509_crl_object_der_read(char *src, int len)
 {
    x509_crl_object *self;
-   unsigned char* ptr = src;
+   const unsigned char* ptr = (const unsigned char *) src;
 
    if ( !(self = PyObject_New( x509_crl_object, &x509_crltype ) ) )
       goto error;
@@ -2432,12 +2433,12 @@ static char x509_crl_object_set_revoked__doc__[] =
 ;
 
 // added because we don't already have one!
-static X509_REVOKED *
-X509_REVOKED_dup(X509_REVOKED *rev)
-{
-   return((X509_REVOKED *)ASN1_dup((int (*)())i2d_X509_REVOKED,
-      (char *(*)())d2i_X509_REVOKED,(char *)rev));
-}
+// static X509_REVOKED *
+// X509_REVOKED_dup(X509_REVOKED *rev)
+//{
+//   return((X509_REVOKED *)ASN1_dup((int (*)())i2d_X509_REVOKED,
+//      (char *(*)())d2i_X509_REVOKED,(char *)rev));
+//}
 
 static PyObject *
 x509_crl_object_set_revoked(x509_crl_object *self, PyObject *args)
@@ -2652,7 +2653,7 @@ X509_crl_object_add_extension(x509_crl_object *self, PyObject *args)
    if ( !(octetString = M_ASN1_OCTET_STRING_new() ) )
       { PyErr_SetString( SSLErrorObject, "could not allocate memory" ); goto error; }
 
-   if ( !ASN1_OCTET_STRING_set(octetString, buf, strlen(buf)) )
+   if ( !ASN1_OCTET_STRING_set(octetString, (const unsigned char *) buf, strlen(buf)) )
       { PyErr_SetString( SSLErrorObject, "could not set ASN1 Octect string" ); goto error; }
 
    if ( NID_undef == (nid = OBJ_txt2nid(name) ) )
@@ -3371,7 +3372,7 @@ X509_revoked_object_add_extension(x509_revoked_object *self, PyObject *args)
    if ( !(octetString = M_ASN1_OCTET_STRING_new() ) )
       { PyErr_SetString( SSLErrorObject, "could not allocate memory" ); goto error; }
 
-   if ( !ASN1_OCTET_STRING_set(octetString, buf, strlen(buf)) )
+   if ( !ASN1_OCTET_STRING_set(octetString, (const unsigned char *)buf, strlen(buf)) )
       { PyErr_SetString( SSLErrorObject, "could not set ASN1 Octect string" ); goto error; }
 
    if ( NID_undef == (nid = OBJ_txt2nid(name) ) )
@@ -4407,7 +4408,7 @@ static ssl_object *
 newssl_object(int type)
 {
 	ssl_object *self;
-   SSL_METHOD *method;
+   const SSL_METHOD *method;
 
 	
 	if ( !(self = PyObject_NEW(ssl_object, &ssltype) ) )
@@ -4577,7 +4578,7 @@ static asymmetric_object *
 asymmetric_object_der_read(int key_type, char *src, int len)
 {
    asymmetric_object *self=NULL;
-   unsigned char *ptr = src;
+   const unsigned char *ptr = (const unsigned char *) src;
 
    self = PyObject_New( asymmetric_object, &asymmetrictype );
    if (self == NULL)
@@ -4811,7 +4812,7 @@ static char asymmetric_object_public_encrypt__doc__[] =
 static PyObject *
 asymmetric_object_public_encrypt(asymmetric_object *self, PyObject *args)
 {
-   char *plain_text=NULL, *cipher_text=NULL;
+   unsigned char *plain_text=NULL, *cipher_text=NULL;
    int len=0, size=0;
    PyObject *obj=NULL;
 
@@ -4870,7 +4871,7 @@ static char asymmetric_object_private_encrypt__doc__[] =
 static PyObject *
 asymmetric_object_private_encrypt(asymmetric_object *self, PyObject *args)
 {
-   char *plain_text=NULL, *cipher_text=NULL;
+   const unsigned char *plain_text=NULL; unsigned char *cipher_text=NULL;
    int len=0, size=0;
    PyObject *obj=NULL;
 
@@ -4923,7 +4924,7 @@ static char asymmetric_object_public_decrypt__doc__[] =
 static PyObject *
 asymmetric_object_public_decrypt(asymmetric_object *self, PyObject *args)
 {
-   char *plain_text=NULL, *cipher_text=NULL;
+   unsigned char *plain_text=NULL; const unsigned char *cipher_text=NULL;
    int len=0, size=0;
    PyObject *obj=NULL;
 
@@ -4981,7 +4982,7 @@ static char asymmetric_object_private_decrypt__doc__[] =
 static PyObject *
 asymmetric_object_private_decrypt(asymmetric_object *self, PyObject *args)
 {
-   char *plain_text=NULL, *cipher_text=NULL;
+   unsigned char *plain_text=NULL; const unsigned char *cipher_text=NULL;
    int len=0, size=0;
    PyObject *obj=NULL;
 
@@ -5049,8 +5050,9 @@ static char asymmetric_object_sign__doc__[] =
 static PyObject *
 asymmetric_object_sign(asymmetric_object *self, PyObject *args)
 {
-   char *digest_text=NULL, *signed_text=NULL; 
-   int digest_len=0, digest_type=0, digest_nid=0, signed_len=0;
+   const unsigned char *digest_text=NULL; unsigned char *signed_text=NULL; 
+   int digest_len=0, digest_type=0, digest_nid=0;
+   unsigned int signed_len=0;
    PyObject *obj=NULL;
 
 	if (!PyArg_ParseTuple(args, "s#i", &digest_text, &digest_len, &digest_type))
@@ -5158,7 +5160,7 @@ static char asymmetric_object_verify__doc__[] =
 static PyObject *
 asymmetric_object_verify(asymmetric_object *self, PyObject *args)
 {
-   char *digest_text=NULL, *signed_text=NULL; 
+   const unsigned char *digest_text=NULL, *signed_text=NULL; 
    int digest_len=0, digest_type=0, digest_nid=0, signed_len=0, result=0;
 
 	if (!PyArg_ParseTuple(args, "s#s#i", &signed_text, &signed_len, &digest_text, &digest_len, &digest_type))
@@ -5309,8 +5311,8 @@ static char symmetric_object_encrypt_init__doc__[] =
 static PyObject *
 symmetric_object_encrypt_init(symmetric_object *self, PyObject *args)
 {
-   char *key=NULL, *iv=NULL, nulliv [] = "";
-   EVP_CIPHER *cipher=NULL;
+   const unsigned char *key=NULL, *iv=NULL, nulliv [] = "";
+   const EVP_CIPHER *cipher=NULL;
 
 	if (!PyArg_ParseTuple(args, "s|s", &key, &iv))
 		goto error;
@@ -5353,8 +5355,8 @@ static char symmetric_object_decrypt_init__doc__[] =
 static PyObject *
 symmetric_object_decrypt_init(symmetric_object *self, PyObject *args)
 {
-   char *key=NULL, *iv=NULL, nulliv [] = "";
-   EVP_CIPHER *cipher=NULL;
+   const unsigned char *key=NULL, *iv=NULL, nulliv [] = "";
+   const EVP_CIPHER *cipher=NULL;
 
 	if (!PyArg_ParseTuple(args, "s|s", &key, &iv))
 		goto error;

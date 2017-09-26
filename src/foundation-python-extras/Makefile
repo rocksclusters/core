@@ -165,7 +165,7 @@ build::
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)
 
-include MySQL-python.mk Numeric.mk \
+include POW.mk MySQL-python.mk Numeric.mk \
 	egenix-mx-base.mk libxml2dom.mk \
 	numarray.mk pexpect.mk IPy.mk docutils.mk \
 	SQLAlchemy.mk
