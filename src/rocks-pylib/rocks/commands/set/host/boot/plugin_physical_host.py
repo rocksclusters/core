@@ -130,12 +130,20 @@ import string
 import rocks.commands
 import os
 
+UEFI_TEMPLATE = """
+set timeout=5
+menuentry 'rocks' {
+     %s 
+     %s 
+}
+"""
 class Plugin(rocks.commands.Plugin):
 
 	def provides(self):
 		return 'physical-host'
 
-	def getFilename(self, nodeid):
+	def getHexIPAddr(self,nodeid):
+
 		#
 		# convert the ipaddress into a pxeboot configuration file
 		# name
@@ -152,14 +160,22 @@ class Plugin(rocks.commands.Plugin):
 
 		ipaddr, = self.db.fetchone()
 
-		filename = '/tftpboot/pxelinux/pxelinux.cfg/'
+		rstr = ''
 		for i in string.split(ipaddr, '.'):
 			hexstr = '%02x' % (int(i))
-			filename += '%s' % hexstr.upper()
+			rstr += '%s' % hexstr.upper()
+		return rstr
 
+
+	def getFilename(self,nodeid):
+		filename = '/tftpboot/pxelinux/pxelinux.cfg/'
+		filename += self.getHexIPAddr(nodeid)
 		return filename
 
-
+	def getUEFIFilename(self,nodeid):
+		filename = '/tftpboot/pxelinux/uefi.cfg/grub.cfg-'
+		filename += self.getHexIPAddr(nodeid)
+		return filename
 	def writeDefaultPxebootCfg(self):
 		nrows = self.db.execute("""select kernel, ramdisk, args from
 			bootaction where action='install' """)
@@ -296,6 +312,101 @@ class Plugin(rocks.commands.Plugin):
 			os.system('chmod 664 %s' % (filename))
 
 
+	def writeUEFIbootCfg(self, node, nodeid):
+		#
+		# there is a case where the host name may be in the nodes table
+		# but not in the boot table. in this case, remove the current
+		# configuration file (if it exists) and return
+		#
+		filename = self.getUEFIFilename(nodeid)
+
+		nrows = self.db.execute("""select action from boot where
+			node = %s """ % (nodeid))
+		if nrows < 1:
+			if filename != None and os.path.exists(filename):
+				os.unlink(filename)
+
+			return
+		else:
+			action, = self.db.fetchone()
+
+		#
+		# get the bootaction from the 'installaction' or
+		# 'runaction' column
+		#
+		if action in [ 'os', 'run' ]:
+			nrows = self.db.execute("""select runaction from 
+				nodes where name = '%s' """ % node)
+		elif action in [ 'install' ]:
+			nrows = self.db.execute("""select installaction from 
+				nodes where name = '%s' """ % node)
+		else:
+			print 'action "%s" for host "%s" is invalid' % \
+				(action, node)
+			sys.exit(-1)
+
+		if nrows == 1:
+			bootaction, = self.db.fetchone()
+		else:
+			print 'failed to get bootaction'
+			sys.exit(-1)
+
+		nrows = self.db.execute("""select kernel, ramdisk, args from
+			bootaction where action = '%s' """% bootaction)
+
+		if nrows == 1:
+			kernel, ramdisk, args = self.db.fetchone()
+		else:
+			print 'bootaction "%s" for host "%s" is invalid' % \
+				(action, node)
+			sys.exit(-1)
+
+		# If the ksdevice= is set fill in the ip information
+		# a well.  This will avoid the DHCP request inside
+		# anaconda.
+
+		if args and args.find('ksdevice=') != -1:
+			self.db.execute("""select net.ip
+				from networks net, subnets s, nodes n
+				where n.name='%s' and net.node=n.id and
+				s.id=net.subnet and s.name='private' and
+				net.ip is not NULL""" % node)
+			ip, = self.db.fetchone()
+			args += ' ip=%s ' % ip
+			attrs = self.db.getHostAttrs(node)
+			args += 'gateway=%s netmask=%s dns=%s nextserver=%s'%(\
+				attrs['Kickstart_PrivateGateway'],
+				attrs['Kickstart_PrivateNetmask'],
+				attrs['Kickstart_PrivateDNSServers'],
+				attrs['Kickstart_PrivateKickstartHost'])
+
+		if filename != None:
+			file = open(filename, 'w')	
+			kline = ''
+			if kernel:
+				if kernel.startswith('vmlinu'):
+					kline = 'linuxefi %s %s\n' % (kernel,args)
+				elif kernel.startswith('localboot'):
+					kline = 'exit'
+				else:
+					kline = kernel
+					if args is not None:
+						kline += " " + args
+
+			rdline = ''
+			if ramdisk and len(ramdisk) > 0:
+				rdline = 'initrdefi %s' % ramdisk
+			file.write(UEFI_TEMPLATE % (kline,rdline))
+
+			file.close()
+
+			#
+			# make sure apache can update the file
+			#
+			os.system('chown root.apache %s' % (filename))
+			os.system('chmod 664 %s' % (filename))
+
+
 	# Solaris Function Only
 	def writePxegrub(self, host, nodeid):
 		nrows = self.db.execute("select action from boot"
@@ -390,5 +501,5 @@ class Plugin(rocks.commands.Plugin):
 					self.writePxegrub(host, nodeid)
 
 				self.writePxebootCfg(host, nodeid)
-
+				self.writeUEFIbootCfg(host, nodeid)
 

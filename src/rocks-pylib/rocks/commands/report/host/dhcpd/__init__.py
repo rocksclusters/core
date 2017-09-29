@@ -174,6 +174,14 @@ import string
 import rocks.commands
 import rocks.ip
 
+# XXX - this shouldn't be hardcode as shim.efi
+UEFI_BIOS_TEMPLATE = """
+			if option arch = 00:07 {
+				filename "uefi.cfg/shim.efi";
+			} else {
+				filename "%s";	
+			}
+"""
 class Command(rocks.commands.HostArgumentProcessor,
 	rocks.commands.report.command):
 	"""
@@ -252,7 +260,7 @@ class Command(rocks.commands.HostArgumentProcessor,
 		self.addOutput('', '\t\t\tfixed-address %s;' % ip)
 
 		if filename:
-			self.addOutput('','\t\t\tfilename "%s";' % filename)
+			self.addOutput('',UEFI_BIOS_TEMPLATE % filename)
 		if nextserver:
 			self.addOutput('','\t\t\tnext-server %s;' % nextserver)
 		self.addOutput('', '\t\t}')
@@ -275,6 +283,8 @@ class Command(rocks.commands.HostArgumentProcessor,
 		netmask = self.db.getHostAttr('localhost',
 			'Kickstart_PrivateNetmask')
 
+		self.addOutput('', 'option space PXE;')
+		self.addOutput('', 'option arch code 93 = unsigned integer 16;')
 		self.addOutput('', 'ddns-update-style none;')
 		self.addOutput('', 'subnet %s netmask %s {'
 			% (network, netmask))

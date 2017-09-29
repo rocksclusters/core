@@ -19,10 +19,11 @@ except ImportError:
 	import blivet
 import time
 
-class RocksPartition:
+class RocksPartition(object):
 	saved_fstab = []
 	raidinfo = ''
 	mountpoints = []
+
 
 	def infoFromBlivet(self):
 		b = blivet.Blivet()
@@ -491,11 +492,15 @@ class RocksPartition:
 		size = 0
 
 		if mountpoint == 'root':
-			size = 16000
+			size = 16384
 		elif mountpoint == 'var':
-			size = 4000
+			size = 8192 
 		elif mountpoint == 'swap':
-			size = 1000
+			size = 1024
+		elif mountpoint == 'efi':
+			size = 2048
+		elif mountpoint == 'boot':
+			size = 2048
 
 		return size
 
@@ -507,6 +512,13 @@ class RocksPartition:
 		if arch == 'ia64':
 			p = 'part /boot/efi --size=1000 --fstype=vfat '
 			p += '--ondisk=%s\n' % (disk)
+
+		if self.uefi:
+			p = 'part '
+			p +=  '/boot/efi --size=%d --fstype=biosboot' % self.RocksGetPartsize('efi')
+			p += ' --ondisk=%s' % (disk)
+			self.mountpoints.append('/boot/efi')
+			parts.append(p)
 
 		p = 'part '
 		p += '/ --size=%d ' % (self.RocksGetPartsize('root'))
@@ -750,6 +762,7 @@ class RocksPartition:
 		syslog.openlog('ROCKS')
 		self.infoFromBlivet()
 		self.alwaysFormat=["/","/var","/boot"]
+		self.uefi = os.path.exists("/sys/firmware/efi")
 
 		#
 		# setup path to commands
