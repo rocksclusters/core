@@ -67,6 +67,16 @@ mv /tmp/all-rocks.js /usr/lib/firefox-*/defaults/preferences/
 	`grep 'processor' /proc/cpuinfo | wc -l`
 </file>
 
+<file name="/etc/rc.d/rocksconfig.d/post-91-attr-cleanup" perms="755">
+#!/bin/bash
+#
+# Remove some attributes in the database that may cause issues kickstarting
+# other types of nodes 
+#
+/opt/rocks/bin/rocks remove attr membership 
+/opt/rocks/bin/rocks remove attr appliance 
+/bin/rm /etc/rc.d/rocksconfig.d/post-91-attr-cleanup
+</file>
 </post>
 
 <post>
