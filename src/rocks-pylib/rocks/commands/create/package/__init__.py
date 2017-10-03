@@ -113,6 +113,13 @@ class Command(rocks.commands.create.command):
 	Release number of the created package (default is '1')
 	</param>
 
+	<param type='string' name='append-version-mk'>
+	Append the named file to the automatically created version.mk file.
+	This can be used to override any directives. Often used to define
+	the specific files that the package includes with RPM.FILES = directive
+	(Default is None)
+	</param>
+
 	<example cmd='create package /opt/stream stream'>
 	Create a package named stream in the current directory using the
 	contents of the /opt/stream directory.  The resulting package will
@@ -139,10 +146,11 @@ class Command(rocks.commands.create.command):
 
 		dir = args[0]
 			
-		(version, release, prefix) = self.fillParams(
+		(version, release, prefix, append_version_mk) = self.fillParams(
 			[('version', '1.0'),
 			('release', '1'),
-			('prefix', None)
+			('prefix', None),
+			('append-version-mk', None)
 			])
 		
 		rocksRoot = os.environ['ROCKSROOT']
@@ -166,12 +174,17 @@ class Command(rocks.commands.create.command):
 		file.write('SOURCE_DIRECTORY=%s\n' % dir)
 		file.write('DEST_DIRECTORY=%s\n' % cwd)
 		file.write('RPM.EXTRAS=AutoReqProv: no\n')
+
+		if append_version_mk is not None:
+			try:
+				f = open(append_version_mk,'r')
+				for line in f.readlines():
+					file.write(line)
+			except:
+				print "Error: Could not open/read %s" % append_version_mk
 		file.close()
 
 		for line in os.popen('make dir2pkg').readlines():
 			self.addText(line)
 
-		shutil.rmtree(tmp)
-		
-
-
+		# shutil.rmtree(tmp)
