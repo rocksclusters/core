@@ -338,6 +338,8 @@
 	line find the host 'localhost' correctly
 -->
 /bin/hostname &hostname;
+</post>
+
 
 <!--
 	Add the rocksdb user and group to the system.
@@ -345,9 +347,18 @@
 	Also setup the correct directories and their
 	permissions for running the database
 -->
+
+<post cond="rocks_version_major == 7">
+getent group rocksdb &gt;/dev/null || groupadd -r rocksdb
+getent passwd rocksdb &gt;/dev/null || useradd -r -g rocksdb -d /var/opt/rocks/mysql -m -s /bin/false rocksdb
+</post>
+
+<post cond="rocks_version_major == 6">
 groupadd -g 403 rocksdb
 useradd -u 403 -g rocksdb -d /var/opt/rocks/mysql -m -s /bin/false rocksdb
+</post>
 
+<post>
 /opt/rocks/mysql/sbin/mysql-install-db
 
 chgrp -R rocksdb /var/opt/rocks/mysql
