@@ -133,38 +133,42 @@ rm -f /etc/rc.d/rocksconfig.d/post-02-on-the-fly
 MOUNTPOINT=/mnt/priv
 if [ ! -d $MOUNTPOINT ]; then mkdir $MOUNTPOINT; fi
 mount -t ramfs -o size=1m ramfs $MOUNTPOINT
+RNDPW=$(/usr/bin/openssl rand -base64 32)
 chmod 700 $MOUNTPOINT
-
-RSAKEY=ssh_host_rsa_key
-DSAKEY=ssh_host_dsa_key
-for file in ${MOUNTPOINT}/${RSAKEY}* ${MOUNTPOINT}/${DSAKEY}*; do 
-	if [ -f $file ]; then
-		/bin/rm -f $file 
-	fi 
-done
-
+CIPHERS=("rsa" "dsa" "ecdsa" "ed25519")
+declare -A CIPHERARGS
+CIPHERARGS["rsa"]="-b 2048"
+CIPHERARGS["dsa"]="-b 1024"
+CIPHERARGS["ecdsa"]="-b 521"
+CIPHERARGS["ed25519"]="-b 1024"
+COMMONARGS="-q -C 'rocks-76-cluster-key'" 
 # generate the keyfiles 
-/usr/bin/ssh-keygen -q -t rsa -C '&hostname;-cluster-key' -N '' -f  ${MOUNTPOINT}/$RSAKEY
-/usr/bin/ssh-keygen -q -t dsa -C '&hostname;-cluster-key' -N '' -f  ${MOUNTPOINT}/$DSAKEY
-for file in ${RSAKEY} ${DSAKEY}; do 
-	chmod 0400 ${MOUNTPOINT}/$file
+for cipher in ${CIPHERS[*]}; do
+	KEYNAME=${MOUNTPOINT}/ssh_host_${cipher}_key
+	for file in ${KEYNAME}*; do 
+		if [ -f $file ]; then
+			/bin/rm -f $file 
+		fi 
+	done
+	/usr/bin/ssh-keygen ${CIPHERARGS[$cipher]} -N '' ${COMMONARGS} -t ${cipher} -f  ${KEYNAME}
+	chmod 0400 ${KEYNAME} 
 done
 
 # The following will fail if the key is already there, that's OK!
-
-/opt/rocks/bin/rocks add sec_attr $RSAKEY value=${MOUNTPOINT}/${RSAKEY} crypted=true 
-/opt/rocks/bin/rocks add sec_attr ${RSAKEY}.pub value=${MOUNTPOINT}/${RSAKEY}.pub crypted=true 
-/opt/rocks/bin/rocks add sec_attr $DSAKEY value=${MOUNTPOINT}/${DSAKEY} crypted=true
-/opt/rocks/bin/rocks add sec_attr ${DSAKEY}.pub value=${MOUNTPOINT}/${DSAKEY}.pub crypted=true
-
+for cipher in ${CIPHERS[*]}; do
+	KEYNAME=ssh_host_${cipher}_key
+	/opt/rocks/bin/rocks add sec_attr $KEYNAME value=${MOUNTPOINT}/${KEYNAME} crypted=true 
+	/opt/rocks/bin/rocks add sec_attr $KEYNAME.pub value=${MOUNTPOINT}/${KEYNAME}.pub crypted=true 
+done
 /bin/umount $MOUNTPOINT
 
 # Now add the frontend's specific Host keys, if already there, that's OK
 MOUNTPOINT=/etc/ssh
-/opt/rocks/bin/rocks add host sec_attr &hostname; attr=$RSAKEY value=${MOUNTPOINT}/${RSAKEY} crypted=true 
-/opt/rocks/bin/rocks add host sec_attr &hostname; attr=${RSAKEY}.pub value=${MOUNTPOINT}/${RSAKEY}.pub crypted=true 
-/opt/rocks/bin/rocks add host sec_attr &hostname; attr=$DSAKEY value=${MOUNTPOINT}/${DSAKEY} crypted=true
-/opt/rocks/bin/rocks add host sec_attr &hostname; attr=${DSAKEY}.pub value=${MOUNTPOINT}/${DSAKEY}.pub crypted=true
+for cipher in ${CIPHERS[*]}; do
+	KEYNAME=ssh_host_${cipher}_key
+	/opt/rocks/bin/rocks add host sec_attr rocks-76 attr=$KEYNAME value=${MOUNTPOINT}/${KEYNAME} crypted=true 
+	/opt/rocks/bin/rocks add host sec_attr rocks-76 attr=${KEYNAME}.pub value=${MOUNTPOINT}/${KEYNAME}.pub crypted=true 
+done
 
 # now generate the /etc/ssh/ssh_known_hosts file
 /opt/rocks/bin/rocks sync config
