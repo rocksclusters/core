@@ -141,7 +141,7 @@ CIPHERARGS["rsa"]="-b 2048"
 CIPHERARGS["dsa"]="-b 1024"
 CIPHERARGS["ecdsa"]="-b 521"
 CIPHERARGS["ed25519"]="-b 1024"
-COMMONARGS="-q -C 'rocks-76-cluster-key'" 
+COMMONARGS="-q -C '&hostname;-cluster-key'" 
 # generate the keyfiles 
 for cipher in ${CIPHERS[*]}; do
 	KEYNAME=${MOUNTPOINT}/ssh_host_${cipher}_key
@@ -166,8 +166,8 @@ done
 MOUNTPOINT=/etc/ssh
 for cipher in ${CIPHERS[*]}; do
 	KEYNAME=ssh_host_${cipher}_key
-	/opt/rocks/bin/rocks add host sec_attr rocks-76 attr=$KEYNAME value=${MOUNTPOINT}/${KEYNAME} crypted=true 
-	/opt/rocks/bin/rocks add host sec_attr rocks-76 attr=${KEYNAME}.pub value=${MOUNTPOINT}/${KEYNAME}.pub crypted=true 
+	/opt/rocks/bin/rocks add host sec_attr &hostname; attr=$KEYNAME value=${MOUNTPOINT}/${KEYNAME} crypted=true 
+	/opt/rocks/bin/rocks add host sec_attr &hostname; attr=${KEYNAME}.pub value=${MOUNTPOINT}/${KEYNAME}.pub crypted=true 
 done
 
 # now generate the /etc/ssh/ssh_known_hosts file
