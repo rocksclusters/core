@@ -347,11 +347,10 @@
 	Also setup the correct directories and their
 	permissions for running the database
 -->
-
-getent group rocksdb &gt;/dev/null || groupadd -r rocksdb
-getent passwd rocksdb &gt;/dev/null || useradd -r -g rocksdb -d /var/opt/rocks/mysql -m -s /bin/false rocksdb
-
 <post>
+/usr/bin/getent group rocksdb &gt;/dev/null || /usr/sbin/groupadd -r rocksdb
+/usr/bin/getent passwd rocksdb &gt;/dev/null || /usr/sbin/useradd -r -g rocksdb -d /var/opt/rocks/mysql -m -s /bin/false rocksdb
+
 /opt/rocks/mysql/sbin/mysql-install-db
 
 chgrp -R rocksdb /var/opt/rocks/mysql
