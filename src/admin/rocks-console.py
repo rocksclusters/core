@@ -207,6 +207,7 @@ class App(rocks.app.Application):
 			os.unlink(self.known_hosts)
 
 		cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
+		cmd += '-o GlobalKnownHostsFile=%s ' % (self.known_hosts)
 		cmd += '-L %d:127.0.0.1:%d ' % (self.localport, self.remoteport)
 		cmd += '%s -p %d ' % (self.nodename,self.sshport)
 		cmd += '\'/bin/bash -c "sleep 20"\' '
