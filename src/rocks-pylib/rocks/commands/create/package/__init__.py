@@ -182,6 +182,12 @@ class Command(rocks.commands.create.command):
 					file.write(line)
 			except:
 				print "Error: Could not open/read %s" % append_version_mk
+		else:
+			files=[]
+			for root,subdir,fs in os.walk(dir):
+				for ff in fs:
+					files.append(os.path.join(root,ff))
+			file.write('RPM.FILES=%s\n' % "\\n".join(files))
 		file.close()
 
 		for line in os.popen('make dir2pkg').readlines():
