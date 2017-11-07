@@ -22,7 +22,7 @@ def parseArgs(params,argv):
 
 def grub_append(line,keyword,args):
 	if keyword in line:
-		rhs=line.split("=")[-1]
+		rhs=line.split("=",1)[-1]
 		if rhs.startswith('"'):
 			rhs=rhs[1:]
 		if rhs.endswith('"'):
@@ -39,7 +39,7 @@ def grub_append(line,keyword,args):
 
 def grub_delete(line,keyword,args):
 	if keyword in line:
-		rhs=line.split("=")[-1]
+		rhs=line.split("=",1)[-1]
 		if rhs.startswith('"'):
 			rhs=rhs[1:]
 		if rhs.endswith('"'):
@@ -56,7 +56,7 @@ def grub_delete(line,keyword,args):
 
 def grub_replace(line,keyword,args):
 	if keyword in line:
-		rhs=line.split("=")[-1]
+		rhs=line.split("=",1)[-1]
 		return '%s="' % keyword + " ".join(args) + '"'
 	else:
 		return line
@@ -64,6 +64,10 @@ def grub_replace(line,keyword,args):
 
 ### Main Program
 args = parseArgs(params,sys.argv)
+
+# if there is nothing to do, leave the file alone
+if len(args) == 0:
+	sys.exit(0)
 try:
 	f = open(params['grubfile'],"r")
 except:
