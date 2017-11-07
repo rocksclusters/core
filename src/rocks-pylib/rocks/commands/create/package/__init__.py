@@ -166,6 +166,9 @@ class Command(rocks.commands.create.command):
 		os.chdir(tmp)
 
 
+		nofiles = open(os.path.join(tmp, 'rocks.empty'),'w')
+		nofiles.write('')
+		nofiles.close()
 		file = open(os.path.join(tmp, 'version.mk'), 'w')
 		file.write('NAME=%s\n' % name)
 		file.write('VERSION=%s\n' % version)
@@ -187,7 +190,10 @@ class Command(rocks.commands.create.command):
 			for root,subdir,fs in os.walk(dir):
 				for ff in fs:
 					files.append(os.path.join(root,ff))
-			file.write('RPM.FILES=%s\n' % "\\n".join(files))
+			if len(files) > 0:
+				file.write('RPM.FILES=%s\n' % "\\n".join(files))
+			else:
+				file.write('RPM.FILESLIST=rocks.empty\n')
 		file.close()
 
 		for line in os.popen('make dir2pkg').readlines():
