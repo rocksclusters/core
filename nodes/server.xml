@@ -151,7 +151,7 @@ for cipher in ${CIPHERS[*]}; do
 		fi 
 	done
 	/usr/bin/ssh-keygen ${CIPHERARGS[$cipher]} -N '' ${COMMONARGS} -t ${cipher} -f  ${KEYNAME}
-	chmod 0400 ${KEYNAME} 
+	/usr/bin/chmod 0400 ${KEYNAME} 
 done
 
 # The following will fail if the key is already there, that's OK!
@@ -166,6 +166,7 @@ done
 MOUNTPOINT=/etc/ssh
 for cipher in ${CIPHERS[*]}; do
 	KEYNAME=ssh_host_${cipher}_key
+	/bin/chmod go-rw ${MOUNTPOINT}/${KEYNAME}
 	/opt/rocks/bin/rocks add host sec_attr &hostname; attr=$KEYNAME value=${MOUNTPOINT}/${KEYNAME} crypted=true 
 	/opt/rocks/bin/rocks add host sec_attr &hostname; attr=${KEYNAME}.pub value=${MOUNTPOINT}/${KEYNAME}.pub crypted=true 
 done
