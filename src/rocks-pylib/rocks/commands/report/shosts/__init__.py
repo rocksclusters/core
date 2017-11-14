@@ -94,7 +94,7 @@ class Command(command):
 				h = '%s' % (ip)
 				self.addOutput('localhost', h)
 
-		# Finally, add the ssh_known_hosts.local file to the list
+		# Finally, add the shosts.equiv.local file to the list
 		shostlocal = '/etc/ssh/shosts.equiv.local'
 		try:
 			f = open(shostlocal,'r')
