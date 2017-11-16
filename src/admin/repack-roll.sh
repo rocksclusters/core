@@ -61,6 +61,7 @@ TEMPDIR=$(mktemp -d)
 echo /bin/cp $ISONAME $TEMPDIR
 /bin/cp $ISONAME $TEMPDIR
 SHORTISONAME=$(basename $ISONAME)
+SHORTISOBASENAME=$(basename -s .iso $SHORTISONAME) 
 CWD=$(pwd)
 pushd $TEMPDIR
 for f in `$LISTISOFILES $SHORTISONAME`; do
@@ -76,7 +77,7 @@ ROLLXML=roll*xml
 if [ -f $ROLLXML ]; then
 	mv ${SHORTISONAME} ${SHORTISONAME}.orig
 	rocks create roll $ROLLXML
-	mv ${SHORTISONAME} ${CWD}/${SHORTISONAME}.repacked 
+	mv ${SHORTISONAME} ${CWD}/${SHORTISOBASENAME}.repacked.iso
 fi
 popd
 echo $TEMPDIR
