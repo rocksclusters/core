@@ -1,5 +1,6 @@
 [Unit]
 Description=Rocks Post-Configuration Scripts
+Requires=sshd.service
 After=sshd.service
 After=foundation-mysql.service
 Wants=foundation-mysql.service
