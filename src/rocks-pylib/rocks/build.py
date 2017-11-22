@@ -951,7 +951,7 @@ class MirrorBuilder(Builder):
 # this will be copied to the rolls directory to reliably return directory
 # listings
 #
-directory_listing_cgi = """#!/opt/rocks/bin/python
+directory_listing_cgi = """#!/usr/bin/env python
 
 import os
 

@@ -162,6 +162,7 @@ graph_files := $(wildcard graphs/$(graph_dir)/*.xml)
 site_nodes := $(wildcard site-nodes/*.xml)
 screen_files := $(wildcard include/screens/*.py)
 javascript_files := $(wildcard include/javascript/*.js)
+json_files := $(wildcard include/json/*.json)
 
 
 ifdef __RULES_LINUX_CENTOS_MK
@@ -192,7 +193,7 @@ $(node_files)::
 		-e 's%[[:space:]]*</changelog>%]]></changelog>%g' \
 		$@ > $(ROOT)/$(PROFILE_DIR)/$@
 
-$(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files)::
+$(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files) $(json_files)::
 	$(INSTALL) -m0644 $@ $(ROOT)/$(PROFILE_DIR)/$@
 
 profile_dir::
@@ -213,10 +214,12 @@ profile_dir::
 		( mkdir -p $(ROOT)/$(PROFILE_DIR)/include/applets; ) fi
 	if [ -d include/javascript ]; then \
 		( mkdir -p $(ROOT)/$(PROFILE_DIR)/include/javascript; ) fi
+	if [ -d include/json ]; then \
+		( mkdir -p $(ROOT)/$(PROFILE_DIR)/include/json; ) fi
 
 build: roll-$(ROLLNAME).xml
 
-install:: profile_dir $(node_files) $(graph_files) $(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files)
+install:: profile_dir $(node_files) $(graph_files) $(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files) $(json_files)
 	if [ -f roll-$(ROLLNAME).xml ]; then \
 		( $(INSTALL) -m0644 roll-$(ROLLNAME).xml \
 			$(ROOT)/$(PROFILE_DIR)/ ; ); fi

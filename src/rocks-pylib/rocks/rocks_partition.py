@@ -50,8 +50,13 @@ class RocksPartition(object):
 		drive = filter(lambda x: x.name is devname, self.disks)	
 		if len(drive) == 0:
 			return False
-		if drive[0].format.labelType == 'gpt':
-			return True
+		# Weird, in the field. Some disk objects from Blivet
+		# do not have a labelType field.
+		try:
+			if drive[0].format.labelType == 'gpt':
+				return True
+		except:
+			pass
 		return False
 		
 	def getDevice(self, str):

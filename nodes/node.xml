@@ -341,6 +341,7 @@
   <package os='linux'>rocks-config</package>
   <package os='linux'>sudo</package>
   <package os='linux' cond="rocks_version_major == 7">rocks-rc-systemd</package>
+  <package os='linux' cond="rocks_version_major == 7">at</package>
 
   <package os='sunos'>SFWsudo</package>
 

@@ -1,7 +1,11 @@
 [Unit]
 Description=Rocks Post-Configuration Scripts
+Requires=sshd.service
 After=sshd.service
 After=foundation-mysql.service
+After=atd.service
+Wants=foundation-mysql.service
+Wants=atd.service
 
 [Service]
 Type=oneshot

@@ -142,8 +142,10 @@ class App(rocks.app.Application):
 		self.nodename = ''
 		self.known_hosts = '/tmp/.known_hosts'
 		self.defaultport = 5901
+		self.sshport	= 22
 		if self.usage_version.split('.')[0] == '6':	
 			self.remotedefaultport = 5900
+			self.sshport = 2200
 		else:
 			self.remotedefaultport = self.defaultport 
 		self.localport = 0
@@ -185,8 +187,8 @@ class App(rocks.app.Application):
 
 
 	def vncviewer(self):
-		cmd = 'vncviewer --name=%s localhost:%d' \
-			% (self.nodename, self.localport - self.defaultport + 1)
+		cmd = 'vncviewer localhost:%d' \
+			% (self.localport - self.defaultport + 1)
 		os.system(cmd)
 
 		return
@@ -205,8 +207,9 @@ class App(rocks.app.Application):
 			os.unlink(self.known_hosts)
 
 		cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
+		cmd += '-o GlobalKnownHostsFile=%s ' % (self.known_hosts)
 		cmd += '-L %d:127.0.0.1:%d ' % (self.localport, self.remoteport)
-		cmd += '%s -p 2200 ' % (self.nodename)
+		cmd += '%s -p %d ' % (self.nodename,self.sshport)
 		cmd += '\'/bin/bash -c "sleep 20"\' '
 		self.s.close()
 		os.system(cmd)

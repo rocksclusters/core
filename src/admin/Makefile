@@ -336,7 +336,8 @@ ROCKSROOT       = ../devel/devel
 include Rules.mk
 
 ROOTONLY	= big-red-button rocks-user-sync shoot-node rocks-db-perms
-ANYONE		= cluster-fork cluster-kill rocks-console gen_root_pw
+ANYONE		= cluster-fork cluster-kill rocks-console gen_root_pw 
+ANYONE 		+= listisofiles repack-roll modify-grub2 restore-keys
 SCRIPTS		= $(ANYONE) $(ROOTONLY)
 
 build::
