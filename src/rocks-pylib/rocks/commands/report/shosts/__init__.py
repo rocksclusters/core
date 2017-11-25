@@ -93,7 +93,18 @@ class Command(command):
 				# Construct the shosts entry we only use the ip
 				h = '%s' % (ip)
 				self.addOutput('localhost', h)
-		
+
+		# Finally, add the shosts.equiv.local file to the list
+		shostlocal = '/etc/ssh/shosts.equiv.local'
+		try:
+			f = open(shostlocal,'r')
+			self.addOutput('localhost','#\n# Imported from %s\n#' % shostlocal)
+			h = f.read()
+			self.addOutput('localhost',h)
+			f.close()
+		except :
+			pass
+               
 		self.addOutput('localhost', '</file>')
 		self.endOutput(padChar='')
 

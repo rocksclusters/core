@@ -141,7 +141,7 @@ class Command(rocks.commands.add.appliance.command):
 			gateway = "''"
 		else:
 			subnet = None
-			gateway = "'%s'" % gateway
+			gateway = "%s" % gateway
 
 		# Now that we know things will work insert the route for
 		# all the appliances
