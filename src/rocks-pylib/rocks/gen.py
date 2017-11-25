@@ -790,6 +790,7 @@ class MainNodeFilter_linux(NodeFilter):
 			'driverdisk',
 			'eula',
 			'firstboot',
+			'ignoredisk',
 			'install',
 			'nfs',
 			'cdrom',
