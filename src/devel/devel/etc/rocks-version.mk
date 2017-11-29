@@ -5,9 +5,10 @@
 # 
 # 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
+# 		         version 6.2 (SideWindwer)
+# 		         version 7.0 (Manzanita)
 # 
-# Copyright (c) 2000 - 2014 The Regents of the University of California.
+# Copyright (c) 2000 - 2017 The Regents of the University of California.
 # All rights reserved.	
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -314,9 +315,10 @@ rocks-copyright.txt:
 	@echo '' >> $@
 	@echo '				Rocks(r)' >> $@
 	@echo '		         www.rocksclusters.org' >> $@
-	@echo '		         version 6.2 (SideWinder)' >> $@
+	@echo '		         version 6.2 (SideWindwer)' >> $@
+	@echo '		         version 7.0 (Manzanita)' >> $@
 	@echo '' >> $@
-	@echo 'Copyright (c) 2000 - 2014 The Regents of the University of California.' >> $@
+	@echo 'Copyright (c) 2000 - 2017 The Regents of the University of California.' >> $@
 	@echo 'All rights reserved.	' >> $@
 	@echo '' >> $@
 	@echo 'Redistribution and use in source and binary forms, with or without' >> $@
