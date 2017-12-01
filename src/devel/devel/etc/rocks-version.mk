@@ -5,7 +5,7 @@
 # 
 # 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		         version 6.2 (SideWindwer)
+# 		         version 6.2 (SideWinder)
 # 		         version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
@@ -315,7 +315,7 @@ rocks-copyright.txt:
 	@echo '' >> $@
 	@echo '				Rocks(r)' >> $@
 	@echo '		         www.rocksclusters.org' >> $@
-	@echo '		         version 6.2 (SideWindwer)' >> $@
+	@echo '		         version 6.2 (SideWinder)' >> $@
 	@echo '		         version 7.0 (Manzanita)' >> $@
 	@echo '' >> $@
 	@echo 'Copyright (c) 2000 - 2017 The Regents of the University of California.' >> $@
