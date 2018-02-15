@@ -17,6 +17,7 @@ ifeq ($(strip $(VERSION.MAJOR)), 5)
 PY.VERSION	= 2.4
 endif
 ifeq ($(strip $(VERSION.MAJOR)), 6)
+PY.VERSION	= 2.6
 endif
 ifeq ($(strip $(VERSION.MAJOR)), 7)
 PY.VERSION	= 2.7
