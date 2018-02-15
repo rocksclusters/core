@@ -99,4 +99,4 @@ if [ `./_os` == "linux" ]; then
 fi
 
 # 5. Add a rocks distribution to system
-/usr/bin/cat nodes/yum-core.xml | /opt/rocks/bin/rocks report post attrs="`/opt/rocks/bin/rocks report host attr localhost pydict=true`" | sh
+cat nodes/yum-core.xml | /opt/rocks/bin/rocks report post attrs="`/opt/rocks/bin/rocks report host attr localhost pydict=true`" | sh
