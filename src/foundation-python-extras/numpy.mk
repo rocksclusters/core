@@ -113,9 +113,14 @@
 # - more source built foundations
 # - scipy stuff is here now (may move to hpc roll)
 #
-
+ifeq ($(strip $(VERSION.MAJOR)), 6)
 NUMPY_VERSION = 1.2.1
+endif 
+
+ifeq ($(strip $(VERSION.MAJOR)), 7)
 NUMPY_VERSION = 1.10.4
+endif
+
 build::
 	gunzip -c numpy-$(NUMPY_VERSION).tar.gz | $(TAR) -xf -
 	(								\

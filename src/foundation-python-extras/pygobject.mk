@@ -81,10 +81,13 @@
 # updates for V
 #
 #
-
+ifeq ($(strip $(VERSION.MAJOR)), 6)
 PYGOBJECT_VERSION	= 2.14.1
-PYGOBJECT_VERSION	= 3.14.0
+endif
 
+ifeq ($(strip $(VERSION.MAJOR)), 7)
+PYGOBJECT_VERSION	= 3.14.0
+endif
 build::
 	gunzip -c pygobject-$(PYGOBJECT_VERSION).tar.gz | $(TAR) -xf -
 	(								\
