@@ -419,6 +419,7 @@ import xml.dom.NodeFilter
 import xml.dom.ext.reader.Sax2
 import rocks.js
 import rocks.cond
+import yaml
 	
 		
 
@@ -842,7 +843,8 @@ class OtherNodeFilter_linux(NodeFilter):
 			'pre', 
 			'post',
 			'boot',
-			'configure'
+			'configure',
+			'ansible'
 			]:
 			return self.FILTER_SKIP
 			
@@ -870,6 +872,9 @@ class Generator_linux(Generator):
 		self.phases		= ['post', 'pre']
 
 		self.log = '/mnt/sysimage/var/log/rocks-install.log'
+		self.ansblBookpath = os.path.join(os.path.sep,"var","rocks",
+				"ansible")
+		self.ansblDistroPath = os.path.join("include","ansible")
 
 
 	def set_phases(self, values):
@@ -1099,6 +1104,117 @@ class Generator_linux(Generator):
 		else:
 			arg = ''
 		list = []
+		# Add the args to the %post line
+		list.append(string.strip(arg))
+		# Add the interpreter to use for this post section
+		list.append(string.strip('#!%s' % interpreter))
+		list.append(self.getChildText(node))
+		self.ks['post'].append(list)
+
+
+	# <ansible>
+	def parse_ansible(self,node):
+		attr = node.attributes
+		# Parse playbook attribute
+		try:
+			book = attr.getNamedItem((None,'playbook')).value
+		except:
+			book = None			
+
+		# Parse ansible_cmd attribute
+		try:
+			cmd = attr.getNamedItem((None,'ansible_cmd')).value
+		except:
+			cmd = '/usr/bin/ansible-playbook'			
+		# Parse args attribute
+		try:
+			args = attr.getNamedItem((None,'args')).value
+		except:
+			args = ''			
+		return (book, cmd, args)
+
+	def handle_ansible(self, node):
+
+		# get the arguments to ansible
+		# <ansible playbook=  ansible_cmd=   args= >
+		(book,cmd, args) = self.parse_ansible(node)
+
+		# Attempt to read the playbook content from a file
+		playbook = None
+		try:
+			bookpath = os.path.join(self.ansblDistroPath, book)
+			playbook = open(bookpath,'r')
+		except:
+			try:
+				playbook = open(book,'r')
+			except:
+				pass
+		if book is not None:
+			lines = playbook.readlines()	
+			book=os.path.basename(book)
+		else:
+			nodename = node.attributes.getNamedItem((None,'file')).value
+			book = nodename + ".yml"
+			
+
+		# read any lines that are "inline"
+		lines.append(self.getChildText(node))
+
+		# create a HERE document to write out playbook contents
+		# This is wrapped inside of standard post section
+		doclist = []
+		ymlfile = os.path.join(self.ansblBookpath,book)
+		doclist.append('')
+		doclist.append("#!/bin/bash")
+		p = self.ansblBookpath
+		doclist.append("if [ ! -d %s ]; then mkdir -p %s; fi" % (p,p))
+		doclist.append("cat > %s << 'ROCKS-KS-YML'" % ymlfile)
+		doclist.append("".join(lines))
+		doclist.append('\nROCKS-KS-YML')
+
+		# execute ansible 
+		doclist.append("%s %s %s\n" % (cmd,args,ymlfile))
+		self.ks['post'].append(doclist)
+
+
+		# Extract any package information and place into the self.ks['rpms-on']
+		(iPkgs,dPkgs) = self.extractPkgsFromAnsible(lines)
+		for pkgList in iPkgs:
+			for pkg in pkgList.split():
+				self.ks['rpms-on'].append(pkg)
+				if pkg in self.ks['rpms-off']:
+					self.ks['rpms-off'].remove(pkg)
+
+		for pkgList in dPkgs:
+			for pkg in pkgList.split():
+				if pkg not in self.ks['rpms-on']:
+					self.ks['rpms-off'].append(pkg)
+
+	def extractPkgsFromAnsible(self,lines):
+		yString = "".join(lines)
+
+		ydata =  yaml.load(yString)
+		ye = []
+		tasks = map(lambda x: x['tasks'],filter(lambda x : x.has_key('tasks'),ydata))
+		for entry in tasks:
+			for task in entry:
+				try:
+					ye.append(task['yum'])	
+				except:
+					pass
+		yumentries = filter(lambda x: x.has_key('state') and x.has_key('name'), ye)
+	
+		installStates = ('present','latest','installed')
+		removeStates = ('absent','removed')
+		iPkgs = map(lambda x: x['name'], 
+			filter(lambda x: any(ext in x['state'] for ext in installStates),yumentries))
+		dPkgs = map(lambda x: x['name'], 
+			filter(lambda x: any(ext in x['state'] for ext in removeStates),yumentries))
+		return(iPkgs,dPkgs)
+
+	def generate_boot(self):
+
+				 
 		# Add the args to the %post line
 		list.append(string.strip(arg))
 		# Add the interpreter to use for this post section

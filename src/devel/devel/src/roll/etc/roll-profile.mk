@@ -195,7 +195,7 @@ $(node_files)::
 		-e 's%[[:space:]]*</changelog>%]]></changelog>%g' \
 		$@ > $(ROOT)/$(PROFILE_DIR)/$@
 
-$(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files) $(json_files)::
+$(screen_files) $(install_class_files) $(install_classes_files) $(applet_files) $(javascript_files) $(json_files) $(ansible_files) ::
 	$(INSTALL) -m0644 $@ $(ROOT)/$(PROFILE_DIR)/$@
 
 profile_dir::
