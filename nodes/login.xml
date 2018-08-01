@@ -25,5 +25,5 @@ the start of the login appliance
 
 </changelog>
 
-<ansible name="login.yml"/>
+<ansible playbook="login.yml"/>
 </kickstart> 
