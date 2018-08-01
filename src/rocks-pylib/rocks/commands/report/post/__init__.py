@@ -110,6 +110,13 @@ class Command(rocks.commands.report.command):
 	Attributes to be used while building the output shell script.
 	</param>
 
+	<param optional='1' type='string' name='ansible'>
+	report post configuration only from ansible files (ignore most post sections)
+	</param>
+
+	<param optional='1' type='string' name='attrs'>
+	Attributes to be used while building the output shell script.
+	</param>
 	<example cmd="cat database.xml | rocks report post attrs=&quot;{'os':'linux'}&quot;">
 	Take database.xml file in the base roll and create a script from the
 	post section. Adding attrs="{'os':'linux'}'" to the command will
@@ -158,15 +165,10 @@ class Command(rocks.commands.report.command):
 
 		self.generator.attrs = self.attrs
 		self.generator.parse(xml)
-		section_name = 'post'
-		if self.os == 'sunos':
-			section_name = 'finish'
 
-		list += self.generator.generate(section_name)
+		for section_name in ('post','configure','ansible'):
+			list += self.generator.generate(section_name)
 
-		section_name = 'configure'
-		list += self.generator.generate('configure')
-			
 		for line in list:
 			if line.startswith("%post") or line.startswith("%end"):
 				continue
@@ -175,23 +177,25 @@ class Command(rocks.commands.report.command):
 
 
 	def run(self, params, args):
-		self.os, self.arch, attributes = self.fillParams([
+		self.os, self.arch, attributes, ansible = self.fillParams([
 			('os', self.os),
 			('arch', self.arch),
-			('attrs', )
+			('attrs', None ),
+			('ansible','False')
 			])
 
 		c_gen = getattr(rocks.gen,'Generator_%s' % self.os)
 		self.generator = c_gen()
 		self.generator.setArch(self.arch)
 		self.generator.setOS(self.os)
+		self.generator.set_ansible(self.str2bool(ansible))
 
 		starter_tag = 'kickstart'
 		if self.os == 'sunos':
 			starter_tag = 'jumpstart'
 
 		# Either all attributes are explictly specified
-		if attributes:
+		if attributes is not None:
 			self.attrs = eval(attributes)
 		else:
 			# OR implicit from os and arch (common case)
