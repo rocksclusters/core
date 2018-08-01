@@ -868,6 +868,7 @@ class Generator_linux(Generator):
 		self.ks['post']         = []
 		self.ks['boot-pre']	= []
 		self.ks['boot-post']	= []
+		self.ks['playbooks']	= []
 
 		self.phases		= ['post', 'pre']
 
@@ -1176,17 +1177,18 @@ class Generator_linux(Generator):
 		doclist.append("%s %s %s\n" % (cmd,args,ymlfile))
 		self.ks['post'].append(doclist)
 
-
 		# Extract any package information and place into the self.ks['rpms-on']
 		(iPkgs,dPkgs) = self.extractPkgsFromAnsible(lines)
 		for pkgList in iPkgs:
-			for pkg in pkgList.split():
+			for pkg in pkgList.split(','):
+				pkg = pkg.strip()
 				self.ks['rpms-on'].append(pkg)
 				if pkg in self.ks['rpms-off']:
 					self.ks['rpms-off'].remove(pkg)
 
 		for pkgList in dPkgs:
 			for pkg in pkgList.split():
+				pkg = pkg.strip()
 				if pkg not in self.ks['rpms-on']:
 					self.ks['rpms-off'].append(pkg)
 

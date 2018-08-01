@@ -25,6 +25,5 @@ the start of the login appliance
 
 </changelog>
 
-<package>pdsh</package>
-<package>rocks-config-server</package>
+<ansible name="login.yml"/>
 </kickstart> 
