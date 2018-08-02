@@ -1261,9 +1261,9 @@ class Generator_linux(Generator):
 			return
 		book = self.randomString(len=8,basename='rocks-ansible-')
 		ymlfile = os.path.join(self.ansblBookpath,book)
-		lines = ["---\n- hosts: localhost\n  tasks:\n"]
+		lines = ["---\n"]
 		for playbook in playbooks:
-			lines.append("    - include: %s\n" % playbook)
+			lines.append("- import_playbook: %s\n" % playbook)
 		doclist = self.write_playbook(ymlfile,lines) 
 		doclist.append("##### RUN the Meta Playbook #####")
 		doclist.append("%s %s %s" % ('ansible-playbook','',ymlfile))

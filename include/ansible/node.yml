@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  tasks:
+  - name:  Configure Basic Rocks Node
+    become: true
+    yum:
+      name: rocks-config, sudo, rocks-rc-systemd, at 
+      state: latest
+  - name: turn on ip forwarding (v4)
+    lineinfile:
+      path: /etc/sysctl.conf
+      regexp: 'net\.ipv4\.ip_forward.*'
+      line: 'net.ipv4.ip_forward = 1'
+      state: present
+  - name: Set up /etc/ld.so.conf  /lib64
+    lineinfile:
+      path: /etc/ld.so.conf
+      line: /lib64
+      state: present
+  - name: Set up /etc/ld.so.conf  /usr/lib64
+    lineinfile:
+      path: /etc/ld.so.conf
+      line: /usr/lib64
+      state: present
+  - name: Set up /etc/ld.so.conf  /usr/kerberos/lib64
+    lineinfile:
+      path: /etc/ld.so.conf
+      line: /usr/kerberos/lib64
+      state: present
