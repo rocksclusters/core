@@ -586,13 +586,21 @@ default: dump-version dump-name dump-arch
 
 # --------------------------------------------------------------------- #
 # Use this target to make sure only the root account is building
-# packages.  Some work without but many require root, standardize
-# and always require root.
+# packages if ROOTREQUIRED is defined.  Many packages work without being root,
+# but some require root, standardize on not requiring root, but forcing it
+# if desired 
 # --------------------------------------------------------------------- #
 
 .PHONY: root-check
+
+UID = $(USERID) 
+ifndef ROOTREQUIRED
+UID = 0
+endif 
+
 root-check:
-	@if [ "$(USERID)" != "0" ] ; then \
+
+	@if [ "$(UID)" != "0" ] ; then \
 		echo ; \
 		echo ; \
 		echo ERROR - YOU MUST BE ROOT TO BUILD PACKAGES; \
