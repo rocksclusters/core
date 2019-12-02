@@ -340,6 +340,15 @@ endif
 ifneq ($(RPM.REQUIRES),)
 rpm.requires = Requires: $(RPM.REQUIRES)
 endif
+ifneq ($(RPM.PROVIDES),)
+rpm.provides = Provides: $(RPM.PROVIDES)
+endif
+ifneq ($(RPM.OBSOLETES),)
+rpm.obsoletes = Obsoletes: $(RPM.OBSOLETES)
+endif
+ifneq ($(RPM.CONFLICTS),)
+rpm.conflicts = Conflicts: $(RPM.CONFLICTS)
+endif
 
 ifneq ($(shell echo *.spec.in),*.spec.in)
 oldstylespecfiles = 1
@@ -416,6 +425,9 @@ $(NAME).spec: $(NAME).spec.mk
 	$(PF) "$(rpm.prefix)\n" >> $@
 	$(PF) "$(rpm.arch)\n" >> $@
 	$(PF) "$(rpm.requires)\n" >> $@
+	$(PF) "$(rpm.provides)\n" >> $@
+	$(PF) "$(rpm.obsoletes)\n" >> $@
+	$(PF) "$(rpm.conflicts)\n" >> $@
 	echo -e "$(RPM.EXTRAS)" >> $@
 	$(PF) "%%description\n" >> $@
 	if [ ! -f DESCRIPTION ]; then			\
