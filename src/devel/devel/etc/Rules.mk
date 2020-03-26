@@ -561,7 +561,11 @@ MAILTO    = info@rocksclusters.org
 # --------------------------------------------------------------------- #
 CC = gcc
 CFLAGS    = -g -Wall
-CPPFLAGS  = -DVERSION="\"$(VERSION)\""
+# Have CPPFLAGS empty
+# CPPFLAGS  = -DVERSION="\"$(VERSION)\""
+ifndef CPPFLAGS
+CPPFLAGS  =
+endif 
 
 RPCGEN = rpcgen
 RPCGENFLAGS = -C -T
