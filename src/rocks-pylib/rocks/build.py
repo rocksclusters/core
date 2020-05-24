@@ -1551,7 +1551,7 @@ class DistributionBuilder(Builder):
         dict = {}
         for e in files:
             name = e.getUniqueName() # name w/ arch string appended
-            if not dict.has_key(name) or e >= dict[name]:
+            if not dict.has_key(name) or e.getName() >= dict[name].getName():
                 dict[name] = e
 
         # Extract the File objects from the dictionary and return
