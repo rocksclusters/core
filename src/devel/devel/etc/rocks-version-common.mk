@@ -114,6 +114,13 @@ VERSION.MINOR = 1
 #VERSION.PATCH = 3
 RELEASE_NAME = Coffeeberry
 endif
+
+ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 8)
+VERSION.MAJOR = 8
+VERSION.MINOR = 0
+#VERSION.PATCH = 3
+RELEASE_NAME = Gorgonio 
+endif
 VERSION_NAME = "$(RELEASE_NAME)"
 
 rocks-version-common.mk: $(wildcard $(ROCKSROOT)/etc/rocks-version-common.mk)

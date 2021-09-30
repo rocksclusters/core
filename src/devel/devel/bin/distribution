@@ -110,7 +110,7 @@ fi
 ##
 
 case $DIST in
-    CentOS|Red|Scientific)
+    CentOS|Red|Scientific|Rocky)
 	echo centos
         ;;
     *)

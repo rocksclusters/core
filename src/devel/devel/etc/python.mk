@@ -22,6 +22,9 @@ endif
 ifeq ($(strip $(VERSION.MAJOR)), 7)
 PY.VERSION	= 2.7
 endif
+ifeq ($(strip $(VERSION.MAJOR)), 8)
+PY.VERSION	= $(shell python -c 'import sys; sys.stdout.write("%d.%d"%(sys.version_info.major,sys.version_info.minor))')
+endif
 PY.PATH		= /opt/rocks/bin/python
 PY.LIB		= python$(PY.VERSION)
 PY.ROCKS	= /opt/rocks/lib/$(PY.LIB)/site-packages/
