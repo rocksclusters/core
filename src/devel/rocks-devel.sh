@@ -81,4 +81,5 @@
 
 export ROCKSROOT=/opt/rocks/share/devel
 export ROLLSROOT=/opt/rocks/share/devel/src/roll
-
+export TOKENFILE=${HOME}/gdriveToken
+export GSAPICLIENTCONF=${ROCKSROOT}/bin/client.conf

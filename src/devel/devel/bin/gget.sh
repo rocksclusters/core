@@ -68,8 +68,8 @@ ERRNO=0
 while [ $TRIES -gt 0 ]; do
    let TRIES=TRIES-1
    HEADER="Authorization: Bearer ${access_token}"
-   echo "$HEADER"
-   echo "$DLPATH"
+   # echo "$HEADER"
+   echo "Retrieving $OUTFILE with curl from $DLPATH" >&2
    curl -f -H "${HEADER}" -o $TMPFILE "$DLPATH" 
    ## Handle the case where curl returned an and attempt a refresh token 
    ERRNO=$?

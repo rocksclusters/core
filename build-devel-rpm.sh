@@ -66,7 +66,7 @@ PACKAGES="$PACKAGES coreutils curl"
 # rpm build
 PACKAGES="$PACKAGES rpm-build rpm-devel createrepo"
 # rpm make gcc 
-PACKAGES="$PACKAGES make gcc"
+PACKAGES="$PACKAGES make gcc firefox"
 
 yum -y install rpm-build rpm-devel createrepo $PACKAGES
 

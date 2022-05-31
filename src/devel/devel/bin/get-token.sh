@@ -22,11 +22,15 @@ if [[ "${GSAPICLIENTCONF-x}" == "x" ]]; then echo "Please define GSAPICLIENTCONF
 source ${GSAPICLIENTCONF}
 echo "You will grant 'read-only' download access to your Google drive. The companion"
 echo "gget.sh only downloads from known google file IDs, and cannot discover any of your drive data"
-echo -e "\nCut and paste the following URL into your browser to authenticate to Google:\n"
-echo "https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=https://www.googleapis.com/auth/drive.readonly&response_type=code"
+echo -e "\nAsking Firefox to open the following URL into your browser to authenticate to Google:\n"
+echo "https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=http://localhost:9000&scope=https://www.googleapis.com/auth/drive.readonly&response_type=code"
+firefox "https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=http://localhost:9000&scope=https://www.googleapis.com/auth/drive.readonly&response_type=code" &
 
-echo 
-read -p "Paste the provided authentication code: " AUTHCODE
+## Start the local webserver
+MY_PATH=$(dirname "$0")
+AUTHCODE=$(python3 ${MY_PATH}/webserver.py)
+
+# read -p "Paste the provided authentication code: " AUTHCODE
 
 # 
 echo -e "\nNow generating your access and refresh tokens. These will be stored in the file"
@@ -35,7 +39,7 @@ echo "  ${TOKENFILE}"
 # Exchange Authorization code for an access token and a refresh token.
 curl \
 --request POST \
---data "code=${AUTHCODE}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&grant_type=authorization_code" \
+--data "code=${AUTHCODE}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=http://localhost:9000&grant_type=authorization_code" \
 https://accounts.google.com/o/oauth2/token | grep _token | sed -e 's/ //g' -e 's/:/=/' -e 's/,$//' -e 's/"//' -e 's/"//' | tee ${TOKENFILE}  
 
 
