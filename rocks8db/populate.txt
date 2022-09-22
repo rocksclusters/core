@@ -1,0 +1,218 @@
+## This is raw SQL to populate the Rocks DB with test data
+
+## Default Priorities
+insert into reslevels(resname,level) values ("global", 0);
+insert into reslevels(resname,level) values ("graph", 100);
+insert into reslevels(resname,level) values ("appliance", 200);
+insert into reslevels(resname,level) values ("node", 1000);
+
+## Default appliances
+insert into appliances(name,graphStart,description) 
+   values("frontend","frontend","Head Provisioning Node");
+insert into appliances(name,graphStart,description,reslevel) 
+   values("compute","compute","Compute Node",(select p.ID from reslevels p where p.resname="appliance"));
+insert into appliances(name,graphStart,description,reslevel) 
+   values("login","login","Login Node",(select p.ID from reslevels p where p.resname="appliance"));
+insert into appliances(name,graphStart,description,reslevel) 
+   values("NAS","nas","NFS Server",(select p.ID from reslevels p where p.resname="appliance"));
+
+#####  Sample nodes
+## frontend-0-0 
+insert into nodes(name,rack,rank,appliance,reslevel) 
+   values("frontend-0-0",0,0,(select ID from appliances a where
+a.name="frontend"),(select p.ID from reslevels p where p.resname="node"));
+
+## Compute-0-0
+insert into nodes(name,rack,rank,appliance,reslevel) 
+   values("compute-0-0",0,0,(select ID from appliances a where
+a.name="compute"), (select p.ID from reslevels p where p.resname="node"));
+
+## Compute-0-1
+insert into nodes(name,rack,rank,appliance,reslevel) 
+   values("compute-0-1",0,1,(select ID from appliances a where
+a.name="compute"), (select p.ID from reslevels p where p.resname="node"));
+
+## Compute-0-2
+insert into nodes(name,rack,rank,appliance,reslevel) 
+   values("compute-0-2",0,2,(select ID from appliances a where
+a.name="compute"), (select p.ID from reslevels p where p.resname="node"));
+
+## nas-0-0 
+insert into nodes(name,rack,rank,appliance,reslevel) 
+   values("nas-0-0",0,0,(select ID from appliances a where a.name="NAS"),
+(select p.ID from reslevels p where p.resname="node"));
+
+insert into netgens(name,incr) values ("decrement",-1);
+
+## Subnets
+insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
+       values("private","10.0.0.0", 16, "True", "10.0.255.254", (select ng.id from netgens ng where ng.name = "decrement"));
+insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
+       values("public","192.168.0.0", 24, "False", "192.168.0.254", (select ng.id from netgens ng where ng.name = "decrement"));
+insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
+       values("fast","192.168.1.0", 24, "False", "192.168.1.254",(select ng.id from netgens ng where ng.name = "decrement"));
+
+## Network Devices
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("en0","dd:bb:cc:dd:ee:f0","ix10ge","","physical",(select n.id from
+nodes n where n.name="frontend-0-0"));
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("en1","dd:bb:cc:dd:ee:f1","ix10ge","","physical",(select n.id from
+nodes n where n.name="frontend-0-0"));
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("eth0","aa:bb:cc:dd:ee:f0","e1000","","physical",(select n.id from nodes n where n.name="compute-0-0"));
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("eth1","aa:bb:cc:dd:ee:f1","e1000","","physical",(select n.id from nodes n where n.name="compute-0-0"));
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("eth0","aa:bb:cc:dd:ee:a4","e1000","","physical", (select n.id from nodes n where n.name="compute-0-1"));
+
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("eth0","aa:bb:cc:dd:ee:b4","e1000","","physical",(select n.id from nodes n where n.name="compute-0-2"));
+insert into netdevs(device,mac,module,options,"devtype",node) 
+       values("eth1","aa:bb:cc:dd:ee:b5","e1000","","physical",(select n.id from nodes n where n.name="compute-0-2"));
+
+insert into netdevs(device,mac,module,options,devtype,node) 
+       values("ilo0","aa:bb:cc:dd:ee:bf","ipmi","","ipmi",(select n.id from nodes n where n.name="compute-0-2"));
+
+## IP Addresses
+insert into ipaddrs(netdev,addr,subnet) 
+  values((select nv.id from netdevsview nv where nv.device="en0" and nv.node="frontend-0-0" ),
+  "10.0.0.1",
+  (select subnets.id from subnets where subnets.name="private"));
+insert into ipaddrs(netdev,addr,subnet)
+  values((select nv.id from netdevsview nv where nv.device="en1" and nv.node="frontend-0-0" ),
+  "192.168.0.4",
+  (select subnets.id from subnets where subnets.name="public"));
+insert into ipaddrs(netdev,addr,subnet) 
+  values((select nv.id from netdevsview nv where nv.device="eth0" and nv.node="compute-0-0" ),
+  "10.0.0.254",
+  (select subnets.id from subnets where subnets.name="private"));
+insert into ipaddrs(netdev,addr,subnet)
+  values((select nv.id from netdevsview nv where nv.device="eth0" and nv.node="compute-0-0" ),
+  "192.168.1.10",
+  (select subnets.id from subnets where subnets.name="fast"));
+insert into ipaddrs(netdev,addr,subnet)
+  values((select nv.id from netdevsview nv where nv.device="eth1" and nv.node="compute-0-0" ),
+  "192.168.0.10",
+  (select subnets.id from subnets where subnets.name="public"));
+insert into ipaddrs(netdev,addr,subnet) 
+  values((select nv.id from netdevsview nv where nv.device="eth0" and nv.node="compute-0-1" ),
+   "192.168.0.10",
+   (select subnets.id from subnets where subnets.name="public"));
+insert into ipaddrs(netdev,addr,subnet)
+  values((select nv.id from netdevsview nv where nv.device="eth0" and nv.node="compute-0-2" ),
+   "10.0.0.253",
+   (select subnets.id from subnets where subnets.name="private"));
+
+## VLAN Definitions
+insert into vlans(VLANID,description,subnet) values(20,"Virtual Cluster 0",(select id from subnets where subnets.name="private"));
+insert into vlans(VLANID,description,subnet) values(21,"Virtual Cluster 1",(select id from subnets where subnets.name="public"));
+
+##  VLAN Devices
+insert into netdevs(device,VLANID,devtype,node) 
+       values("vlan20",20,"vlan",(select n.id from nodes n where n.name="compute-0-0"));
+insert into netdevs(device,VLANID,devtype,node) 
+       values("vlan21",21,"vlan",(select n.id from nodes n where n.name="compute-0-0"));
+
+
+## Attributes 
+insert into attrs(attr,value)
+   values('primary_net','private');
+insert into attrs(attr,value,reslevel,reskey) 
+   values('primary_net','public',(select ID from reslevels p where p.resname='appliance'),'frontend');
+
+insert into attrs(attr,value) 
+   values('submit_host','False');
+insert into attrs(attr,value,reslevel,reskey) 
+   values('submit_host','True',(select ID from reslevels p where p.resname='appliance'),'login');
+insert into attrs(attr,value,reslevel,reskey) 
+   values('submit_host','True',(select ID from reslevels p where p.resname='node'),'compute-0-2');
+
+## routes
+insert into routes(network,netmask,gateway)
+   values('0.0.0.0','0.0.0.0','10.0.0.1');
+insert into routes(network,netmask,gateway)
+   values('192.168.0.4','255.255.255.255','10.0.0.1');
+insert into routes(network,netmask,gateway,reslevel,reskey) values('0.0.0.0','0.0.0.0','192.168.0.1',
+   (select ID from reslevels p where p.resname='node'),'frontend-0-0');
+
+## Firewalls
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'A40-HTTPS-PUBLIC-LAN','system',(select id from subnets s where s.name='public'),
+NULL,'tcp','https','ACCEPT','INPUT',
+'-m state --state NEW --source &Kickstart_PublicNetwork;/&Kickstart_PublicNetmask;',
+NULL,(select r.id from reslevels r where r.resname='appliance'),'frontend');
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'A50-FORWARD-RELATED','system',(select id from subnets s where s.name='public'),
+(select id from subnets s where s.name='private'),'all','all','ACCEPT','FORWARD',
+'-m state --state RELATED,ESTABLISHED',
+NULL,(select r.id from reslevels r where r.resname='appliance'),'login');
+
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'A50-FORWARD-RELATED','system',(select id from subnets s where s.name='public'),
+(select id from subnets s where s.name='private'),'all','all','ACCEPT','FORWARD',
+'-m state --state RELATED,ESTABLISHED',
+NULL,(select r.id from reslevels r where r.resname='node'),'frontend-0-0');
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'A60-FORWARD','system',(select id from subnets s where s.name='private'),
+NULL,'all','all','ACCEPT','FORWARD',
+NULL,
+NULL,(select r.id from reslevels r where r.resname='appliance'),'login');
+
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'A60-FORWARD','system',(select id from subnets s where s.name='private'),
+NULL,'all','all','ACCEPT','FORWARD',
+NULL,
+NULL,(select r.id from reslevels r where r.resname='node'),'frontend-0-0');
+
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'MASQUERADE','system',NULL,
+(select id from subnets s where s.name='private'),'nat','all','MASQUERADE','POSTROUTING',
+NULL,
+NULL,(select r.id from reslevels r where r.resname='node'),'frontend-0-0');
+
+insert into
+firewalls(Rulename,RuleSrc,InSubnet,
+OutSubnet,Service,Protocol,Action,Chain,
+Flags,
+Comment,reslevel,reskey)
+values(
+'MASQUERADE','system',NULL,
+(select id from subnets s where s.name='private'),'nat','all','MASQUERADE','POSTROUTING',
+NULL,
+NULL,(select r.id from reslevels r where r.resname='appliance'),'login');
