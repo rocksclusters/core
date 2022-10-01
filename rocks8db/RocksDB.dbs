@@ -16,6 +16,7 @@
 			<column name="reslevel" prior="priority" type="INTEGER" jt="4" >
 				<comment><![CDATA[reference to the 'appliances' reslevel in the reslevels table]]></comment>
 			</column>
+			<column name="reskey" type="VARCHAR" length="256" jt="12" definition="(name)" spec="computed" />
 			<index name="pk_appliances" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
@@ -37,7 +38,8 @@
 				<comment><![CDATA[resolution level of this attribute.  Reference to reslevels table. Common resllevels are global, appliance, node]]></comment>
 			</column>
 			<column name="reskey" prior="pkey" type="VARCHAR" length="512" jt="12" >
-				<comment><![CDATA[This is the key into the reslevel.  E.g. reslevel.resname='compute', then  reskey could be compute-0-0 for a node-specific attribute   reslevel.resname='appliance,' reskey could be 'login' for an appliance-specific attribute]]></comment>
+				<defo><![CDATA['global']]></defo>
+				<comment><![CDATA[This is the key into the reslevel.  E.g. reslevel.resname='compute', then  reskey could be compute-0-0 for a node-specific attribute   reslevel.resname='appliance,' reskey could be 'login' for an appliance-specific attribute. If unspecified, a trigger will put this as the global reslevel with 'global' reskey.]]></comment>
 			</column>
 			<index name="pk_attrs" unique="PRIMARY_KEY" >
 				<column name="ID" />
@@ -45,6 +47,7 @@
 			<index name="unq_attrs" unique="UNIQUE_INDEX" >
 				<column name="attr" />
 				<column name="reslevel" />
+				<column name="reskey" />
 			</index>
 			<fk name="fk_attrs_priorities" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
 				<fk_column name="reslevel" pk="ID" />
@@ -60,6 +63,26 @@
 			<column name="ramdisk" type="VARCHAR" length="256" jt="12" />
 			<column name="Flags" type="VARCHAR" length="1025" jt="12" />
 			<index name="pk_bootactions" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
+		<table name="bootflags" >
+			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
+			<column name="node" type="INTEGER" jt="4" mandatory="y" />
+			<column name="flags" type="VARCHAR" length="256" jt="12" mandatory="y" />
+			<index name="pk_bootflags" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<fk name="fk_bootflags" to_schema="Default" to_table="nodes" delete_action="cascade" update_action="cascade" >
+				<fk_column name="node" pk="ID" />
+			</fk>
+		</table>
+		<table name="distributions" >
+			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
+			<column name="name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="OS_release" type="VARCHAR" length="32" jt="12" />
+			<column name="lang" type="VARCHAR" length="128" jt="12" />
+			<index name="pk_distributions" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
 		</table>
@@ -89,7 +112,8 @@
 			<column name="reslevel" prior="priority" type="INTEGER" jt="4" >
 				<comment><![CDATA[reference to reslevels table]]></comment>
 			</column>
-			<column name="reskey" prior="pkey" type="VARCHAR" length="256" jt="12" >
+			<column name="reskey" prior="pkey" type="VARCHAR" length="256" jt="12" mandatory="y" >
+				<defo><![CDATA['global']]></defo>
 				<comment><![CDATA[reslevel key (e.g. compute-0-0 for a node-level resolution)]]></comment>
 			</column>
 			<index name="pk_firewalls" unique="PRIMARY_KEY" >
@@ -101,11 +125,28 @@
 				<column name="Rulename" />
 				<column name="reskey" />
 			</index>
-			<fk name="fk_firewalls_subnets" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
+			<fk name="fk_firewalls" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
 				<fk_column name="InSubnet" pk="ID" />
 			</fk>
-			<fk name="fk_firewalls_priorities" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
+			<fk name="fk_firewalls_0" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
+				<fk_column name="OutSubnet" pk="ID" />
+			</fk>
+			<fk name="fk_firewalls_1" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
 				<fk_column name="reslevel" pk="ID" />
+			</fk>
+		</table>
+		<table name="groupmembers" >
+			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
+			<column name="nodegroup" type="INTEGER" jt="4" />
+			<column name="nodeid" type="INTEGER" jt="4" />
+			<index name="pk_groupmembers" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<fk name="fk_groupmembers_nodes" to_schema="Default" to_table="nodes" delete_action="cascade" update_action="cascade" >
+				<fk_column name="nodeid" pk="ID" />
+			</fk>
+			<fk name="fk_groupmembers" to_schema="Default" to_table="nodegroups" delete_action="cascade" update_action="cascade" >
+				<fk_column name="nodegroup" pk="ID" />
 			</fk>
 		</table>
 		<table name="hwinventory" >
@@ -145,15 +186,15 @@
 			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
 			<column name="netdev" type="INTEGER" jt="4" mandatory="y" />
 			<column name="addr" type="VARCHAR" length="256" jt="12" />
-			<column name="subnet" prior="network" type="INTEGER" length="256" jt="4" />
+			<column name="subnet" type="INTEGER" jt="4" />
 			<index name="pk_IPaddrs" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
-			<fk name="fk_ipaddrs_networks" to_schema="Default" to_table="subnets" delete_action="cascade" >
-				<fk_column name="subnet" pk="ID" />
-			</fk>
-			<fk name="fk_ipaddrs_netdevices" to_schema="Default" to_table="netdevs" delete_action="cascade" >
+			<fk name="fk_ipaddrs" to_schema="Default" to_table="netdevs" delete_action="cascade" update_action="cascade" >
 				<fk_column name="netdev" pk="ID" />
+			</fk>
+			<fk name="fk_ipaddrs_0" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
+				<fk_column name="subnet" pk="ID" />
 			</fk>
 		</table>
 		<table name="netdevs" prior="netdevices" >
@@ -180,11 +221,11 @@
 				<string><![CDATA[devtype in ('physical', 'vlan', 'bridge','ipmi')]]></string>
 				<comment><![CDATA[ensure that devtype is enumerated]]></comment>
 			</constraint>
-			<fk name="fk_netdevices_nodes" to_schema="Default" to_table="nodes" delete_action="cascade" >
-				<fk_column name="node" pk="ID" />
-			</fk>
-			<fk name="fk_netdevs_vlans" to_schema="Default" to_table="vlans" >
+			<fk name="fk_netdevs" to_schema="Default" to_table="vlans" delete_action="cascade" update_action="cascade" >
 				<fk_column name="VLANID" pk="VLANID" />
+			</fk>
+			<fk name="fk_netdevs_0" to_schema="Default" to_table="nodes" delete_action="cascade" update_action="cascade" >
+				<fk_column name="node" pk="ID" />
 			</fk>
 		</table>
 		<table name="netgens" prior="netgen" >
@@ -198,7 +239,20 @@
 			<index name="pk_netgens" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
-			<fk name="fk_netgen_networks" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" />
+		</table>
+		<table name="nodegroups" >
+			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
+			<column name="name" type="VARCHAR" length="128" jt="12" mandatory="y" />
+			<column name="reslevel" type="INTEGER" jt="4" />
+			<column name="reskey" type="VARCHAR" length="128" jt="12" definition="(name)" spec="computed" mandatory="y" >
+				<comment><![CDATA[synonym for name.]]></comment>
+			</column>
+			<index name="pk_nodegroups" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<fk name="fk_nodegroups" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
+				<fk_column name="reslevel" pk="ID" />
+			</fk>
 		</table>
 		<table name="nodes" >
 			<comment><![CDATA[basic nodes table]]></comment>
@@ -227,17 +281,32 @@
 			<column name="reslevel" prior="priority" type="INTEGER" jt="4" >
 				<comment><![CDATA[reference to the 'node' reslevel entry in reslevels]]></comment>
 			</column>
+			<column name="reskey" type="VARCHAR" length="256" jt="12" definition="(name)" spec="computed" />
+			<column name="boot" type="VARCHAR" length="32" jt="12" mandatory="y" >
+				<defo><![CDATA['run']]></defo>
+				<comment><![CDATA[the next boot state of the node]]></comment>
+			</column>
 			<index name="pk_nodes" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
-			<fk name="fk_nodes_appliances" to_schema="Default" to_table="appliances" delete_action="setNull" >
-				<fk_column name="appliance" pk="ID" />
+			<constraint name="Cns_nodes" >
+				<string><![CDATA[boot in ('install','os','run')]]></string>
+				<comment><![CDATA[check boot type]]></comment>
+			</constraint>
+			<fk name="fk_nodes" to_schema="Default" to_table="bootactions" delete_action="cascade" update_action="cascade" >
+				<fk_column name="installaction" pk="ID" />
 			</fk>
-			<fk name="fk_nodes_priorities" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
+			<fk name="fk_nodes_0" to_schema="Default" to_table="bootactions" delete_action="cascade" update_action="cascade" >
+				<fk_column name="runaction" pk="ID" />
+			</fk>
+			<fk name="fk_nodes_1" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
 				<fk_column name="reslevel" pk="ID" />
 			</fk>
-			<fk name="fk_nodes" to_schema="Default" to_table="bootactions" update_action="cascade" >
-				<fk_column name="installaction" pk="ID" />
+			<fk name="fk_nodes_2" to_schema="Default" to_table="appliances" delete_action="cascade" update_action="cascade" >
+				<fk_column name="appliance" pk="ID" />
+			</fk>
+			<fk name="fk_nodes_3" to_schema="Default" to_table="distributions" delete_action="setNull" update_action="cascade" >
+				<fk_column name="dist" pk="ID" />
 			</fk>
 		</table>
 		<table name="partitions" >
@@ -297,6 +366,24 @@ used is resolved by the one with highest priority.]]></comment>
 				<column name="level" />
 			</index>
 		</table>
+		<table name="rolls" >
+			<comment><![CDATA[rolls that are part of the cluster]]></comment>
+			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
+			<column name="name" type="VARCHAR" length="256" jt="12" mandatory="y" />
+			<column name="version" type="VARCHAR" length="128" jt="12" mandatory="y" />
+			<column name="arch" type="VARCHAR" length="32" jt="12" mandatory="y" >
+				<defo><![CDATA['x86_64']]></defo>
+			</column>
+			<column name="os" type="VARCHAR" length="32" jt="12" mandatory="y" >
+				<defo><![CDATA['linux']]></defo>
+			</column>
+			<column name="enabled" type="BOOLEAN" jt="-7" mandatory="y" >
+				<defo><![CDATA[True]]></defo>
+			</column>
+			<index name="pk_rolls" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
 		<table name="routes" >
 			<comment><![CDATA[IP Routing Table]]></comment>
 			<column name="ID" type="INTEGER" jt="4" mandatory="y" />
@@ -319,7 +406,8 @@ used is resolved by the one with highest priority.]]></comment>
 			<column name="reslevel" prior="priority" type="INTEGER" jt="4" >
 				<comment><![CDATA[cross-ref to reslevels table]]></comment>
 			</column>
-			<column name="reskey" prior="pkey" type="VARCHAR" length="256" jt="12" >
+			<column name="reskey" prior="pkey" type="VARCHAR" length="256" jt="12" mandatory="y" >
+				<defo><![CDATA['global']]></defo>
 				<comment><![CDATA[key for resolution level (E.g. 'compute' for an appliance route)]]></comment>
 			</column>
 			<index name="pk_routes" unique="PRIMARY_KEY" >
@@ -329,10 +417,10 @@ used is resolved by the one with highest priority.]]></comment>
 				<string><![CDATA[nettype in ('IPV4','IPV6','IPMI')]]></string>
 				<comment><![CDATA[nettype in ('IPV4','IPV6','IPMI')]]></comment>
 			</constraint>
-			<fk name="fk_routes_netdevs" to_schema="Default" to_table="netdevs" delete_action="cascade" update_action="cascade" >
-				<fk_column name="device" pk="ID" />
+			<fk name="fk_routes" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
+				<fk_column name="network" pk="ID" />
 			</fk>
-			<fk name="fk_routes_priorities" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
+			<fk name="fk_routes_0" to_schema="Default" to_table="reslevels" delete_action="cascade" update_action="cascade" >
 				<fk_column name="reslevel" pk="ID" />
 			</fk>
 		</table>
@@ -369,7 +457,7 @@ used is resolved by the one with highest priority.]]></comment>
 			<constraint name="Cns_networks" >
 				<string><![CDATA[nettype in ('IPV4','IPV6','IPMI')]]></string>
 			</constraint>
-			<fk name="fk_networks_netgens" to_schema="Default" to_table="netgens" delete_action="cascade" >
+			<fk name="fk_subnets" to_schema="Default" to_table="netgens" delete_action="cascade" update_action="cascade" >
 				<fk_column name="netgen" pk="ID" />
 			</fk>
 		</table>
@@ -380,13 +468,13 @@ used is resolved by the one with highest priority.]]></comment>
 			</column>
 			<column name="description" prior="Description" type="VARCHAR" length="512" jt="12" />
 			<column name="subnet" type="INTEGER" jt="4" >
-				<defo><![CDATA[Null]]></defo>
 				<comment><![CDATA[logical subnet this vlan is attached to]]></comment>
 			</column>
+			<column name="ID" type="INTEGER" jt="4" definition="(VLANID)" spec="computed" mandatory="y" />
 			<index name="pk_VLANS" unique="PRIMARY_KEY" >
 				<column name="VLANID" />
 			</index>
-			<fk name="fk_vlans_subnets" to_schema="Default" to_table="subnets" delete_action="cascade" >
+			<fk name="fk_vlans" to_schema="Default" to_table="subnets" delete_action="cascade" update_action="cascade" >
 				<fk_column name="subnet" pk="ID" />
 			</fk>
 		</table>
@@ -401,6 +489,9 @@ select n.name as node, a.attr, a.value, a.shadow, r.resname, r.level from nodes 
 UNION
 select n.name as node, a.attr, a.value, a.shadow, r.resname, r.level from nodes n inner join appliances ap on n.appliance=ap.id inner join attrs a on ap.reslevel=a.reslevel inner join reslevels r on a.reslevel=r.id where ap.name = a.
 reskey
+UNION 
+select gm.node,a.attr,a.value,a.shadow,gm.resname,gm.level from groupmembersview gm
+inner join attrsview a on gm.resname=a.resname where gm.reskey=a.reskey
 ORDER by node,attr;]]></view_script>
 		</view>
 		<view name="attrsview" >
@@ -410,12 +501,6 @@ If an attribute has no priority, at picks global]]></comment>
 a.ID,a.attr,a.value,a.shadow,r.resname,a.reskey,r.level
 FROM attrs a LEFT JOIN reslevels r on a.reslevel=r.id;]]></view_script>
 		</view>
-		<view name="dbs_validate_view" >
-			<view_script><![CDATA[CREATE VIEW ${fullName} AS SELECT n.name, nd.device, nd.mac, nd.module,
- nd.options, net.name as netname, ip.addr, net.prefix, net.type
- FROM nodes n inner join netdevs nd on nd.node = n.id,
- ipaddrs ip inner join networks net on ip.network = net.id where ip.netdev=nd.id;]]></view_script>
-		</view>
 		<view name="firewallsview" >
 			<view_script><![CDATA[CREATE VIEW ${fullName} AS SELECT
 f.ID,f.rulename,f.rulesrc,si.name as inSubnet, so.name as OutSubnet,
@@ -423,6 +508,15 @@ f.service,f.protocol,f.action,f.chain,f.flags,f.comment,rl.resname,f.reskey,rl.l
 FROM firewalls f LEFT JOIN subnets si on f.InSubnet=si.ID
 LEFT JOIN subnets so on f.OutSubnet=so.ID
 LEFT JOIN reslevels rl on f.reslevel=rl.ID]]></view_script>
+		</view>
+		<view name="groupmembersview" >
+			<comment><![CDATA[nodegroups with name of group and names of group members]]></comment>
+			<view_script><![CDATA[CREATE VIEW ${fullName} AS SELECT 
+ng.name as groupname, n.name as node, r.resname, ng.reskey, r.level FROM
+nodegroups ng INNER JOIN reslevels r ON ng.reslevel = r.ID
+INNER JOIN groupmembers gm ON gm.nodegroup = ng.id 
+INNER JOIN nodes n ON gm.nodeid=n.id
+ORDER BY groupname, node]]></view_script>
 		</view>
 		<view name="hwinventoryview" >
 			<view_script><![CDATA[CREATE VIEW ${fullName} AS SELECT
@@ -443,7 +537,8 @@ LEFT JOIN subnets net on ip.subnet=net.id INNER JOIN nodes n on nd.node=n.id]]><
 			<comment><![CDATA[integrated view of nodes, appliance, etc.]]></comment>
 			<view_script><![CDATA[CREATE VIEW nodesview AS SELECT
 n.id,n.name as node,n.rack,n.rank,ba.action as installaction,
-bb.action as runaction,n.managed,app.name as appliance,app.graph FROM nodes n INNER JOIN appliances app
+bb.action as runaction,n.boot, n.managed,app.name as appliance,app.graph
+FROM nodes n INNER JOIN appliances app
 on n.appliance=app.id
 LEFT JOIN bootactions ba on n.installaction=ba.ID 
 LEFT JOIN bootactions bb on n.runaction=bb.ID]]></view_script>
@@ -478,20 +573,20 @@ AFTER UPDATE on appliances
 WHEN old.name <> new.name OR
    old.reslevel <> new.reslevel
 BEGIN
-  UPDATE attrs set reskey=new.name where attrs.reslevel = old.reslevel and attrs.reskey = old.name;
-  UPDATE attrs set reslevel=new.reslevel where attrs.reslevel=old.reslevel and attrs.reskey=new.name;
-  UPDATE routes set reskey=new.name where routes.reslevel = old.reslevel and routes.reskey = old.name;
-  UPDATE routes set reslevel=new.reslevel where routes.reslevel=old.reslevel and routes.reskey=new.name;
-  UPDATE firewalls set reskey=new.name where firewalls.reslevel = old.reslevel and firewalls.reskey = old.name;
-  UPDATE firewalls set reslevel=new.reslevel where firewalls.reslevel=old.reslevel and firewalls.reskey=new.name;
+  UPDATE attrs set reskey=new.reskey where attrs.reslevel = old.reslevel and attrs.reskey = old.reskey;
+  UPDATE attrs set reslevel=new.reslevel where attrs.reslevel=old.reslevel and attrs.reskey=new.reskey;
+  UPDATE routes set reskey=new.reskey where routes.reslevel = old.reslevel and routes.reskey = old.reskey;
+  UPDATE routes set reslevel=new.reslevel where routes.reslevel=old.reslevel and routes.reskey=new.reskey;
+  UPDATE firewalls set reskey=new.reskey where firewalls.reslevel = old.reslevel and firewalls.reskey = old.reskey;
+  UPDATE firewalls set reslevel=new.reslevel where firewalls.reslevel=old.reslevel and firewalls.reskey=new.reskey;
 END;
 
 CREATE TRIGGER trigger_appliance_delete
 BEFORE DELETE on appliances
 BEGIN
-  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=name;
-  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=name;
-  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=name;
+  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=reskey;
+  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=reskey;
+  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=reskey;
 END;]]></string>
 		</trigger>
 		<trigger name="Trigger_Firewalls" id="Trigger-1c61" isSystem="false" >
@@ -537,6 +632,15 @@ BEGIN
   DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=name;
 END;]]></string>
 		</trigger>
+		<trigger name="Trigger_nodegroups" id="Trigger-12dd" isSystem="false" >
+			<string><![CDATA[CREATE TRIGGER trigger_nodegroups_insert
+AFTER  INSERT ON nodegroups
+BEGIN
+  UPDATE nodegroups set reslevel = (select id from reslevels r where r.resname='groups') where nodegroups.reslevel is NULL;
+END;
+
+]]></string>
+		</trigger>
 		<trigger name="Trigger_routes" id="Trigger-1086" isSystem="false" >
 			<string><![CDATA[CREATE TRIGGER trigger_route_insert
 AFTER  INSERT ON routes
@@ -546,36 +650,37 @@ END;]]></string>
 		</trigger>
 	</schema>
 	<connector name="MyDb" database="MySql" host="localhost" port="3306" user="root" />
-	<connector name="Sqlite" database="Sqlite" host="localhost" port="7210" instance="C:\Users\phili\rocks8.db" />
-	<layout name="Default Layout" id="Layout-142e" show_relation="columns" >
+	<connector name="Sqlite" database="Sqlite" driver_class="org.sqlite.JDBC" driver_jar="sqlite-jdbc-3.36.0.3.jar" driver_desc="Standard" host="localhost" port="7210" instance="C:/Users/phili/OneDrive - University of California - Irvine/Rocks-Design/rocks8" />
+	<layout name="Rocks8 DB Design" id="Layout-142e" show_relation="columns" >
 		<entity schema="Default" name="allattrsview" color="3986C1" x="400" y="368" />
 		<entity schema="Default" name="appliances" color="C1D8EE" x="528" y="48" />
 		<entity schema="Default" name="attrs" color="C1D8EE" x="400" y="224" />
 		<entity schema="Default" name="attrsview" color="3986C1" x="400" y="176" />
 		<entity schema="Default" name="bootactions" color="C1D8EE" x="48" y="448" />
+		<entity schema="Default" name="bootflags" color="C1D8EE" x="224" y="480" />
+		<entity schema="Default" name="distributions" color="C1D8EE" x="1296" y="64" />
 		<entity schema="Default" name="firewalls" color="C1D8EE" x="1072" y="384" />
 		<entity schema="Default" name="firewallsview" color="3986C1" x="1072" y="336" />
+		<entity schema="Default" name="groupmembers" color="C1D8EE" x="944" y="128" />
+		<entity schema="Default" name="groupmembersview" color="3986C1" x="944" y="64" />
 		<entity schema="Default" name="hwinventory" color="C1D8EE" x="240" y="224" />
 		<entity schema="Default" name="hwinventoryview" color="3986C1" x="240" y="176" />
 		<entity schema="Default" name="ipaddrs" color="C1D8EE" x="384" y="656" />
 		<entity schema="Default" name="netdevs" color="C1D8EE" x="240" y="656" />
 		<entity schema="Default" name="netdevsview" color="3986C1" x="240" y="832" />
 		<entity schema="Default" name="netgens" color="C1D8EE" x="816" y="704" />
+		<entity schema="Default" name="nodegroups" color="C1D8EE" x="736" y="128" />
 		<entity schema="Default" name="nodes" color="C1D8EE" x="48" y="176" />
 		<entity schema="Default" name="nodesview" color="3986C1" x="48" y="112" />
 		<entity schema="Default" name="partitions" color="C1D8EE" x="48" y="624" />
 		<entity schema="Default" name="partitionsview" color="3986C1" x="48" y="864" />
 		<entity schema="Default" name="reslevels" color="C1D8EE" x="688" y="352" />
+		<entity schema="Default" name="rolls" color="C1D8EE" x="1168" y="64" />
 		<entity schema="Default" name="routes" color="C1D8EE" x="960" y="464" />
 		<entity schema="Default" name="routesview" color="3986C1" x="960" y="416" />
 		<entity schema="Default" name="subnets" color="C1D8EE" x="656" y="656" />
 		<entity schema="Default" name="vlans" color="C1D8EE" x="496" y="656" />
-		<entity schema="Default" name="vlansview" color="3986C1" x="528" y="752" />
-		<callout x="912" y="176" pointer="Round" >
-			<comment><![CDATA[Add tables to the layout by drag & drop from the project structure.
-Currently, the model is in offline mode, which means new tables will be created only in the model file.
-Drop this callout from its context menu.]]></comment>
-		</callout>
+		<entity schema="Default" name="vlansview" color="3986C1" x="496" y="768" />
 		<script name="SQL_Editor" id="Editor-880" language="SQL" >
 			<string><![CDATA[CREATE TABLE appliances ( 
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
@@ -584,6 +689,54 @@ Drop this callout from its context menu.]]></comment>
 	description          VARCHAR(512)     ,
 	graph                VARCHAR(125)  DEFAULT 'default'   
  );
+]]></string>
+		</script>
+		<script name="SQL_Editor_001" id="Editor-1fec" language="SQL" >
+			<string><![CDATA[CREATE TABLE nodegroups ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	name                 VARCHAR(128) NOT NULL    ,
+	reslevel             INTEGER NOT NULL    ,
+	reskey               AS name 
+ );
+
+CREATE TABLE groupmembers ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	nodegroup            INTEGER     ,
+	nodeid               INTEGER     ,
+	groupmemberid        INTEGER     ,
+	FOREIGN KEY ( nodegroup ) REFERENCES nodegroups( ID )  ,
+	CHECK ( (nodeid IS NULL AND groupmemberid IS NOT NULL) OR (nodeid IS NOT NULL AND groupmemberId IS NULL) )
+ );
+]]></string>
+		</script>
+		<script name="SQL_Editor_002" id="Editor-11e2" language="SQL" >
+			<string><![CDATA[CREATE TABLE nodegroups ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	name                 VARCHAR(128) NOT NULL    ,
+	reslevel             INTEGER NOT NULL    ,
+	reskey               AS name 
+ );
+
+CREATE TABLE nodes ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	name                 VARCHAR(100) NOT NULL    ,
+	rack                 INTEGER  DEFAULT 0   ,
+	rank                 INTEGER NOT NULL    ,
+	appliance            INTEGER     ,
+	dist                 INTEGER     ,
+	installaction        INTEGER     ,
+	runaction            INTEGER     ,
+	managed              BOOLEAN  DEFAULT True   ,
+	reslevel             INTEGER     ,
+	reskey               AS name 
+ );
+
+CREATE VIEW dbs_validate_view AS SELECT 
+ng.name as groupname, n.name as node, r.resname, ng.reskey, r.level FROM
+nodegroups ng INNER JOIN reslevels r ON ng.reslevel = r.ID
+INNER JOIN groupmembers gm ON gm.nodegroup = ng.id 
+INNER JOIN nodes n ON gm.nodeid=n.id
+ORDER BY groupnamae, node;
 ]]></string>
 		</script>
 	</layout>

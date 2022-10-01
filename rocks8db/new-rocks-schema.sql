@@ -6,41 +6,11 @@ CREATE TABLE bootactions (
 	Flags                VARCHAR(1025)     
  );
 
-CREATE TABLE firewalls ( 
+CREATE TABLE distributions ( 
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
-	Rulename             VARCHAR(128) NOT NULL    ,
-	Rulesrc              VARCHAR(16) NOT NULL    ,
-	InSubnet             INTEGER     ,
-	OutSubnet            INTEGER     ,
-	Service              VARCHAR(256)     ,
-	Protocol             VARCHAR(256)     ,
-	Action               VARCHAR(256)     ,
-	Chain                VARCHAR(256)     ,
-	flags                VARCHAR(256)     ,
-	Comment              VARCHAR(256)     ,
-	reslevel             INTEGER     ,
-	reskey               VARCHAR(256)     ,
-	CONSTRAINT unq_firewalls UNIQUE ( reslevel, Rulename, reskey )
- );
-
-CREATE TABLE ipaddrs ( 
-	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
-	netdev               INTEGER NOT NULL    ,
-	addr                 VARCHAR(256)     ,
-	subnet               INTEGER     
- );
-
-CREATE TABLE netdevs ( 
-	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
-	device               VARCHAR(128)     ,
-	mac                  VARCHAR(128)     ,
-	module               VARCHAR(32)     ,
-	options              VARCHAR(256)     ,
-	node                 INTEGER     ,
-	VLANID               INTEGER     ,
-	devtype              VARCHAR(32)  DEFAULT 'physical'   ,
-	CONSTRAINT unq_netdevices_ID UNIQUE ( ID ),
-	CHECK ( devtype in ('physical', 'vlan', 'bridge','ipmi') )
+	name                 VARCHAR(100) NOT NULL    ,
+	OS_release           VARCHAR(32)     ,
+	lang                 VARCHAR(128)     
  );
 
 CREATE TABLE netgens ( 
@@ -56,16 +26,13 @@ CREATE TABLE reslevels (
 	CONSTRAINT unq_priorities UNIQUE ( resname, level )
  );
 
-CREATE TABLE routes ( 
+CREATE TABLE rolls ( 
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
-	network              VARCHAR(256) NOT NULL    ,
-	netmask              VARCHAR(256) NOT NULL    ,
-	nettype              VARCHAR(4) NOT NULL DEFAULT 'IPV4'   ,
-	gateway              VARCHAR(256)     ,
-	device               INTEGER     ,
-	reslevel             INTEGER     ,
-	reskey               VARCHAR(256)     ,
-	CHECK ( nettype in ('IPV4','IPV6','IPMI') )
+	name                 VARCHAR(256) NOT NULL    ,
+	version              VARCHAR(128) NOT NULL    ,
+	arch                 VARCHAR(32) NOT NULL DEFAULT 'x86_64'   ,
+	os                   VARCHAR(32) NOT NULL DEFAULT 'linux'   ,
+	enabled              BOOLEAN NOT NULL DEFAULT True   
  );
 
 CREATE TABLE subnets ( 
@@ -77,13 +44,16 @@ CREATE TABLE subnets (
 	netgen               INTEGER     ,
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
 	nextFree             VARCHAR(256) NOT NULL    ,
+	FOREIGN KEY ( netgen ) REFERENCES netgens( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	CHECK ( nettype in ('IPV4','IPV6','IPMI') )
  );
 
 CREATE TABLE vlans ( 
 	VLANID               INTEGER NOT NULL  PRIMARY KEY  ,
 	description          VARCHAR(512)     ,
-	subnet               INTEGER  DEFAULT Null   
+	subnet               INTEGER     ,
+	ID                   AS (VLANID) ,
+	FOREIGN KEY ( subnet ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
 CREATE TABLE appliances ( 
@@ -93,6 +63,7 @@ CREATE TABLE appliances (
 	description          VARCHAR(512)     ,
 	graph                VARCHAR(125)  DEFAULT 'default'   ,
 	reslevel             INTEGER     ,
+	reskey               AS (name) ,
 	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
@@ -102,11 +73,39 @@ CREATE TABLE attrs (
 	value                VARCHAR(512)     ,
 	shadow               VARCHAR(512)     ,
 	reslevel             INTEGER     ,
-	reskey               VARCHAR(512)     ,
+	reskey               VARCHAR(512)  DEFAULT 'global'   ,
 	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
-CREATE UNIQUE INDEX unq_attrs ON attrs ( attr, reslevel );
+CREATE UNIQUE INDEX unq_attrs ON attrs ( attr, reslevel, reskey );
+
+CREATE TABLE firewalls ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	Rulename             VARCHAR(128) NOT NULL    ,
+	Rulesrc              VARCHAR(16) NOT NULL    ,
+	InSubnet             INTEGER     ,
+	OutSubnet            INTEGER     ,
+	Service              VARCHAR(256)     ,
+	Protocol             VARCHAR(256)     ,
+	Action               VARCHAR(256)     ,
+	Chain                VARCHAR(256)     ,
+	flags                VARCHAR(256)     ,
+	Comment              VARCHAR(256)     ,
+	reslevel             INTEGER     ,
+	reskey               VARCHAR(256) NOT NULL DEFAULT 'global'   ,
+	CONSTRAINT unq_firewalls UNIQUE ( reslevel, Rulename, reskey ),
+	FOREIGN KEY ( InSubnet ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( OutSubnet ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE
+ );
+
+CREATE TABLE nodegroups ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	name                 VARCHAR(128) NOT NULL    ,
+	reslevel             INTEGER     ,
+	reskey               AS (name) ,
+	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE
+ );
 
 CREATE TABLE nodes ( 
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
@@ -119,9 +118,14 @@ CREATE TABLE nodes (
 	runaction            INTEGER     ,
 	managed              BOOLEAN  DEFAULT True   ,
 	reslevel             INTEGER     ,
-	FOREIGN KEY ( appliance ) REFERENCES appliances( ID ) ON DELETE SET NULL ,
+	reskey               AS (name) ,
+	boot                 VARCHAR(32) NOT NULL DEFAULT 'run'   ,
+	FOREIGN KEY ( installaction ) REFERENCES bootactions( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( runaction ) REFERENCES bootactions( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY ( installaction ) REFERENCES bootactions( ID )  ON UPDATE CASCADE
+	FOREIGN KEY ( appliance ) REFERENCES appliances( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( dist ) REFERENCES distributions( ID ) ON DELETE SET NULL ON UPDATE CASCADE,
+	CHECK ( boot in ('install','os','run') )
  );
 
 CREATE TABLE partitions ( 
@@ -140,6 +144,35 @@ CREATE TABLE partitions (
 	FOREIGN KEY ( node ) REFERENCES nodes( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
+CREATE TABLE routes ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	network              VARCHAR(256) NOT NULL    ,
+	netmask              VARCHAR(256) NOT NULL    ,
+	nettype              VARCHAR(4) NOT NULL DEFAULT 'IPV4'   ,
+	gateway              VARCHAR(256)     ,
+	device               INTEGER     ,
+	reslevel             INTEGER     ,
+	reskey               VARCHAR(256) NOT NULL DEFAULT 'global'   ,
+	FOREIGN KEY ( network ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK ( nettype in ('IPV4','IPV6','IPMI') )
+ );
+
+CREATE TABLE bootflags ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	node                 INTEGER NOT NULL    ,
+	flags                VARCHAR(256) NOT NULL    ,
+	FOREIGN KEY ( node ) REFERENCES nodes( ID ) ON DELETE CASCADE ON UPDATE CASCADE
+ );
+
+CREATE TABLE groupmembers ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	nodegroup            INTEGER     ,
+	nodeid               INTEGER     ,
+	FOREIGN KEY ( nodeid ) REFERENCES nodes( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( nodegroup ) REFERENCES nodegroups( ID ) ON DELETE CASCADE ON UPDATE CASCADE
+ );
+
 CREATE TABLE hwinventory ( 
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
 	node                 INTEGER NOT NULL    ,
@@ -151,6 +184,30 @@ CREATE TABLE hwinventory (
 	FOREIGN KEY ( node ) REFERENCES nodes( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
+CREATE TABLE netdevs ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	device               VARCHAR(128)     ,
+	mac                  VARCHAR(128)     ,
+	module               VARCHAR(32)     ,
+	options              VARCHAR(256)     ,
+	node                 INTEGER     ,
+	VLANID               INTEGER     ,
+	devtype              VARCHAR(32)  DEFAULT 'physical'   ,
+	CONSTRAINT unq_netdevices_ID UNIQUE ( ID ),
+	FOREIGN KEY ( VLANID ) REFERENCES vlans( VLANID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( node ) REFERENCES nodes( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK ( devtype in ('physical', 'vlan', 'bridge','ipmi') )
+ );
+
+CREATE TABLE ipaddrs ( 
+	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	netdev               INTEGER NOT NULL    ,
+	addr                 VARCHAR(256)     ,
+	subnet               INTEGER     ,
+	FOREIGN KEY ( netdev ) REFERENCES netdevs( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY ( subnet ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE
+ );
+
 CREATE VIEW allattrsview AS
 select n.name as node, a.attr, a.value, a.shadow, r.resname, r.level from nodes n, attrs a inner join reslevels r
  where a.reslevel=r.id and r.resname='global' 
@@ -160,16 +217,14 @@ select n.name as node, a.attr, a.value, a.shadow, r.resname, r.level from nodes 
 UNION
 select n.name as node, a.attr, a.value, a.shadow, r.resname, r.level from nodes n inner join appliances ap on n.appliance=ap.id inner join attrs a on ap.reslevel=a.reslevel inner join reslevels r on a.reslevel=r.id where ap.name = a.
 reskey
+UNION 
+select gm.node,a.attr,a.value,a.shadow,gm.resname,gm.level from groupmembersview gm
+inner join attrsview a on gm.resname=a.resname where gm.reskey=a.reskey
 ORDER by node,attr;;
 
 CREATE VIEW attrsview AS SELECT
 a.ID,a.attr,a.value,a.shadow,r.resname,a.reskey,r.level
 FROM attrs a LEFT JOIN reslevels r on a.reslevel=r.id;;
-
-CREATE VIEW dbs_validate_view AS SELECT n.name, nd.device, nd.mac, nd.module,
- nd.options, net.name as netname, ip.addr, net.prefix, net.type
- FROM nodes n inner join netdevs nd on nd.node = n.id,
- ipaddrs ip inner join networks net on ip.network = net.id where ip.netdev=nd.id;;
 
 CREATE VIEW firewallsview AS SELECT
 f.ID,f.rulename,f.rulesrc,si.name as inSubnet, so.name as OutSubnet,
@@ -177,6 +232,13 @@ f.service,f.protocol,f.action,f.chain,f.flags,f.comment,rl.resname,f.reskey,rl.l
 FROM firewalls f LEFT JOIN subnets si on f.InSubnet=si.ID
 LEFT JOIN subnets so on f.OutSubnet=so.ID
 LEFT JOIN reslevels rl on f.reslevel=rl.ID;
+
+CREATE VIEW groupmembersview AS SELECT 
+ng.name as groupname, n.name as node, r.resname, ng.reskey, r.level FROM
+nodegroups ng INNER JOIN reslevels r ON ng.reslevel = r.ID
+INNER JOIN groupmembers gm ON gm.nodegroup = ng.id 
+INNER JOIN nodes n ON gm.nodeid=n.id
+ORDER BY groupname, node;
 
 CREATE VIEW hwinventoryview AS SELECT
 hw.id, n.name, hw.component, hw.subtype, hw.count, hw.comment 
@@ -193,7 +255,8 @@ LEFT JOIN subnets net on ip.subnet=net.id INNER JOIN nodes n on nd.node=n.id;
 
 CREATE VIEW nodesview AS SELECT
 n.id,n.name as node,n.rack,n.rank,ba.action as installaction,
-bb.action as runaction,n.managed,app.name as appliance,app.graph FROM nodes n INNER JOIN appliances app
+bb.action as runaction,n.boot, n.managed,app.name as appliance,app.graph
+FROM nodes n INNER JOIN appliances app
 on n.appliance=app.id
 LEFT JOIN bootactions ba on n.installaction=ba.ID 
 LEFT JOIN bootactions bb on n.runaction=bb.ID;
@@ -223,20 +286,20 @@ AFTER UPDATE on appliances
 WHEN old.name <> new.name OR
    old.reslevel <> new.reslevel
 BEGIN
-  UPDATE attrs set reskey=new.name where attrs.reslevel = old.reslevel and attrs.reskey = old.name;
-  UPDATE attrs set reslevel=new.reslevel where attrs.reslevel=old.reslevel and attrs.reskey=new.name;
-  UPDATE routes set reskey=new.name where routes.reslevel = old.reslevel and routes.reskey = old.name;
-  UPDATE routes set reslevel=new.reslevel where routes.reslevel=old.reslevel and routes.reskey=new.name;
-  UPDATE firewalls set reskey=new.name where firewalls.reslevel = old.reslevel and firewalls.reskey = old.name;
-  UPDATE firewalls set reslevel=new.reslevel where firewalls.reslevel=old.reslevel and firewalls.reskey=new.name;
+  UPDATE attrs set reskey=new.reskey where attrs.reslevel = old.reslevel and attrs.reskey = old.reskey;
+  UPDATE attrs set reslevel=new.reslevel where attrs.reslevel=old.reslevel and attrs.reskey=new.reskey;
+  UPDATE routes set reskey=new.reskey where routes.reslevel = old.reslevel and routes.reskey = old.reskey;
+  UPDATE routes set reslevel=new.reslevel where routes.reslevel=old.reslevel and routes.reskey=new.reskey;
+  UPDATE firewalls set reskey=new.reskey where firewalls.reslevel = old.reslevel and firewalls.reskey = old.reskey;
+  UPDATE firewalls set reslevel=new.reslevel where firewalls.reslevel=old.reslevel and firewalls.reskey=new.reskey;
 END;
 
 CREATE TRIGGER trigger_appliance_delete
 BEFORE DELETE on appliances
 BEGIN
-  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=name;
-  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=name;
-  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=name;
+  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=reskey;
+  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=reskey;
+  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=reskey;
 END;
 
 CREATE TRIGGER trigger_firewall_insert
@@ -276,6 +339,12 @@ BEGIN
   DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=name;
   DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=name;
   DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=name;
+END;
+
+CREATE TRIGGER trigger_nodegroups_insert
+AFTER  INSERT ON nodegroups
+BEGIN
+  UPDATE nodegroups set reslevel = (select id from reslevels r where r.resname='groups') where nodegroups.reslevel is NULL;
 END;
 
 CREATE TRIGGER trigger_route_insert

@@ -4,6 +4,8 @@
 insert into reslevels(resname,level) values ("global", 0);
 insert into reslevels(resname,level) values ("graph", 100);
 insert into reslevels(resname,level) values ("appliance", 200);
+insert into reslevels(resname,level) values ("rack", 300);
+insert into reslevels(resname,level) values ("groups", 300);
 insert into reslevels(resname,level) values ("node", 1000);
 
 ## Default appliances
@@ -46,11 +48,11 @@ insert into netgens(name,incr) values ("decrement",-1);
 
 ## Subnets
 insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("private","10.0.0.0", 16, "True", "10.0.255.254", (select ng.id from netgens ng where ng.name = "decrement"));
+       values("private","10.0.0.0", 16, True, "10.0.255.254", (select ng.id from netgens ng where ng.name = "decrement"));
 insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("public","192.168.0.0", 24, "False", "192.168.0.254", (select ng.id from netgens ng where ng.name = "decrement"));
+       values("public","192.168.0.0", 24, false, "192.168.0.254", (select ng.id from netgens ng where ng.name = "decrement"));
 insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("fast","192.168.1.0", 24, "False", "192.168.1.254",(select ng.id from netgens ng where ng.name = "decrement"));
+       values("fast","192.168.1.0", 24, false, "192.168.1.254",(select ng.id from netgens ng where ng.name = "decrement"));
 
 ## Network Devices
 insert into netdevs(device,mac,module,options,devtype,node) 
@@ -216,3 +218,31 @@ values(
 (select id from subnets s where s.name='private'),'nat','all','MASQUERADE','POSTROUTING',
 NULL,
 NULL,(select r.id from reslevels r where r.resname='appliance'),'login');
+
+### some node groups
+insert into nodegroups(name) values("odd");
+insert into nodegroups(name) values("even");
+
+### add group members
+insert into groupmembers(nodegroup,nodeid)
+values ( (select id from nodegroups where name="even"), (select id from nodes where name="compute-0-0"));
+
+insert into groupmembers(nodegroup,nodeid)
+values ( (select id from nodegroups where name="even"), (select id from nodes where name="compute-0-2"));
+
+insert into groupmembers(nodegroup,nodeid)
+values ( (select id from nodegroups where name="even"), (select id from nodes where name="nas-0-0"));
+
+insert into groupmembers(nodegroup,nodeid)
+values ( (select id from nodegroups where name="even"), (select id from nodes where name="frontend-0-0"));
+
+insert into groupmembers(nodegroup,nodeid)
+values ( (select id from nodegroups where name="odd"), (select id from nodes where name="compute-0-1"));
+
+## Add group-specific attributes
+insert into attrs(attr,value,reslevel,reskey) 
+values("reportGanglia","False",(select ID from reslevels where resname="groups"), "even");
+
+insert into attrs(attr,value,reslevel,reskey) 
+values("reportGanglia","True",(select ID from reslevels where resname="groups"), "odd");
+
