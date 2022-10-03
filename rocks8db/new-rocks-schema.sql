@@ -253,7 +253,8 @@ CREATE VIEW netdevsview  AS SELECT
 nd.id, n.name as node, nd.device, nd.mac, nd.module, nd.devtype, nd.options,
 net.name as netname, ip.addr, net.prefix, net.nettype, net.mtu, net.dnszone, nd.vlanid, 
 vl.subnet as logicalVLAN,
-IIF(length(net.dnszone) > 0, ip.cname || '.' || net.dnszone, ip.cname) as fqdn 
+CASE WHEN  length(net.dnszone) > 0 then  ip.cname || '.' || net.dnszone 
+ELSE ip.cname END fqdn
 FROM netdevs nd 
 LEFT JOIN ipaddrs ip ON ip.netdev=nd.id 
 LEFT join vlansview vl on vl.vlanid=nd.vlanid 
@@ -323,8 +324,9 @@ END;
 CREATE TRIGGER trigger_ipaddrs_insert
 AFTER  INSERT ON ipaddrs
 BEGIN
-  UPDATE ipaddrs set cname = (select n.name from nodes n INNER JOIN netdevs nd INNER JOIN ipaddrs ip ON ip.netdev=nd.id WHERE ip.netdev=new.netdev)
-  WHERE ipaddrs.id = new.id and ipaddrs.cname is NULL;
+  UPDATE ipaddrs SET cname = 
+  (SELECT n.name FROM nodes n INNER JOIN netdevs nd  ON nd.node=n.id INNER JOIN ipaddrs ip ON ip.netdev=nd.id WHERE ip.netdev=new.netdev)
+  WHERE ipaddrs.id = new.id AND ipaddrs.cname IS NULL;
 END;
 
 CREATE TRIGGER trigger_node_insert
