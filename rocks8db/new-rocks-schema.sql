@@ -44,6 +44,9 @@ CREATE TABLE subnets (
 	netgen               INTEGER     ,
 	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
 	nextFree             VARCHAR(256) NOT NULL    ,
+	dnszone              VARCHAR(132)     ,
+	mtu                  INTEGER  DEFAULT 1500   ,
+	CONSTRAINT unq_subnets UNIQUE ( dnszone ),
 	FOREIGN KEY ( netgen ) REFERENCES netgens( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	CHECK ( nettype in ('IPV4','IPV6','IPMI') )
  );
@@ -204,6 +207,7 @@ CREATE TABLE ipaddrs (
 	netdev               INTEGER NOT NULL    ,
 	addr                 VARCHAR(256)     ,
 	subnet               INTEGER     ,
+	cname                VARCHAR(100)     ,
 	FOREIGN KEY ( netdev ) REFERENCES netdevs( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY ( subnet ) REFERENCES subnets( ID ) ON DELETE CASCADE ON UPDATE CASCADE
  );
@@ -242,13 +246,15 @@ ORDER BY groupname, node;
 
 CREATE VIEW hwinventoryview AS SELECT
 hw.id, n.name, hw.component, hw.subtype, hw.count, hw.comment 
-FROM hwinventory hw INNER JOIN node n on hw.id=n.id
-ORDER BY name,component,subtype;;
+FROM hwinventory hw INNER JOIN nodes n on hw.id=n.id
+ORDER BY name,component,subtype;
 
 CREATE VIEW netdevsview  AS SELECT 
 nd.id, n.name as node, nd.device, nd.mac, nd.module, nd.devtype, nd.options,
-net.name as netname, ip.addr, net.prefix, net.nettype, nd.vlanid, 
-vl.subnet as logicalVLAN FROM netdevs nd 
+net.name as netname, ip.addr, net.prefix, net.nettype, net.mtu, net.dnszone, nd.vlanid, 
+vl.subnet as logicalVLAN,
+IIF(length(net.dnszone) > 0, ip.cname || '.' || net.dnszone, ip.cname) as fqdn 
+FROM netdevs nd 
 LEFT JOIN ipaddrs ip ON ip.netdev=nd.id 
 LEFT join vlansview vl on vl.vlanid=nd.vlanid 
 LEFT JOIN subnets net on ip.subnet=net.id INNER JOIN nodes n on nd.node=n.id;
@@ -312,6 +318,13 @@ CREATE TRIGGER trigger_attr_insert
 AFTER  INSERT ON attrs 
 BEGIN
   UPDATE attrs set reslevel = (select id from reslevels r where r.resname='global') where attrs.reslevel is NULL;
+END;
+
+CREATE TRIGGER trigger_ipaddrs_insert
+AFTER  INSERT ON ipaddrs
+BEGIN
+  UPDATE ipaddrs set cname = (select n.name from nodes n INNER JOIN netdevs nd INNER JOIN ipaddrs ip ON ip.netdev=nd.id WHERE ip.netdev=new.netdev)
+  WHERE ipaddrs.id = new.id and ipaddrs.cname is NULL;
 END;
 
 CREATE TRIGGER trigger_node_insert

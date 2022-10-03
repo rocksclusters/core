@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from sqlalchemy import create_engine
-from sqlalchemy import Table,Column,Integer 
+from sqlalchemy import Table,Column,Integer,func 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///rocks.db', echo=True)
+engine = create_engine('sqlite:///rocks8.db', echo=True)
 Base = declarative_base(engine)
 ########################################################################
 class Bootactions(Base): 
@@ -133,6 +133,11 @@ def loadSession():
     
 if __name__ == "__main__":
     session = loadSession()
-    nodes = session.query(NetdevsView).filter(NetdevsView.node == 'frontend-0-0').all()
-    for i in range(0,len(nodes)):
-        print (nodes[i].node, nodes[i].device, nodes[i].addr, nodes[i].prefix, nodes[i].mac)
+    attrs = session.query(func.upper(Allattrsview.node).label('node'),Allattrsview.attr,Allattrsview.value,
+      Allattrsview.shadow,Allattrsview.resname,func.max(Allattrsview.level).label('level')).\
+      group_by(Allattrsview.node,Allattrsview.attr).\
+      all()
+    for a in attrs:
+        print (a.node, a.attr, a.value, a.shadow, a.resname,a.level)
+    #for i in range(0,len(attrs)):
+    #    print (attrs[i].node, attrs[i].attr, attrs[i].value, attrs[i].shadow, attrs[i].resname,attrs[i].level)

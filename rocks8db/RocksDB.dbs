@@ -187,6 +187,9 @@
 			<column name="netdev" type="INTEGER" jt="4" mandatory="y" />
 			<column name="addr" type="VARCHAR" length="256" jt="12" />
 			<column name="subnet" type="INTEGER" jt="4" />
+			<column name="cname" type="VARCHAR" length="100" jt="12" >
+				<comment><![CDATA[alias name for this IP address on this device]]></comment>
+			</column>
 			<index name="pk_IPaddrs" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
@@ -451,8 +454,18 @@ used is resolved by the one with highest priority.]]></comment>
 			<column name="nextFree" type="VARCHAR" length="256" jt="12" mandatory="y" >
 				<comment><![CDATA[next Available IP address in this subnet]]></comment>
 			</column>
+			<column name="dnszone" type="VARCHAR" length="132" jt="12" >
+				<comment><![CDATA[what's the dns zone for this subnet]]></comment>
+			</column>
+			<column name="mtu" type="INTEGER" jt="4" >
+				<defo><![CDATA[1500]]></defo>
+				<comment><![CDATA[maximum transmission unit]]></comment>
+			</column>
 			<index name="pk_networks" unique="PRIMARY_KEY" >
 				<column name="ID" />
+			</index>
+			<index name="unq_subnets" unique="UNIQUE_KEY" >
+				<column name="dnszone" />
 			</index>
 			<constraint name="Cns_networks" >
 				<string><![CDATA[nettype in ('IPV4','IPV6','IPMI')]]></string>
@@ -521,14 +534,17 @@ ORDER BY groupname, node]]></view_script>
 		<view name="hwinventoryview" >
 			<view_script><![CDATA[CREATE VIEW ${fullName} AS SELECT
 hw.id, n.name, hw.component, hw.subtype, hw.count, hw.comment 
-FROM hwinventory hw INNER JOIN node n on hw.id=n.id
-ORDER BY name,component,subtype;]]></view_script>
+FROM hwinventory hw INNER JOIN nodes n on hw.id=n.id
+ORDER BY name,component,subtype
+]]></view_script>
 		</view>
 		<view name="netdevsview" >
 			<view_script><![CDATA[CREATE VIEW ${fullName}  AS SELECT 
 nd.id, n.name as node, nd.device, nd.mac, nd.module, nd.devtype, nd.options,
-net.name as netname, ip.addr, net.prefix, net.nettype, nd.vlanid, 
-vl.subnet as logicalVLAN FROM netdevs nd 
+net.name as netname, ip.addr, net.prefix, net.nettype, net.mtu, net.dnszone, nd.vlanid, 
+vl.subnet as logicalVLAN,
+IIF(length(net.dnszone) > 0, ip.cname || '.' || net.dnszone, ip.cname) as fqdn 
+FROM netdevs nd 
 LEFT JOIN ipaddrs ip ON ip.netdev=nd.id 
 LEFT join vlansview vl on vl.vlanid=nd.vlanid 
 LEFT JOIN subnets net on ip.subnet=net.id INNER JOIN nodes n on nd.node=n.id]]></view_script>
@@ -602,6 +618,14 @@ END;
 AFTER  INSERT ON attrs 
 BEGIN
   UPDATE attrs set reslevel = (select id from reslevels r where r.resname='global') where attrs.reslevel is NULL;
+END;]]></string>
+		</trigger>
+		<trigger name="Trigger_ipaddrs" id="Trigger-15c4" isSystem="false" >
+			<string><![CDATA[CREATE TRIGGER trigger_ipaddrs_insert
+AFTER  INSERT ON ipaddrs
+BEGIN
+  UPDATE ipaddrs set cname = (select n.name from nodes n INNER JOIN netdevs nd INNER JOIN ipaddrs ip ON ip.netdev=nd.id WHERE ip.netdev=new.netdev)
+  WHERE ipaddrs.id = new.id and ipaddrs.cname is NULL;
 END;]]></string>
 		</trigger>
 		<trigger name="Trigger_node" id="Trigger-2d9" isSystem="false" >

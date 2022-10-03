@@ -47,12 +47,12 @@ insert into nodes(name,rack,rank,appliance,reslevel)
 insert into netgens(name,incr) values ("decrement",-1);
 
 ## Subnets
-insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("private","10.0.0.0", 16, True, "10.0.255.254", (select ng.id from netgens ng where ng.name = "decrement"));
-insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("public","192.168.0.0", 24, false, "192.168.0.254", (select ng.id from netgens ng where ng.name = "decrement"));
-insert into subnets(name,network,prefix,servedns,nextFree,netgen) 
-       values("fast","192.168.1.0", 24, false, "192.168.1.254",(select ng.id from netgens ng where ng.name = "decrement"));
+insert into subnets(name,dnszone,network,prefix,servedns,nextFree,netgen) 
+       values("private","local","10.0.0.0", 16, True, "10.0.255.254", (select ng.id from netgens ng where ng.name = "decrement"));
+insert into subnets(name,dnszone,network,prefix,servedns,nextFree,netgen) 
+       values("public","oit.uci.edu", "192.168.0.0", 24, false, "192.168.0.254", (select ng.id from netgens ng where ng.name = "decrement"));
+insert into subnets(name,dnszone,network,prefix,mtu,servedns,nextFree,netgen) 
+       values("fast","fast","192.168.1.0", 24, 9000, false, "192.168.1.254",(select ng.id from netgens ng where ng.name = "decrement"));
 
 ## Network Devices
 insert into netdevs(device,mac,module,options,devtype,node) 
@@ -81,10 +81,10 @@ insert into ipaddrs(netdev,addr,subnet)
   values((select nv.id from netdevsview nv where nv.device="en0" and nv.node="frontend-0-0" ),
   "10.0.0.1",
   (select subnets.id from subnets where subnets.name="private"));
-insert into ipaddrs(netdev,addr,subnet)
+insert into ipaddrs(netdev,addr,subnet,cname)
   values((select nv.id from netdevsview nv where nv.device="en1" and nv.node="frontend-0-0" ),
   "192.168.0.4",
-  (select subnets.id from subnets where subnets.name="public"));
+  (select subnets.id from subnets where subnets.name="public"),"vc1");
 insert into ipaddrs(netdev,addr,subnet) 
   values((select nv.id from netdevsview nv where nv.device="eth0" and nv.node="compute-0-0" ),
   "10.0.0.254",
