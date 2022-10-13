@@ -111,7 +111,7 @@ CREATE TABLE nodegroups (
  );
 
 CREATE TABLE nodes ( 
-	ID                   INTEGER NOT NULL  PRIMARY KEY  ,
+	ID                   INTEGER NOT NULL PRIMARY KEY ,
 	name                 VARCHAR(100) NOT NULL    ,
 	rack                 INTEGER  DEFAULT 0   ,
 	rank                 INTEGER NOT NULL    ,
@@ -123,6 +123,7 @@ CREATE TABLE nodes (
 	reslevel             INTEGER     ,
 	reskey               AS (name) ,
 	boot                 VARCHAR(32) NOT NULL DEFAULT 'run'   ,
+	CONSTRAINT unq_nodes UNIQUE ( name ),
 	FOREIGN KEY ( installaction ) REFERENCES bootactions( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY ( runaction ) REFERENCES bootactions( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY ( reslevel ) REFERENCES reslevels( ID ) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -304,9 +305,9 @@ END;
 CREATE TRIGGER trigger_appliance_delete
 BEFORE DELETE on appliances
 BEGIN
-  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=reskey;
-  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=reskey;
-  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=reskey;
+  DELETE FROM attrs where attrs.reslevel=old.reslevel and attrs.reskey=old.reskey;
+  DELETE FROM routes where routes.reslevel=old.reslevel and routes.reskey=old.reskey;
+  DELETE FROM firewalls where firewalls.reslevel=old.reslevel and firewalls.reskey=old.reskey;
 END;
 
 CREATE TRIGGER trigger_firewall_insert
@@ -351,9 +352,9 @@ END;
 CREATE TRIGGER trigger_node_delete
 BEFORE DELETE on nodes
 BEGIN
-  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=name;
-  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=name;
-  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=name;
+  DELETE FROM attrs where attrs.reslevel=reslevel and attrs.reskey=old.name;
+  DELETE FROM routes where routes.reslevel=reslevel and routes.reskey=old.name;
+  DELETE FROM firewalls where firewalls.reslevel=reslevel and firewalls.reskey=old.name;
 END;
 
 CREATE TRIGGER trigger_nodegroups_insert

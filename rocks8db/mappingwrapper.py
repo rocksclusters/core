@@ -1,3 +1,4 @@
+from sqlalchemy import and_,or_
 class RocksBase(object):
     """Additional base class of Rocks ORM hierarchy which includes some
     helper methods for all classes"""
