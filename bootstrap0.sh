@@ -172,6 +172,7 @@ compile_and_install foundation-python-setuptools
 compile_and_install foundation-libxml2
 compile_and_install foundation-python-xml
 compile_and_install foundation-python-extras
+compile_and_install foundation-PyYAML
 compile_and_install foundation-rcs
 
 # 3. Rocks  config, pylib, and kickstart, commands  

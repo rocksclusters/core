@@ -148,6 +148,7 @@
 	<package os='linux'>foundation-python-extras</package>
 	<package os='linux'>foundation-python-setuptools</package>
 	<package os='linux'>foundation-python-xml</package>
+	<package os='linux'>foundation-PyYAML</package>
 	<package os='linux'>foundation-graphviz</package>
 	<package os='linux'>foundation-coreutils</package>
 	<package os='linux'>foundation-rcs</package>

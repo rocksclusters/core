@@ -338,6 +338,61 @@
 
   </changelog>
 
-  <ansible playbook='node.yml'/>
+  <package os='linux'>rocks-config</package>
+  <package os='linux'>sudo</package>
+  <package os='linux' cond="rocks_version_major == 7">rocks-rc-systemd</package>
+  <package os='linux' cond="rocks_version_major == 7">at</package>
+
+  <package os='sunos'>SFWsudo</package>
+
+<post os='linux'>
+for i in gpm kudzu keytable cups apmd linuxconf identd pcmcia rhnsd xfs \
+	lpd restorecond mcstrans bluetooth hidd yum-updatesd avahi-daemon \
+	pcscd ; do
+	if [ -f /etc/rc.d/init.d/$i ]; then
+		/sbin/chkconfig $i off
+	fi
+done
+
+
+<!-- configure IP forwarding -->
+gawk '/net\.ipv4\.ip_forward/ { \
+	printf("net.ipv4.ip_forward = 1\n"); \
+	next; \
+} \
+{ print $0 }' /etc/sysctl.conf &gt; /tmp/sysctl.conf
+mv /tmp/sysctl.conf /etc/sysctl.conf
+
+<file name="/etc/man.config" mode="append">
+MANPATH /opt/rocks/man
+</file>
+
+<!-- Set up x86 compatible libraries for other architectures. -->
+if [ -d /opt/x86-libs ]
+then
+	(cd /opt/x86-libs; \
+		find | cpio -pdu /)
+	/sbin/ldconfig
+fi
+
+</post>
+
+<post arch="x86_64" os='linux'>
+
+<!-- This should be done automatically, but isn't. -->
+<file name="/etc/ld.so.conf" mode="append">
+/lib64
+/usr/lib64
+/usr/kerberos/lib64
+</file>
+
+/sbin/ldconfig 
+
+</post>
+
+<post os='sunos'>
+<!-- configure IP forwarding -->
+ndd -set /dev/ip ip_forwarding 1
+</post>
 
 </kickstart> 
