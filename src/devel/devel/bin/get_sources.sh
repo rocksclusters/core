@@ -9,11 +9,11 @@
 #
 
 MYDIR=$(dirname $0)
-GGET=$MYDIR/gget.sh
+#GGET=$MYDIR/gget.sh
+HTTPGET=$MYDIR/httpget.sh
 
-if [ ! "$SURL" ]; then
-	# rocksclusters download base URL
-	SURL="https://googledrive.com/host/0B0LD0shfkvCRRGtadUFTQkhoZWs"
+if [ "x$SURL" == "x" ]; then
+	SURL="http://sources.rocksclusters.org"
 fi
 
 pn=$(basename `pwd`)
@@ -38,11 +38,7 @@ while read a; do
       url=${SURL}/${pn}/`basename ${fname}`
       basepath=`dirname ${fname}`
       test -d $basepath || mkdir -p $basepath
-      if [ "x${fobj}" == "x" ]; then 
-      	curl -L "$url" -o ${fname}
-      else
-        $GGET ${fobj} ${fname}
-      fi
+      $HTTPGET -B "${SURL}" -F "${pn}" -n "$(basename ${fname})" -o "${fname}"
       if [ "$?" != "0" ]; then
           echo "Error download from URL $url"
           exit 1
