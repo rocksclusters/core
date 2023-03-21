@@ -93,7 +93,7 @@ __ROCKS_VERSION_COMMON_MK = yes
 # can override this with their own version numbers.  If you want to
 # make sure you get the version of Rocks use ROCKS_VERSION.
 
-ROCKS.OS.VERSION.MAJOR=$(shell /bin/cat /etc/os-release | grep ^REDHAT_SUPPORT_PRODUCT_VERSION | /usr/bin/cut -f 2 -d\") 
+ROCKS.OS.VERSION.MAJOR=$(shell /bin/cat /etc/os-release | grep ^REDHAT_SUPPORT_PRODUCT_VERSION | /usr/bin/cut -f 2 -d\" | /usr/bin/cut -f 1 -d.) 
 ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 5)
 VERSION.MAJOR = 5
 VERSION.MINOR = 6
