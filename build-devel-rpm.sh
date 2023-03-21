@@ -58,9 +58,7 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 
-PACKAGES="wget genisoimage"
-#needed to detect OS version
-PACKAGES="$PACKAGES redhat-lsb"
+PACKAGES="curl wget genisoimage"
 # needed to download the binary files
 PACKAGES="$PACKAGES coreutils curl"
 # rpm build

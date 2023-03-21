@@ -93,7 +93,7 @@ __ROCKS_VERSION_COMMON_MK = yes
 # can override this with their own version numbers.  If you want to
 # make sure you get the version of Rocks use ROCKS_VERSION.
 
-ROCKS.OS.VERSION.MAJOR=$(shell lsb_release -rs | cut -d . -f 1)
+ROCKS.OS.VERSION.MAJOR=$(shell /bin/cat /etc/os-release | grep ^REDHAT_SUPPORT_PRODUCT_VERSION | /usr/bin/cut -f 2 -d\") 
 ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 5)
 VERSION.MAJOR = 5
 VERSION.MINOR = 6
@@ -119,8 +119,16 @@ ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 8)
 VERSION.MAJOR = 8
 VERSION.MINOR = 0
 #VERSION.PATCH = 3
-RELEASE_NAME = Gorgonio 
+RELEASE_NAME = Gorgonio
 endif
+
+ifeq ($(strip $(ROCKS.OS.VERSION.MAJOR)), 9)
+VERSION.MAJOR = 9
+VERSION.MINOR = 0
+#VERSION.PATCH = 3
+RELEASE_NAME = Helium
+endif
+
 VERSION_NAME = "$(RELEASE_NAME)"
 
 rocks-version-common.mk: $(wildcard $(ROCKSROOT)/etc/rocks-version-common.mk)
