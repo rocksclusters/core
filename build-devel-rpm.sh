@@ -71,12 +71,12 @@ PACKAGES="$PACKAGES rpm-build rpm-devel createrepo"
 PACKAGES="$PACKAGES make gcc firefox"
 
 
-$(SUDO) yum -y install rpm-build rpm-devel createrepo $PACKAGES
+${SUDO} yum -y install rpm-build rpm-devel createrepo $PACKAGES
 
 # Make the devel rpm and install
 (cd src/devel; make pkg )
 make createlocalrepo
-$(SUDO) yum -c yum.conf -y install rocks-devel
+${SUDO} yum -c yum.conf -y install rocks-devel
 
 
 # Make sure we have updated paths
