@@ -58,6 +58,10 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 
+# NOTE: to install packages using (passwordless) sudo privileges, 
+# call as 
+# $ SUDO=sudo ./build-devel-rpm.sh 
+
 PACKAGES="curl wget genisoimage"
 # needed to download the binary files
 PACKAGES="$PACKAGES coreutils curl"
@@ -66,12 +70,14 @@ PACKAGES="$PACKAGES rpm-build rpm-devel createrepo"
 # rpm make gcc 
 PACKAGES="$PACKAGES make gcc firefox"
 
-yum -y install rpm-build rpm-devel createrepo $PACKAGES
+
+$(SUDO) yum -y install rpm-build rpm-devel createrepo $PACKAGES
 
 # Make the devel rpm and install
 (cd src/devel; make pkg )
 make createlocalrepo
-yum -c yum.conf -y install rocks-devel
+$(SUDO) yum -c yum.conf -y install rocks-devel
+
 
 # Make sure we have updated paths
 . /etc/profile.d/rocks-devel.sh
