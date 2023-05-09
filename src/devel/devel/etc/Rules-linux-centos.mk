@@ -470,7 +470,7 @@ ifeq ($(RPM.PREFIX),)
 ifeq ($(RPM.FILES),)
 	@$(PF) "/\n" >> $@
 else
-	@$(PF) "$(RPM.FILES)\n" >> $@
+	tail -n 1 version.mk | sed -e 's/\\n/\n/g' | sed -e 's/RPM.FILES=//g'| sed -e 's/^/"/g' | sed -e 's/$$/"/g' >> $@
 endif
 else
 	@$(PF) "$(RPM.PREFIX)\n" >> $@
